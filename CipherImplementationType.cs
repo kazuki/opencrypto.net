@@ -29,7 +29,7 @@ using System;
 
 namespace openCrypto
 {
-	enum CipherImplementationType
+	public enum CipherImplementationType
 	{
 		LowMemory,
 		Balanced,
