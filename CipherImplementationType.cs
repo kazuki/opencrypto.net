@@ -26,44 +26,13 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Security.Cryptography;
 
 namespace openCrypto
 {
-	public abstract class SymmetricAlgorithmPlus : SymmetricAlgorithm
+	enum CipherImplementationType
 	{
-		protected int _threads = 1;
-		protected CipherModePlus _mode;
-		protected CipherImplementationType _implType;
-
-		public abstract bool SupportsMultiThread {
-			get;
-		}
-
-		public int NumberOfThreads {
-			get { return _threads; }
-			set {
-				if (!SupportsMultiThread)
-					return;
-				if (value < 1)
-					throw new ArgumentOutOfRangeException ();
-				_threads = value;
-			}
-		}
-
-		public override CipherMode Mode {
-			get { return (CipherMode)_mode; }
-			set { _mode = (CipherModePlus)value; }
-		}
-
-		public CipherModePlus ModePlus {
-			get { return _mode; }
-			set { _mode = value;}
-		}
-
-		public CipherImplementationType ImplementationType {
-			get { return _implType; }
-			set { _implType = value;}
-		}
+		LowMemory,
+		Balanced,
+		HighSpeed
 	}
 }

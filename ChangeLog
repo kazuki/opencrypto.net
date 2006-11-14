@@ -1,4 +1,9 @@
-﻿2006-11-13  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-14  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* CipherImplementationType.cs: 追加
+	* SymmetricAlgorithmPlus.cs: 低メモリ実装や高性能実装を選択するオプションを追加
+
+2006-11-13  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* CipherModePlus.cs
 	* ConfluentWaitHandle.cs

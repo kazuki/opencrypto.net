@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CipherImplementationType.cs" />
     <Compile Include="CipherModePlus.cs" />
     <Compile Include="Tests\DummyAlgorithm.cs" />
     <Compile Include="SymmetricAlgorithmPlus.cs" />
