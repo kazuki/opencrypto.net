@@ -1,3 +1,7 @@
+2006-11-14  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* SymmetricAlgorithmPlusTest: CipherModeとCipherModePlusの相互変換テスト追加
+
 2006-11-13  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* DummyAlgorithm.cs: 追加
