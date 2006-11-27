@@ -1,3 +1,9 @@
+2006-11-27  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* ライセンスをBSDからMIT/X11に変更
+	* コメントを付加
+	* 文字コードや改行コードを整理
+
 2006-11-14  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* CipherImplementationType.cs: アクセサをpublicに修正
