@@ -1,0 +1,8 @@
+2006-11-28  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* Camellia.cs:
+	* CamelliaManaged.cs:
+	* CamelliaTransform.cs:
+	* CamelliaTransform64LE.cs:
+	* CamelliaTransformBE.cs:
+	* CamelliaTransformLE.cs: Camellia.NETから移植

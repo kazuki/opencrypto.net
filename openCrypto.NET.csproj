@@ -45,8 +45,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Camellia\Camellia.cs" />
+    <Compile Include="Camellia\CamelliaManaged.cs" />
+    <Compile Include="Camellia\CamelliaTransform.cs" />
+    <Compile Include="Camellia\CamelliaTransform64LE.cs" />
+    <Compile Include="Camellia\CamelliaTransformBE.cs" />
+    <Compile Include="Camellia\CamelliaTransformLE.cs" />
     <Compile Include="CipherImplementationType.cs" />
     <Compile Include="CipherModePlus.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Tests\ConfluentWaitHandleTest.cs" />
     <Compile Include="Tests\DummyAlgorithm.cs" />
     <Compile Include="SymmetricAlgorithmPlus.cs" />
@@ -63,7 +70,7 @@
     <None Include="README.ja" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="LICENSE" />
+    <None Include="LICENSE.MIT.X11" />
     <None Include="Tests\ChangeLog" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
