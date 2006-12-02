@@ -1,0 +1,17 @@
+<Combine name="openCrypto.NET" fileversion="2.0">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry build="True" name="openCrypto.NET" configuration="Debug" />
+    </Configuration>
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry build="True" name="openCrypto.NET" configuration="Release" />
+    </Configuration>
+  </Configurations>
+  <DeployTargets />
+  <StartMode startupentry="openCrypto.NET" single="True">
+    <Execute type="None" entry="openCrypto.NET" />
+  </StartMode>
+  <Entries>
+    <Entry filename="./openCrypto.NET.mdp" />
+  </Entries>
+</Combine>

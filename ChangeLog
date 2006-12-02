@@ -1,3 +1,9 @@
+2006-12-03  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* openCrypto.NET.mdp:
+	* openCrypto.NET.mds: MonoDevelop用のソリューション／プロジェクトファイルを追加
+	* Makefile: 追加
+
 2006-11-28  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* Helpers.cs: 追加

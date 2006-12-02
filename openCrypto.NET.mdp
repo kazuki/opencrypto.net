@@ -1,0 +1,47 @@
+<Project name="openCrypto.NET" fileversion="2.0" language="C#" clr-version="Net_2_0" ctype="DotNetProject">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="DotNetProjectConfiguration">
+      <Output directory="./bin/Debug" assembly="openCrypto.NET" />
+      <Build debugmode="True" target="Exe" />
+      <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" clr-version="Net_2_0" />
+      <CodeGeneration compiler="Mcs" warninglevel="4" optimize="False" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+    </Configuration>
+    <Configuration name="Release" ctype="DotNetProjectConfiguration">
+      <Output directory="./bin/Release" assembly="openCrypto.NET" />
+      <Build debugmode="False" target="Exe" />
+      <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" clr-version="Net_2_0" />
+      <CodeGeneration compiler="Mcs" warninglevel="4" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+    </Configuration>
+  </Configurations>
+  <DeployTargets />
+  <Contents>
+    <File name="./Camellia" subtype="Directory" buildaction="Compile" />
+    <File name="./Tests" subtype="Directory" buildaction="Compile" />
+    <File name="./ChangeLog" subtype="Code" buildaction="Nothing" />
+    <File name="./CipherImplementationType.cs" subtype="Code" buildaction="Compile" />
+    <File name="./CipherModePlus.cs" subtype="Code" buildaction="Compile" />
+    <File name="./ConfluentWaitHandle.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Helpers.cs" subtype="Code" buildaction="Compile" />
+    <File name="./LICENSE.MIT.X11" subtype="Code" buildaction="Nothing" />
+    <File name="./Program.cs" subtype="Code" buildaction="Compile" />
+    <File name="./README.ja" subtype="Code" buildaction="Nothing" />
+    <File name="./SymmetricAlgorithmPlus.cs" subtype="Code" buildaction="Compile" />
+    <File name="./SymmetricTransform.cs" subtype="Code" buildaction="Compile" />
+    <File name="./openCrypto.NET.csproj" subtype="Code" buildaction="Nothing" />
+    <File name="./openCrypto.NET.mdp" subtype="Code" buildaction="Nothing" />
+    <File name="./openCrypto.NET.mds" subtype="Code" buildaction="Nothing" />
+    <File name="./openCrypto.NET.sln" subtype="Code" buildaction="Nothing" />
+    <File name="./Camellia/Camellia.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Camellia/CamelliaManaged.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Camellia/CamelliaTransform.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Camellia/CamelliaTransform64LE.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Camellia/CamelliaTransformBE.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Camellia/CamelliaTransformLE.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Camellia/ChangeLog" subtype="Code" buildaction="Nothing" />
+    <File name="./Tests/ChangeLog" subtype="Code" buildaction="Nothing" />
+    <File name="./Tests/ConfluentWaitHandleTest.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Tests/DummyAlgorithm.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Tests/SymmetricAlgorithmPlusTest.cs" subtype="Code" buildaction="Compile" />
+  </Contents>
+  <References />
+</Project>
