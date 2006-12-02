@@ -1,3 +1,11 @@
+2006-12-03  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp> 
+
+	* CamelliaTransformBE.cs: 改行コードを修正
+
+2006-12-03  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp> 
+
+	* CamelliaTransformBE.cs: 改行コードを修正
+
 2006-11-28  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* Camellia.cs:
