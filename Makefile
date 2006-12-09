@@ -14,29 +14,23 @@ release: ${RELEASE_TARGET}
 debug: ${DEBUG_TARGET}
 tests: ${TEST_TARGET}
 test: tests
+run-test: tests
+	nunit-console2 ${TEST_TARGET}
 
 clean:
 	rm -f ${RELEASE_TARGET} ${DEBUG_TARGET} ${TEST_TARGET}
 
-${RELEASE_TARGET}: FORCE ${RELEASE_DIR}
+${RELEASE_TARGET}: FORCE
 	${COMPILER} ${FLAGS} -optimize+ -out:${RELEASE_TARGET} ${SOURCE_FILES}
 
-${DEBUG_TARGET}: FORCE ${DEBUG_DIR}
+${DEBUG_TARGET}: FORCE
 	${COMPILER} ${FLAGS} -out:${DEBUG_TARGET} ${SOURCE_FILES}
 
-${TEST_TARGET}: FORCE ${TEST_DIR}
-	${COMPILER} ${FLAGS} -define:TEST -r:nunit.framework.dll -out:${TEST_TARGET} ${SOURCE_FILES}
+${TEST_TARGET}: FORCE
+	${COMPILER} ${FLAGS} -define:TEST -r:nunit.framework.dll \
+	-out:${TEST_TARGET} ${SOURCE_FILES} \
+	-resource:Tests/t_camellia.txt
 
-${RELEASE_DIR}: ./bin
-	mkdir ${RELEASE_DIR}
-
-${DEBUG_DIR}: ./bin
-	mkdir ${DEBUG_DIR}
-
-${TEST_DIR}: ./bin
-	mkdir ${TEST_DIR}
-
-./bin:
-	mkdir bin
 
 FORCE:
+

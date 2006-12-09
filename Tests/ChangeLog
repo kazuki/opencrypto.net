@@ -1,3 +1,9 @@
+2006-12-10  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* CamelliaTest.cs:
+	* SymmetricAlgorithmTestBase.cs:
+	* t_camellia.txt: CamelliaのECBテストを追加
+
 2006-11-27  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* ライセンスをBSDからMIT/X11に変更
