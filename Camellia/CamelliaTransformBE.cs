@@ -147,6 +147,7 @@ namespace openCrypto
 				switch (rawKey.Length) {
 				case 16: /* 128bit */
 					CopyConvertEndianness16 ((uint*)pKey, t);
+					t[4] = t[5] = t[6] = t[7] = 0;
 					break;
 				case 24: /* 192bit */
 					CopyConvertEndianness16 ((uint*)pKey, t);

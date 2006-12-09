@@ -661,6 +661,7 @@ namespace openCrypto
 				switch (rawKey.Length) {
 				case 16: /* 128bit */
 					memcpy64 (t, (ulong*)pKey, 2);
+					t[2] = t[3] = 0;
 					break;
 				case 24: /* 192bit */
 					memcpy64 (t, (ulong*)pKey, 2);
