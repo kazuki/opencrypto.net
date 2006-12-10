@@ -5,7 +5,7 @@ DEBUG_DIR=bin/Debug
 DEBUG_TARGET=${DEBUG_DIR}/${TARGET}
 TEST_DIR=bin/Tests
 TEST_TARGET=${TEST_DIR}/${TARGET}
-SOURCE_FILES=*.cs Camellia/*.cs Tests/*.cs
+SOURCE_FILES:=$(foreach f,$(shell cat SourceFiles),$(f))
 COMPILER=gmcs
 FLAGS=-codepage:utf8 -unsafe+
 
@@ -20,17 +20,13 @@ run-test: tests
 clean:
 	rm -f ${RELEASE_TARGET} ${DEBUG_TARGET} ${TEST_TARGET}
 
-${RELEASE_TARGET}: FORCE
+${RELEASE_TARGET}: ${SOURCE_FILES}
 	${COMPILER} ${FLAGS} -optimize+ -out:${RELEASE_TARGET} ${SOURCE_FILES}
 
-${DEBUG_TARGET}: FORCE
+${DEBUG_TARGET}: ${SOURCE_FILES}
 	${COMPILER} ${FLAGS} -out:${DEBUG_TARGET} ${SOURCE_FILES}
 
-${TEST_TARGET}: FORCE
+${TEST_TARGET}: ${SOURCE_FILES}
 	${COMPILER} ${FLAGS} -define:TEST -r:nunit.framework.dll \
 	-out:${TEST_TARGET} ${SOURCE_FILES} \
 	-resource:Tests/t_camellia.txt
-
-
-FORCE:
-

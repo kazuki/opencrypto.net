@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -45,23 +45,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CipherImplementationType.cs" />
+    <Compile Include="CipherModePlus.cs" />
+    <Compile Include="ConfluentWaitHandle.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="SymmetricAlgorithmPlus.cs" />
+    <Compile Include="SymmetricTransform.cs" />
     <Compile Include="Camellia\Camellia.cs" />
     <Compile Include="Camellia\CamelliaManaged.cs" />
     <Compile Include="Camellia\CamelliaTransform.cs" />
     <Compile Include="Camellia\CamelliaTransform64LE.cs" />
     <Compile Include="Camellia\CamelliaTransformBE.cs" />
     <Compile Include="Camellia\CamelliaTransformLE.cs" />
-    <Compile Include="CipherImplementationType.cs" />
-    <Compile Include="CipherModePlus.cs" />
-    <Compile Include="Helpers.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\CamelliaTest.cs" />
     <Compile Include="Tests\ConfluentWaitHandleTest.cs" />
     <Compile Include="Tests\DummyAlgorithm.cs" />
-    <Compile Include="SymmetricAlgorithmPlus.cs" />
-    <Compile Include="ConfluentWaitHandle.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SymmetricTransform.cs" />
     <Compile Include="Tests\SymmetricAlgorithmPlusTest.cs" />
+    <Compile Include="Tests\SymmetricAlgorithmTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ChangeLog" />
