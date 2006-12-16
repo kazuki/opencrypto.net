@@ -62,6 +62,7 @@
     <Compile Include="Tests\CamelliaTest.cs" />
     <Compile Include="Tests\ConfluentWaitHandleTest.cs" />
     <Compile Include="Tests\DummyAlgorithm.cs" />
+    <Compile Include="Tests\PaddingModeTest.cs" />
     <Compile Include="Tests\SymmetricAlgorithmPlusTest.cs" />
     <Compile Include="Tests\SymmetricAlgorithmTestBase.cs" />
   </ItemGroup>

@@ -29,17 +29,21 @@ using System.Security.Cryptography;
 namespace openCrypto.Tests
 {
 	/// <summary>
-	/// <ja>各種テスト用のダミー対称アルゴリズム</ja>
+	/// <ja>
+	/// 各種テスト用のダミー対称アルゴリズム。
+	/// キーサイズとブロックサイズは64bit固定で、
+	/// 暗号化／復号プロセスはただのコピー
+	/// </ja>
 	/// </summary>
 	class DummyAlgorithm : SymmetricAlgorithmPlus
 	{
 		public DummyAlgorithm ()
 		{
-			base.KeySizeValue = 128;
-			base.BlockSizeValue = 128;
-			base.FeedbackSizeValue = 128;
-			base.LegalBlockSizesValue = new KeySizes[] { new KeySizes (128, 128, 0) };
-			base.LegalKeySizesValue = new KeySizes[] { new KeySizes (128, 128, 0) };
+			base.KeySizeValue = 64;
+			base.BlockSizeValue = 64;
+			base.FeedbackSizeValue = 64;
+			base.LegalBlockSizesValue = new KeySizes[] { new KeySizes (64, 64, 0) };
+			base.LegalKeySizesValue = new KeySizes[] { new KeySizes (64, 64, 0) };
 		}
 
 		public override bool SupportsMultiThread {
@@ -58,12 +62,12 @@ namespace openCrypto.Tests
 
 		public override void GenerateIV ()
 		{
-			IVValue = new byte[16];
+			IVValue = new byte[8];
 		}
 
 		public override void GenerateKey ()
 		{
-			KeyValue = new byte[16];
+			KeyValue = new byte[8];
 		}
 
 		class DummyTransform : SymmetricTransform

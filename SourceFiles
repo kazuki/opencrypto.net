@@ -15,5 +15,6 @@ Properties/AssemblyInfo.cs
 Tests/CamelliaTest.cs
 Tests/ConfluentWaitHandleTest.cs
 Tests/DummyAlgorithm.cs
+Tests/PaddingModeTest.cs
 Tests/SymmetricAlgorithmPlusTest.cs
 Tests/SymmetricAlgorithmTestBase.cs

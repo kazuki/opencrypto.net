@@ -1,44 +1,48 @@
-2006-12-11  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-12-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* SourceFiles, openCrypto.NET.mdp, openCrypto.NET.csproj: 更新
+
+2006-12-11 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* Makefile, SourceFiles: 更新時のみのビルドに対応
 	* openCrypto.NET.mdp, openCrypto.NET.csproj: 更新
 
-2006-12-10  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-12-10 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* Makefile:
 	- うまく動作しないディレクトリ生成ルールを削除
 	- NUnitテストの実行ルールを追加
 
-2006-12-03  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-12-03 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* openCrypto.NET.mdp:
 	* openCrypto.NET.mds: MonoDevelop用のソリューション／プロジェクトファイルを追加
 	* Makefile: 追加
 
-2006-11-28  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-28 Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* Helpers.cs: 追加
 
-2006-11-27  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-27 Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* LICENSE, LICENSE.MIT.X11: ファイル名変更
 
-2006-11-27  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-27 Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* ライセンスをBSDからMIT/X11に変更
 	* コメントを付加
 	* 文字コードや改行コードを整理
 
-2006-11-14  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-14 Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* CipherImplementationType.cs: アクセサをpublicに修正
 
-2006-11-14  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-14 Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* CipherImplementationType.cs: 追加
 	* SymmetricAlgorithmPlus.cs: 低メモリ実装や高性能実装を選択するオプションを追加
 
-2006-11-13  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-13 Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* CipherModePlus.cs
 	* ConfluentWaitHandle.cs

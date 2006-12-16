@@ -41,6 +41,7 @@
     <File name="./Tests/ChangeLog" subtype="Code" buildaction="Nothing" />
     <File name="./Tests/ConfluentWaitHandleTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Tests/DummyAlgorithm.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Tests/PaddingModeTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Tests/SymmetricAlgorithmPlusTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Tests/CamelliaTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Tests/SymmetricAlgorithmTestBase.cs" subtype="Code" buildaction="Compile" />

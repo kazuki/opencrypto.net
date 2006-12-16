@@ -1,23 +1,28 @@
-2006-12-10  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-12-17  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* PaddingModeTest.cs: パディングのテストを追加
+	* DummyAlgorithm.cs: キーとブロック長を64bitに変更
+
+2006-12-10  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* CamelliaTest.cs:
 	* SymmetricAlgorithmTestBase.cs:
 	* t_camellia.txt: CamelliaのECBテストを追加
 
-2006-11-27  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-27  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* ライセンスをBSDからMIT/X11に変更
 	* コメントを付加
 	* 文字コードや改行コードを整理
 
-2006-11-14  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-14  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* ConfluentWaitHandleTest.cs: 追加
 
-2006-11-14  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-14  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* SymmetricAlgorithmPlusTest: CipherModeとCipherModePlusの相互変換テスト追加
 
-2006-11-13  Kazuki Oikawa  <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+2006-11-13  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* DummyAlgorithm.cs: 追加
