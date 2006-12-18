@@ -12,6 +12,7 @@ Camellia/CamelliaTransform64LE.cs
 Camellia/CamelliaTransformBE.cs
 Camellia/CamelliaTransformLE.cs
 Properties/AssemblyInfo.cs
+Tests/BlockCipherModeTest.cs
 Tests/CamelliaTest.cs
 Tests/ConfluentWaitHandleTest.cs
 Tests/DummyAlgorithm.cs

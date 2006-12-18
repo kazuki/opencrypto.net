@@ -32,5 +32,14 @@ namespace openCrypto
 	static class Helpers
 	{
 		public static RNGCryptoServiceProvider RNG = new RNGCryptoServiceProvider ();
+
+#if TEST
+		public static byte[] GetRNGBytes (int size)
+		{
+			byte[] buf = new byte [size];
+			RNG.GetBytes (buf);
+			return buf;
+		}
+#endif
 	}
 }

@@ -76,10 +76,10 @@ namespace openCrypto
 
 			if (_threads == null || inputCount < _mt_threshold) {
 				if (_encryptMode) {
-					for (int i = inputOffset, o = outputOffset; i < inputCount; i += InputBlockSize, o += OutputBlockSize)
+					for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize)
 						EncryptECB (inputBuffer, i, outputBuffer, o);
 				} else {
-					for (int i = inputOffset, o = outputOffset; i < inputCount; i += InputBlockSize, o += OutputBlockSize)
+					for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize)
 						DecryptECB (inputBuffer, i, outputBuffer, o);
 				}
 			} else {

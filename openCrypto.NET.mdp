@@ -39,6 +39,7 @@
     <File name="./Camellia/CamelliaTransformLE.cs" subtype="Code" buildaction="Compile" />
     <File name="./Camellia/ChangeLog" subtype="Code" buildaction="Nothing" />
     <File name="./Tests/ChangeLog" subtype="Code" buildaction="Nothing" />
+    <File name="./Tests/BlockCipherModeTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Tests/ConfluentWaitHandleTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Tests/DummyAlgorithm.cs" subtype="Code" buildaction="Compile" />
     <File name="./Tests/PaddingModeTest.cs" subtype="Code" buildaction="Compile" />

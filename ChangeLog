@@ -1,3 +1,8 @@
+2006-12-18 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* SymmetricTransform.cs: TransformBlockで入力データにオフセットが指定されていると
+	正しく変換できないバグを修正
+
 2006-12-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* SourceFiles, openCrypto.NET.mdp, openCrypto.NET.csproj: 更新
