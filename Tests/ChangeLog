@@ -1,3 +1,7 @@
+2006-12-18 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* BlockCipherModeTest.cs: 追加
+
 2006-12-17  Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* PaddingModeTest.cs: パディングのテストを追加
