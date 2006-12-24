@@ -704,7 +704,7 @@ namespace openCrypto
 		ulong _fb0, _fb1;
 		int _flayerLimit;
 		public CamelliaTransform64LE (byte[] key, byte[] rgbIV, SymmetricAlgorithmPlus algo, bool encrypt)
-			: base (algo, encrypt)
+			: base (algo, encrypt, rgbIV)
 		{
 			_keyTable = new ulong [272 / 8];
 			GenerateKeyTable (key, _keyTable);

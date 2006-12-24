@@ -52,12 +52,12 @@ namespace openCrypto.Tests
 
 		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV)
 		{
-			return new DummyTransform (this, false);
+			return new DummyTransform (this, false, rgbIV);
 		}
 
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
 		{
-			return new DummyTransform (this, true);
+			return new DummyTransform (this, true, rgbIV);
 		}
 
 		public override void GenerateIV ()
@@ -72,8 +72,8 @@ namespace openCrypto.Tests
 
 		class DummyTransform : SymmetricTransform
 		{
-			public DummyTransform (SymmetricAlgorithmPlus algo, bool encryptMode)
-				: base (algo, encryptMode)
+			public DummyTransform (SymmetricAlgorithmPlus algo, bool encryptMode, byte[] iv)
+				: base (algo, encryptMode, iv)
 			{
 			}
 

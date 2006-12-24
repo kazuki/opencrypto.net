@@ -36,16 +36,20 @@ namespace openCrypto
 	public abstract class SymmetricTransform : ICryptoTransform
 	{
 		private SymmetricAlgorithmPlus _algo;
+		private CipherModePlus _mode;
 		private int _blockBytes, _mt_threshold;
 		protected bool _encryptMode;
 		private Thread[] _threads;
+		private byte[] _iv;
 
-		public SymmetricTransform (SymmetricAlgorithmPlus algo, bool encryptMode)
+		public SymmetricTransform (SymmetricAlgorithmPlus algo, bool encryptMode, byte[] iv)
 		{
 			_algo = algo;
 			_blockBytes = algo.BlockSize >> 3;
 			_encryptMode = encryptMode;
 			_mt_threshold = _blockBytes * 2;
+			_iv = (byte[])iv.Clone ();
+			_mode = algo.ModePlus;
 
 			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB || algo.ModePlus == CipherModePlus.CTR)) {
 				_threads = new Thread [algo.NumberOfThreads];

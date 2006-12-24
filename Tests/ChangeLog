@@ -1,5 +1,9 @@
 2006-12-25 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* DummyAlgorithm.cs: 基底クラスのコンストラクタインターフェイス変更に対応
+
+2006-12-25 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* PaddingModeTest.cs: ブロック暗号モードをECBに明示的に設定
 
 2006-12-18 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>

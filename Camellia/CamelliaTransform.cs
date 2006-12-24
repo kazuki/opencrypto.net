@@ -43,7 +43,7 @@ namespace openCrypto
 		protected uint _fb0, _fb1, _fb2, _fb3;
 
 		protected CamelliaTransform (SymmetricAlgorithmPlus algo, bool encryptMode, int flayerLimit, byte[] iv, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
-			: base (algo, encryptMode)
+			: base (algo, encryptMode, iv)
 		{
 			_flayerLimit = flayerLimit;
 
