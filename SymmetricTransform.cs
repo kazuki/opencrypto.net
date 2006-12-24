@@ -41,6 +41,7 @@ namespace openCrypto
 		protected bool _encryptMode;
 		private Thread[] _threads;
 		private byte[] _iv;
+		private byte[] _temp;
 
 		public SymmetricTransform (SymmetricAlgorithmPlus algo, bool encryptMode, byte[] iv)
 		{
@@ -50,6 +51,8 @@ namespace openCrypto
 			_mt_threshold = _blockBytes * 2;
 			_iv = (byte[])iv.Clone ();
 			_mode = algo.ModePlus;
+			if (_mode != CipherModePlus.ECB)
+				_temp = new byte[iv.Length];
 
 			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB || algo.ModePlus == CipherModePlus.CTR)) {
 				_threads = new Thread [algo.NumberOfThreads];
@@ -79,12 +82,74 @@ namespace openCrypto
 			inputCount -= inputCount % InputBlockSize;
 
 			if (_threads == null || inputCount < _mt_threshold) {
-				if (_encryptMode) {
-					for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize)
-						EncryptECB (inputBuffer, i, outputBuffer, o);
-				} else {
-					for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize)
-						DecryptECB (inputBuffer, i, outputBuffer, o);
+				switch (_mode) {
+				case CipherModePlus.ECB:
+					if (_encryptMode) {
+						for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize)
+							EncryptECB (inputBuffer, i, outputBuffer, o);
+					} else {
+						for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize)
+							DecryptECB (inputBuffer, i, outputBuffer, o);
+					}
+					break;
+				case CipherModePlus.CBC:
+					if (_encryptMode) {
+						for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize) {
+							for (int j = 0; j < InputBlockSize; j ++)
+								_temp[j] = (byte)(inputBuffer [i + j] ^ _iv[j]);
+							EncryptECB (_temp, 0, outputBuffer, o);
+							Buffer.BlockCopy (outputBuffer, o, _iv, 0, InputBlockSize);
+						}
+					} else {
+						for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize) {
+							DecryptECB (inputBuffer, i, outputBuffer, o);
+							for (int j = 0; j < InputBlockSize; j ++) {
+								outputBuffer[o + j] ^= _iv[j];
+								_iv[j] = inputBuffer[i + j];
+							}
+						}
+					}
+					break;
+				case CipherModePlus.CFB:
+					if (_encryptMode) {
+						for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize) {
+							EncryptECB (_iv, 0, _temp, 0);
+							for (int j = 0; j < InputBlockSize; j ++)
+								_iv[j] = outputBuffer[o + j] = (byte)(inputBuffer[i + j] ^ _temp [j]);
+						}
+					} else {
+						for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize) {
+							EncryptECB (_iv, 0, _temp, 0);
+							for (int j = 0; j < InputBlockSize; j ++) {
+								_iv[j] = inputBuffer[i + j];
+								outputBuffer[o + j] = (byte)(inputBuffer[i + j] ^ _temp [j]);
+							}
+						}
+					}
+					break;
+				case CipherModePlus.OFB:
+					for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize) {
+						EncryptECB (_iv, 0, _temp, 0);
+						for (int j = 0; j < InputBlockSize; j ++) {
+							_iv[j] = _temp[j];
+							outputBuffer[o + j] = (byte)(inputBuffer[i + j] ^ _temp [j]);
+						}
+					}
+					break;
+				case CipherModePlus.CTR:
+					for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize) {
+						EncryptECB (_iv, 0, _temp, 0);
+						for (int j = 0; j < InputBlockSize; j ++)
+							outputBuffer[o + j] = (byte)(inputBuffer[i + j] ^ _temp [j]);
+						for (int j = InputBlockSize - 1; j >= 0; j --) {
+							_iv[j] ++;
+							if (_iv[j] != 0)
+								break;
+						}
+					}
+					break;
+				default:
+					throw new CryptographicException ();
 				}
 			} else {
 				throw new NotImplementedException ();

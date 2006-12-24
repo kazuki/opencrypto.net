@@ -1,5 +1,9 @@
 2006-12-25 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricTransform.cs: 各種ブロックモード(ECB, CBC, CFB, OFB, CTR)を実装
+
+2006-12-25 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* SymmetricTransform.cs: コンストラクタでIVをとるようにインターフェイスを変更
 
 2006-12-18 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
