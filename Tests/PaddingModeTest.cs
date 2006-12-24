@@ -39,6 +39,7 @@ namespace openCrypto.Tests
 		public void TestANSIX923 ()
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
+			algo.Mode = CipherMode.ECB;
 			algo.Padding = PaddingMode.ANSIX923;
 			PaddingTest (algo, "ANSIX923 Tests #1",
 							 new byte[] {1, 2, 3, 4, 5, 6, 7, 8},
@@ -64,6 +65,7 @@ namespace openCrypto.Tests
 		public void TestNone ()
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
+			algo.Mode = CipherMode.ECB;
 			algo.Padding = PaddingMode.None;
 			PaddingTest (algo, "None Tests #1",
 							 new byte[] {1, 2, 3, 4, 5, 6, 7, 8},
@@ -104,6 +106,7 @@ namespace openCrypto.Tests
 		public void TestPKCS7 ()
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
+			algo.Mode = CipherMode.ECB;
 			algo.Padding = PaddingMode.PKCS7;
 			PaddingTest (algo, "PKCS7 Tests #1",
 							 new byte[] {1, 2, 3, 4, 5, 6, 7, 8},
@@ -129,6 +132,7 @@ namespace openCrypto.Tests
 		public void TestISO10126 ()
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
+			algo.Mode = CipherMode.ECB;
 			algo.Padding = PaddingMode.ISO10126;
 			PaddingTest (algo, "ISO10126 Tests #1",
 							 new byte[] {1, 2, 3, 4, 5, 6, 7, 8},
@@ -154,6 +158,7 @@ namespace openCrypto.Tests
 		public void TestZeros ()
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
+			algo.Mode = CipherMode.ECB;
 			algo.Padding = PaddingMode.Zeros;
 			PaddingTest (algo, "Zeros Tests #1",
 							 new byte[] {1, 2, 3, 4, 5, 6, 7, 8},
