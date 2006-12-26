@@ -70,6 +70,11 @@ namespace openCrypto.Tests
 			KeyValue = new byte[8];
 		}
 
+		public override bool HasImplementation (CipherImplementationType type)
+		{
+			return true;
+		}
+
 		class DummyTransform : SymmetricTransform
 		{
 			public DummyTransform (SymmetricAlgorithmPlus algo, bool encryptMode, byte[] iv)
