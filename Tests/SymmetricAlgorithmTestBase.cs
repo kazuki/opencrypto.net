@@ -49,7 +49,7 @@ namespace openCrypto.Tests
 				if (ct == null || helper.IsUpdateKey) {
 					byte[] key = helper.Key;
 					keyText = ToString (key);
-					ct = algo.CreateEncryptor (key, new byte[algo.BlockSize]);
+					ct = algo.CreateEncryptor (key, new byte[algo.BlockSize >> 3]);
 				}
 				byte[] output = new byte[ct.OutputBlockSize];
 				ct.TransformBlock (helper.PlainText, 0, helper.PlainText.Length, output, 0);
