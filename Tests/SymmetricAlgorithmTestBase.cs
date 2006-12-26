@@ -34,6 +34,13 @@ namespace openCrypto.Tests
 	/// </summary>
 	public abstract class SymmetricAlgorithmTestBase
 	{
+		static CipherImplementationType[] _types = new CipherImplementationType[] {
+			CipherImplementationType.Study,
+			CipherImplementationType.LowMemory,
+			CipherImplementationType.Balanced,
+			CipherImplementationType.HighSpeed
+		};
+
 		protected SymmetricAlgorithmTestBase ()
 		{
 		}
@@ -65,6 +72,45 @@ namespace openCrypto.Tests
 			for (int i = 0; i < raw.Length; i ++)
 				text += raw[i].ToString ("x2");
 			return text;
+		}
+
+		protected virtual void TestECB_MultiBlock_1 (SymmetricAlgorithmPlus algo)
+		{
+			KeySizes keySizes = algo.LegalKeySizes[0];
+			KeySizes blockSizes = algo.LegalBlockSizes[0];
+
+			int keySize = keySizes.MinSize;
+			do {
+				int blockSize = blockSizes.MinSize;
+				do {
+					byte[] pt = new byte[(blockSize >> 3) * 3];
+					byte[] ct = new byte[pt.Length];
+					byte[] tmp = new byte[pt.Length];
+					byte[] key = new byte[keySize >> 3];
+					byte[] iv = new byte[blockSize >> 3];
+					algo.BlockSize = blockSize;
+					algo.KeySize = keySize;
+					
+					algo.Mode = CipherMode.ECB;
+					foreach (CipherImplementationType type in _types) {
+						if (!algo.HasImplementation (type))
+							continue;
+						Helpers.RNG.GetBytes (pt);
+						Helpers.RNG.GetBytes (key);
+						algo.ImplementationType = type;
+						using (ICryptoTransform t = algo.CreateEncryptor (key, iv))
+							for (int i = 0; i < pt.Length; i += blockSize >> 3)
+								t.TransformBlock (pt, i, blockSize >> 3, ct, i);
+						using (ICryptoTransform t = algo.CreateDecryptor (key, iv))
+							for (int i = 0; i < ct.Length; i += blockSize >> 3)
+								t.TransformBlock (ct, i, blockSize >> 3, tmp, i);
+						for (int i = 0; i < pt.Length; i ++)
+							Assert.AreEqual (pt[i], tmp[i], "Mode:" + type.ToString () + " Pos:" + i.ToString ());
+					}
+					blockSize += blockSizes.SkipSize;
+				} while (blockSize < blockSizes.MaxSize);
+				keySize += keySizes.SkipSize;
+			} while (keySize < keySizes.MaxSize);
 		}
 
 		public virtual void TestCBC ()

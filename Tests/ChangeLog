@@ -1,5 +1,11 @@
 2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricAlgorithmTestBase.cs:
+	* CamelliaTest.cs:
+	* RijndaelTest.cs: ECBマルチブロックテストを追加
+
+2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* DummyAlgorithm.cs: rev.1825で変更した基底クラスのインターフェイス変更を反映
 	
 2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>

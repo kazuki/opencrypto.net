@@ -48,6 +48,12 @@ namespace openCrypto.Tests
 			TestECB (new CamelliaManaged (), helper);
 		}
 
+		[Test]
+		public void TestECB_MultiBlock_1 ()
+		{
+			TestECB_MultiBlock_1 (new CamelliaManaged ());
+		}
+
 		class ECBTestReader : ECBTestHelper
 		{
 			StreamReader _reader;

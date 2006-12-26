@@ -42,11 +42,26 @@ namespace openCrypto.Tests
 		public void TestECB ()
 		{
 			string[] files = new string[] {"ecb_tbl.txt", "ecb_vk.txt", "ecb_vt.txt"};
+			RijndaelManaged algo = new RijndaelManaged ();
 
 			foreach (string file in files) {
 				ECBTestReader helper = new ECBTestReader (file);
-				TestECB (new RijndaelManaged (), helper);
+				algo.ImplementationType = CipherImplementationType.Study;
+				TestECB (algo, helper);
+				algo.ImplementationType = CipherImplementationType.LowMemory;
+				TestECB (algo, helper);
+				algo.ImplementationType = CipherImplementationType.Balanced;
+				TestECB (algo, helper);
+				algo.ImplementationType = CipherImplementationType.HighSpeed;
+				TestECB (algo, helper);
 			}
+		}
+
+		[Test]
+		public void TestECB_MultiBlock_1 ()
+		{
+			RijndaelManaged algo = new RijndaelManaged ();
+			TestECB_MultiBlock_1 (algo);
 		}
 
 		class ECBTestReader : ECBTestHelper
