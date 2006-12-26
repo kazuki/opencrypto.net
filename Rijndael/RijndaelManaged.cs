@@ -30,11 +30,12 @@ namespace openCrypto
 	{
 		public RijndaelManaged () : base ()
 		{
+			_implType = CipherImplementationType.Study;
 		}
 
 		private ICryptoTransform CreateTransformer (byte[] rgbKey, byte[] rgbIV, bool encryption)
 		{
-			throw new NotImplementedException ();
+			return new SimpleRijndaelTransform (this, rgbKey, rgbIV, encryption);
 		}
 
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
@@ -49,7 +50,7 @@ namespace openCrypto
 
 		public override bool HasImplementation (CipherImplementationType type)
 		{
-			return false;
+			return (type != CipherImplementationType.Study);
 		}
 	}
 }

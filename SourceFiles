@@ -14,6 +14,7 @@ Camellia/CamelliaTransformLE.cs
 Properties/AssemblyInfo.cs
 Rijndael/Rijndael.cs
 Rijndael/RijndaelManaged.cs
+Rijndael/SimpleRijndaelTransform.cs
 Tests/BlockCipherModeTest.cs
 Tests/CamelliaTest.cs
 Tests/ConfluentWaitHandleTest.cs

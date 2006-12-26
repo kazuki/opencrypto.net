@@ -31,6 +31,11 @@ namespace openCrypto
 	/// </summary>
 	public class CamelliaManaged : Camellia
 	{
+		public CamelliaManaged ()
+		{
+			_implType = CipherImplementationType.HighSpeed;
+		}
+		
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
 		{
 			return Create (rgbKey, rgbIV, true);

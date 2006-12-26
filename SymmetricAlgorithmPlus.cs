@@ -34,7 +34,7 @@ namespace openCrypto
 	{
 		protected int _threads = 1;
 		protected CipherModePlus _mode;
-		protected CipherImplementationType _implType;
+		protected CipherImplementationType _implType = CipherImplementationType.Balanced;
 
 		/// <summary>
 		/// <ja>アルゴリズムレベルで並列化に対応しているかを返す</ja>
