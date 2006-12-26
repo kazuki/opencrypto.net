@@ -1,5 +1,9 @@
 2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricAlgorithmPlus.cs: 指定された実装タイプを保持しているか確認するメソッドを追加
+
+2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* CipherImplementationType.cs: 勉強用実装を一覧に追加
 	* SourceFiles, Makefile: Rijndaelテストケースを追加
 

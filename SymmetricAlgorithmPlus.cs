@@ -80,5 +80,10 @@ namespace openCrypto
 			get { return _implType; }
 			set { _implType = value;}
 		}
+
+		/// <summary>
+		/// <ja>指定された実装タイプを保持しているかを返すメソッド</ja>
+		/// </summary>
+		public abstract bool HasImplementation (CipherImplementationType type);
 	}
 }

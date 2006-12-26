@@ -43,6 +43,9 @@ namespace openCrypto
 		
 		private ICryptoTransform Create (byte[] rgbKey, byte[] rgbIV, bool encrypt)
 		{
+			if (ImplementationType != CipherImplementationType.HighSpeed)
+				throw new NotImplementedException ();
+
 			if (BitConverter.IsLittleEndian) {
 				if (IntPtr.Size != 8)
 					return new CamelliaTransformLE (this, rgbKey, rgbIV, encrypt);
@@ -50,6 +53,11 @@ namespace openCrypto
 			} else {
 				return new CamelliaTransformBE (this, rgbKey, rgbIV, encrypt);
 			}
+		}
+
+		public override bool HasImplementation (CipherImplementationType type)
+		{
+			return (type == CipherImplementationType.HighSpeed);
 		}
 	}
 }

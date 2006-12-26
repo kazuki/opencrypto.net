@@ -46,5 +46,10 @@ namespace openCrypto
 		{
 			return CreateTransformer (rgbKey, rgbIV, false);
 		}
+
+		public override bool HasImplementation (CipherImplementationType type)
+		{
+			return false;
+		}
 	}
 }
