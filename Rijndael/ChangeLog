@@ -1,0 +1,21 @@
+2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* RijndaelTransform32.cs:
+	* RijndaelTransform32LowMemory.cs:
+	* RijndaelTransform32Balanced.cs:
+	* RijndaelTransform32HighSpeed.cs: 1ブロック変換コードを追加
+	* RijndaelManaged.cs: 各種実装モードに対応した生成コードを追加
+
+2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* RijndaelManaged.cs: 実装タイプの初期値を設定
+	* SimpleRijndaelTransform.cs: 追加
+
+2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* RijndaelManaged.cs: 指定された実装タイプを保持しているか確認するメソッドを実装
+
+2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* Rijndael.cs:
+	* RijndaelManaged.cs: 追加

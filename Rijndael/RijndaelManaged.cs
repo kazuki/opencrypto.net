@@ -30,12 +30,23 @@ namespace openCrypto
 	{
 		public RijndaelManaged () : base ()
 		{
-			_implType = CipherImplementationType.Study;
+			_implType = CipherImplementationType.HighSpeed;
 		}
 
 		private ICryptoTransform CreateTransformer (byte[] rgbKey, byte[] rgbIV, bool encryption)
 		{
-			return new SimpleRijndaelTransform (this, rgbKey, rgbIV, encryption);
+			switch (_implType) {
+			case CipherImplementationType.Study:
+				return new SimpleRijndaelTransform (this, rgbKey, rgbIV, encryption);
+			case CipherImplementationType.LowMemory:
+				return new RijndaelTransform32LowMemory (this, rgbKey, rgbIV, encryption);
+			case CipherImplementationType.Balanced:
+				return new RijndaelTransform32Balanced (this, rgbKey, rgbIV, encryption);
+			case CipherImplementationType.HighSpeed:
+				return new RijndaelTransform32HighSpeed (this, rgbKey, rgbIV, encryption);
+			default:
+				throw new NotSupportedException ();
+			}
 		}
 
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
@@ -50,7 +61,10 @@ namespace openCrypto
 
 		public override bool HasImplementation (CipherImplementationType type)
 		{
-			return (type != CipherImplementationType.Study);
+			return type == CipherImplementationType.Study
+				|| type == CipherImplementationType.LowMemory
+				|| type == CipherImplementationType.Balanced
+				|| type == CipherImplementationType.HighSpeed;
 		}
 	}
 }
