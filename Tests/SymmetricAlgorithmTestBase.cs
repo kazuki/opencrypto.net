@@ -74,7 +74,7 @@ namespace openCrypto.Tests
 			return text;
 		}
 
-		protected virtual void TestECB_MultiBlock_1 (SymmetricAlgorithmPlus algo)
+		protected void Test_MultiBlock_1 (SymmetricAlgorithmPlus algo)
 		{
 			KeySizes keySizes = algo.LegalKeySizes[0];
 			KeySizes blockSizes = algo.LegalBlockSizes[0];
@@ -90,13 +90,12 @@ namespace openCrypto.Tests
 					byte[] iv = new byte[blockSize >> 3];
 					algo.BlockSize = blockSize;
 					algo.KeySize = keySize;
-					
-					algo.Mode = CipherMode.ECB;
 					foreach (CipherImplementationType type in _types) {
 						if (!algo.HasImplementation (type))
 							continue;
 						Helpers.RNG.GetBytes (pt);
 						Helpers.RNG.GetBytes (key);
+						Helpers.RNG.GetBytes (iv);
 						algo.ImplementationType = type;
 						using (ICryptoTransform t = algo.CreateEncryptor (key, iv))
 							for (int i = 0; i < pt.Length; i += blockSize >> 3)
@@ -113,24 +112,40 @@ namespace openCrypto.Tests
 			} while (keySize < keySizes.MaxSize);
 		}
 
-		public virtual void TestCBC ()
+		protected void Test_MultiBlock_2 (SymmetricAlgorithmPlus algo)
 		{
-		}
+			KeySizes keySizes = algo.LegalKeySizes[0];
+			KeySizes blockSizes = algo.LegalBlockSizes[0];
 
-		public virtual void TestOFB ()
-		{
-		}
-
-		public virtual void TestCFB ()
-		{
-		}
-
-		public virtual void TestCTS ()
-		{
-		}
-
-		public virtual void TestCTR ()
-		{
+			int keySize = keySizes.MinSize;
+			do {
+				int blockSize = blockSizes.MinSize;
+				do {
+					byte[] pt = new byte[(blockSize >> 3) * 3];
+					byte[] ct = new byte[pt.Length];
+					byte[] tmp = new byte[pt.Length];
+					byte[] key = new byte[keySize >> 3];
+					byte[] iv = new byte[blockSize >> 3];
+					algo.BlockSize = blockSize;
+					algo.KeySize = keySize;
+					foreach (CipherImplementationType type in _types) {
+						if (!algo.HasImplementation (type))
+							continue;
+						Helpers.RNG.GetBytes (pt);
+						Helpers.RNG.GetBytes (key);
+						Helpers.RNG.GetBytes (iv);
+						algo.ImplementationType = type;
+						using (ICryptoTransform t = algo.CreateEncryptor (key, iv))
+							Assert.AreEqual (pt.Length, t.TransformBlock (pt, 0, pt.Length, ct, 0), "Mode:" + type.ToString () + " Encryption");
+						using (ICryptoTransform t = algo.CreateDecryptor (key, iv))
+							Assert.AreEqual (ct.Length, t.TransformBlock (ct, 0, ct.Length, tmp, 0), "Mode:" + type.ToString () + " Encryption");
+						for (int i = 0; i < pt.Length; i ++)
+							Assert.AreEqual (pt[i], tmp[i], "Mode:" + type.ToString () + " Pos:" + i.ToString ());
+					}
+					blockSize += blockSizes.SkipSize;
+				} while (blockSize < blockSizes.MaxSize);
+				keySize += keySizes.SkipSize;
+			} while (keySize < keySizes.MaxSize);
 		}
 
 		protected abstract class ECBTestHelper

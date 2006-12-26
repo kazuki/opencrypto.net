@@ -51,7 +51,81 @@ namespace openCrypto.Tests
 		[Test]
 		public void TestECB_MultiBlock_1 ()
 		{
-			TestECB_MultiBlock_1 (new CamelliaManaged ());
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.ECB;
+			Test_MultiBlock_1 (algo);
+		}
+
+		[Test]
+		public void TestECB_MultiBlock_2 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.ECB;
+			Test_MultiBlock_2 (algo);
+		}
+
+		[Test]
+		public void TestCBC_MultiBlock_1 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.CBC;
+			Test_MultiBlock_1 (algo);
+		}
+
+		[Test]
+		public void TestCBC_MultiBlock_2 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.CBC;
+			Test_MultiBlock_2 (algo);
+		}
+
+		[Test]
+		public void TestOFB_MultiBlock_1 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.OFB;
+			Test_MultiBlock_1 (algo);
+		}
+
+		[Test]
+		public void TestOFB_MultiBlock_2 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.OFB;
+			Test_MultiBlock_2 (algo);
+		}
+
+		[Test]
+		public void TestCFB_MultiBlock_1 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.CFB;
+			Test_MultiBlock_1 (algo);
+		}
+
+		[Test]
+		public void TestCFB_MultiBlock_2 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.CFB;
+			Test_MultiBlock_2 (algo);
+		}
+
+		[Test]
+		public void TestCTR_MultiBlock_1 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.CTR;
+			Test_MultiBlock_1 (algo);
+		}
+
+		[Test]
+		public void TestCTR_MultiBlock_2 ()
+		{
+			SymmetricAlgorithmPlus algo = new CamelliaManaged ();
+			algo.ModePlus = CipherModePlus.CTR;
+			Test_MultiBlock_2 (algo);
 		}
 
 		class ECBTestReader : ECBTestHelper
