@@ -1,5 +1,13 @@
 2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* ecb_vt.txt:
+	* ecb_e_m.txt:
+	* ecb_vk.txt:
+	* ecb_tbl.txt:
+	* RijndaelTest.cs: RijndaelのECBテストを追加
+
+2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* SymmetricAlgorithmTestBase.cs: IVのサイズ指定が不正だったのを修正
 
 2006-12-25 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>

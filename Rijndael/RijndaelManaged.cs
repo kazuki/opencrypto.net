@@ -22,32 +22,29 @@
 //
 
 using System;
+using System.Security.Cryptography;
 
 namespace openCrypto
 {
-	/// <summary>
-	/// <ja>実装の種類を表す列挙体</ja>
-	/// </summary>
-	public enum CipherImplementationType
+	public sealed class RijndaelManaged : Rijndael
 	{
-		/// <summary>
-		/// <ja>勉強用の実装</ja>
-		/// </summary>
-		Study,
-		
-		/// <summary>
-		/// <ja>速度よりも消費メモリ量の少なさを重視した実装</ja>
-		/// </summary>
-		LowMemory,
+		public RijndaelManaged () : base ()
+		{
+		}
 
-		/// <summary>
-		/// <ja>速度とメモリ使用量の両立を目指した実装</ja>
-		/// </summary>
-		Balanced,
+		private ICryptoTransform CreateTransformer (byte[] rgbKey, byte[] rgbIV, bool encryption)
+		{
+			throw new NotImplementedException ();
+		}
 
-		/// <summary>
-		/// <ja>速度を重視した実装</ja>
-		/// </summary>
-		HighSpeed
+		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
+		{
+			return CreateTransformer (rgbKey, rgbIV, true);
+		}
+
+		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV)
+		{
+			return CreateTransformer (rgbKey, rgbIV, false);
+		}
 	}
 }

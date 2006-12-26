@@ -22,32 +22,40 @@
 //
 
 using System;
+using System.Security.Cryptography;
 
 namespace openCrypto
 {
-	/// <summary>
-	/// <ja>実装の種類を表す列挙体</ja>
-	/// </summary>
-	public enum CipherImplementationType
+	public abstract class Rijndael : SymmetricAlgorithmPlus
 	{
-		/// <summary>
-		/// <ja>勉強用の実装</ja>
-		/// </summary>
-		Study,
-		
-		/// <summary>
-		/// <ja>速度よりも消費メモリ量の少なさを重視した実装</ja>
-		/// </summary>
-		LowMemory,
+		static KeySizes[] _legalKeySizes = new KeySizes[] { new KeySizes (128, 256, 64) };
+		static KeySizes[] _legalBlockSizes = new KeySizes[] { new KeySizes (128, 256, 32) };
 
-		/// <summary>
-		/// <ja>速度とメモリ使用量の両立を目指した実装</ja>
-		/// </summary>
-		Balanced,
+		protected Rijndael ()
+		{
+			base.KeySizeValue = _legalKeySizes[0].MinSize;
+			base.BlockSizeValue = _legalBlockSizes[0].MinSize;
+			base.FeedbackSizeValue = _legalBlockSizes[0].MinSize;
+			base.LegalBlockSizesValue = _legalBlockSizes;
+			base.LegalKeySizesValue = _legalKeySizes;
+		}
 
-		/// <summary>
-		/// <ja>速度を重視した実装</ja>
-		/// </summary>
-		HighSpeed
+		public override void GenerateIV ()
+		{
+			base.IVValue = new byte [base.BlockSizeValue >> 3];
+			Helpers.RNG.GetBytes (base.IVValue);
+		}
+
+		public override void GenerateKey ()
+		{
+			base.KeyValue = new byte [base.KeySizeValue >> 3];
+			Helpers.RNG.GetBytes (base.KeyValue);
+		}
+
+		public override bool SupportsMultiThread {
+			get {
+				return true;
+			}
+		}
 	}
 }

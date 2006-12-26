@@ -28,5 +28,9 @@ ${DEBUG_TARGET}: ${SOURCE_FILES}
 
 ${TEST_TARGET}: ${SOURCE_FILES}
 	${COMPILER} ${FLAGS} -define:TEST -r:nunit.framework.dll \
-	-out:${TEST_TARGET} ${SOURCE_FILES} \
-	-resource:Tests/t_camellia.txt
+	-out:${TEST_TARGET} ${SOURCE_FILES}                      \
+	-resource:Tests/t_camellia.txt                           \
+	-resource:Tests/ecb_tbl.txt                              \
+	-resource:Tests/ecb_vt.txt                               \
+	-resource:Tests/ecb_e_m.txt                              \
+	-resource:Tests/ecb_vk.txt

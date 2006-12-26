@@ -12,10 +12,13 @@ Camellia/CamelliaTransform64LE.cs
 Camellia/CamelliaTransformBE.cs
 Camellia/CamelliaTransformLE.cs
 Properties/AssemblyInfo.cs
+Rijndael/Rijndael.cs
+Rijndael/RijndaelManaged.cs
 Tests/BlockCipherModeTest.cs
 Tests/CamelliaTest.cs
 Tests/ConfluentWaitHandleTest.cs
 Tests/DummyAlgorithm.cs
 Tests/PaddingModeTest.cs
+Tests/RijndaelTest.cs
 Tests/SymmetricAlgorithmPlusTest.cs
 Tests/SymmetricAlgorithmTestBase.cs
