@@ -34,7 +34,7 @@ namespace openCrypto.Tests
 	/// </summary>
 	public abstract class SymmetricAlgorithmTestBase
 	{
-		static CipherImplementationType[] _types = new CipherImplementationType[] {
+		protected static CipherImplementationType[] _types = new CipherImplementationType[] {
 			CipherImplementationType.LowMemory,
 			CipherImplementationType.Balanced,
 			CipherImplementationType.HighSpeed
@@ -105,10 +105,14 @@ namespace openCrypto.Tests
 						for (int i = 0; i < pt.Length; i ++)
 							Assert.AreEqual (pt[i], tmp[i], "Mode:" + type.ToString () + " Pos:" + i.ToString ());
 					}
+					if (blockSizes.SkipSize == 0)
+						break;
 					blockSize += blockSizes.SkipSize;
-				} while (blockSize < blockSizes.MaxSize);
+				} while (blockSize <= blockSizes.MaxSize);
+				if (keySizes.SkipSize == 0)
+					break;
 				keySize += keySizes.SkipSize;
-			} while (keySize < keySizes.MaxSize);
+			} while (keySize <= keySizes.MaxSize);
 		}
 
 		protected void Test_MultiBlock_2 (SymmetricAlgorithmPlus algo)
@@ -141,10 +145,14 @@ namespace openCrypto.Tests
 						for (int i = 0; i < pt.Length; i ++)
 							Assert.AreEqual (pt[i], tmp[i], "Mode:" + type.ToString () + " Pos:" + i.ToString ());
 					}
+					if (blockSizes.SkipSize == 0)
+						break;
 					blockSize += blockSizes.SkipSize;
-				} while (blockSize < blockSizes.MaxSize);
+				} while (blockSize <= blockSizes.MaxSize);
+				if (keySizes.SkipSize == 0)
+					break;
 				keySize += keySizes.SkipSize;
-			} while (keySize < keySizes.MaxSize);
+			} while (keySize <= keySizes.MaxSize);
 		}
 
 		protected abstract class ECBTestHelper

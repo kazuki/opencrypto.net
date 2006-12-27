@@ -46,12 +46,12 @@ namespace openCrypto.Tests
 
 			foreach (string file in files) {
 				ECBTestReader helper = new ECBTestReader (file);
-				algo.ImplementationType = CipherImplementationType.LowMemory;
-				TestECB (algo, helper);
-				algo.ImplementationType = CipherImplementationType.Balanced;
-				TestECB (algo, helper);
-				algo.ImplementationType = CipherImplementationType.HighSpeed;
-				TestECB (algo, helper);
+				foreach (CipherImplementationType type in _types) {
+					if (algo.HasImplementation (type)) {
+						algo.ImplementationType = type;
+						TestECB (algo, helper);
+					}
+				}
 			}
 		}
 

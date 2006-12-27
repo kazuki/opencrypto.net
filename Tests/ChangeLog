@@ -1,5 +1,10 @@
 2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricAlgorithmTestBase.cs: 最大長のブロック／鍵サイズでテストを行えていなかったのを修正
+	* RijndaelTest.cs: 実装モードのチェック方法を変更
+
+2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* SymmetricAlgorithmTestBase.cs:
 	* RijndaelTest.cs: 勉強用実装の項目を削除
 
