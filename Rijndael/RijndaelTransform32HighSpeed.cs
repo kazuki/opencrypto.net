@@ -34,7 +34,7 @@ namespace openCrypto
 		}
 
 		#region Encrypt
-		protected override void Encrypt128 (byte[] indata, byte[] outdata, uint[] ekey)
+		protected override unsafe void Encrypt128 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, b0, b1, b2, b3;
 			int ei = 40;
@@ -154,7 +154,7 @@ namespace openCrypto
 			outdata[14] = (byte)(SBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
 			outdata[15] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei++]);
 		}
-		protected override void Encrypt192 (byte[] indata, byte[] outdata, uint[] ekey)
+		protected override unsafe void Encrypt192 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, a4, a5, b0, b1, b2, b3, b4, b5;
 			int ei = 72;
@@ -307,7 +307,7 @@ namespace openCrypto
 			outdata[22] = (byte)(SBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
 			outdata[23] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei++]);
 		}
-		protected override void Encrypt256 (byte[] indata, byte[] outdata, uint[] ekey)
+		protected override unsafe void Encrypt256 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7;
 
@@ -494,7 +494,468 @@ namespace openCrypto
 		}
 		#endregion
 
-		protected static readonly uint[] T1 = {
+		#region Decrypt
+		protected override unsafe void Decrypt128 (byte* indata, byte* outdata, uint[] ekey)
+		{
+			uint a0, a1, a2, a3, b0, b1, b2, b3;
+			int ei = 40;
+
+			/* Round 0 */
+			a0 = (((uint)indata[0] << 24) | ((uint)indata[1] << 16) | ((uint)indata[2] << 8) | (uint)indata[3]) ^ ekey[0];
+			a1 = (((uint)indata[4] << 24) | ((uint)indata[5] << 16) | ((uint)indata[6] << 8) | (uint)indata[7]) ^ ekey[1];
+			a2 = (((uint)indata[8] << 24) | ((uint)indata[9] << 16) | ((uint)indata[10] << 8) | (uint)indata[11]) ^ ekey[2];
+			a3 = (((uint)indata[12] << 24) | ((uint)indata[13] << 16) | ((uint)indata[14] << 8) | (uint)indata[15]) ^ ekey[3];
+
+			/* Round 1 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[4];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[5];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[6];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[7];
+
+			/* Round 2 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[8];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[9];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[10];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[11];
+
+			/* Round 3 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[12];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[13];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[14];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[15];
+
+			/* Round 4 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[16];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[17];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[18];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[19];
+
+			/* Round 5 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[20];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[21];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[22];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[23];
+
+			/* Round 6 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[24];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[25];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[26];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[27];
+
+			/* Round 7 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[28];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[29];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[30];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[31];
+
+			/* Round 8 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[32];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[33];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[34];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[35];
+
+			/* Round 9 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[36];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[37];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[38];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[39];
+
+			if (_Nr > 10) {
+
+				/* Round 10 */
+				a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[40];
+				a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[41];
+				a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[42];
+				a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[43];
+
+				/* Round 11 */
+				b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[44];
+				b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[45];
+				b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[46];
+				b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[47];
+
+				ei = 48;
+
+				if (_Nr > 12) {
+
+					/* Round 12 */
+					a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[48];
+					a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[49];
+					a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[50];
+					a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[51];
+
+					/* Round 13 */
+					b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[52];
+					b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[53];
+					b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[54];
+					b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[55];
+					
+					ei = 56;
+				}
+			}
+
+			/* Final Round */
+			outdata[0] = (byte)(iSBox[b0 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[1] = (byte)(iSBox[(byte)(b3 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[2] = (byte)(iSBox[(byte)(b2 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[3] = (byte)(iSBox[(byte)b1] ^ (byte)ekey[ei++]);
+
+			outdata[4] = (byte)(iSBox[b1 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[5] = (byte)(iSBox[(byte)(b0 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[6] = (byte)(iSBox[(byte)(b3 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[7] = (byte)(iSBox[(byte)b2] ^ (byte)ekey[ei++]);
+
+			outdata[8] = (byte)(iSBox[b2 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[9] = (byte)(iSBox[(byte)(b1 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[10] = (byte)(iSBox[(byte)(b0 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[11] = (byte)(iSBox[(byte)b3] ^ (byte)ekey[ei++]);
+
+			outdata[12] = (byte)(iSBox[b3 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[13] = (byte)(iSBox[(byte)(b2 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[14] = (byte)(iSBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[15] = (byte)(iSBox[(byte)b0] ^ (byte)ekey[ei++]);
+		}
+		protected override unsafe void Decrypt192 (byte* indata, byte* outdata, uint[] ekey)
+		{
+			uint a0, a1, a2, a3, a4, a5, b0, b1, b2, b3, b4, b5;
+			int ei = 72;
+
+			/* Round 0 */
+			a0 = (((uint)indata[0] << 24) | ((uint)indata[1] << 16) | ((uint)indata[2] << 8) | (uint)indata[3]) ^ ekey[0];
+			a1 = (((uint)indata[4] << 24) | ((uint)indata[5] << 16) | ((uint)indata[6] << 8) | (uint)indata[7]) ^ ekey[1];
+			a2 = (((uint)indata[8] << 24) | ((uint)indata[9] << 16) | ((uint)indata[10] << 8) | (uint)indata[11]) ^ ekey[2];
+			a3 = (((uint)indata[12] << 24) | ((uint)indata[13] << 16) | ((uint)indata[14] << 8) | (uint)indata[15]) ^ ekey[3];
+			a4 = (((uint)indata[16] << 24) | ((uint)indata[17] << 16) | ((uint)indata[18] << 8) | (uint)indata[19]) ^ ekey[4];
+			a5 = (((uint)indata[20] << 24) | ((uint)indata[21] << 16) | ((uint)indata[22] << 8) | (uint)indata[23]) ^ ekey[5];
+
+			/* Round 1 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[6];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[7];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a5] ^ ekey[8];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[9];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[10];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[11];
+
+			/* Round 2 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[12];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[13];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b5] ^ ekey[14];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[15];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[16];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[17];
+
+			/* Round 3 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[18];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[19];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a5] ^ ekey[20];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[21];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[22];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[23];
+
+			/* Round 4 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[24];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[25];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b5] ^ ekey[26];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[27];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[28];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[29];
+
+			/* Round 5 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[30];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[31];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a5] ^ ekey[32];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[33];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[34];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[35];
+
+			/* Round 6 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[36];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[37];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b5] ^ ekey[38];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[39];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[40];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[41];
+
+			/* Round 7 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[42];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[43];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a5] ^ ekey[44];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[45];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[46];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[47];
+
+			/* Round 8 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[48];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[49];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b5] ^ ekey[50];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[51];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[52];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[53];
+
+			/* Round 9 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[54];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[55];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a5] ^ ekey[56];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[57];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[58];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[59];
+
+			/* Round 10 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[60];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[61];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b5] ^ ekey[62];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[63];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[64];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[65];
+
+			/* Round 11 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[66];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[67];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a5] ^ ekey[68];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[69];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[70];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[71];
+
+			if (_Nr > 12) {
+
+				/* Round 12 */
+				a0 = iT0[b0 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[72];
+				a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[73];
+				a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b5] ^ ekey[74];
+				a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[75];
+				a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[76];
+				a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[77];
+
+				/* Round 13 */
+				b0 = iT0[a0 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[78];
+				b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[79];
+				b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a5] ^ ekey[80];
+				b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[81];
+				b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[82];
+				b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[83];
+
+				ei = 84;
+			}
+
+			/* Final Round */
+			outdata[0] = (byte)(iSBox[b0 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[1] = (byte)(iSBox[(byte)(b5 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[2] = (byte)(iSBox[(byte)(b4 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[3] = (byte)(iSBox[(byte)b3] ^ (byte)ekey[ei++]);
+
+			outdata[4] = (byte)(iSBox[b1 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[5] = (byte)(iSBox[(byte)(b0 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[6] = (byte)(iSBox[(byte)(b5 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[7] = (byte)(iSBox[(byte)b4] ^ (byte)ekey[ei++]);
+
+			outdata[8] = (byte)(iSBox[b2 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[9] = (byte)(iSBox[(byte)(b1 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[10] = (byte)(iSBox[(byte)(b0 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[11] = (byte)(iSBox[(byte)b5] ^ (byte)ekey[ei++]);
+
+			outdata[12] = (byte)(iSBox[b3 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[13] = (byte)(iSBox[(byte)(b2 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[14] = (byte)(iSBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[15] = (byte)(iSBox[(byte)b0] ^ (byte)ekey[ei++]);
+
+			outdata[16] = (byte)(iSBox[b4 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[17] = (byte)(iSBox[(byte)(b3 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[18] = (byte)(iSBox[(byte)(b2 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[19] = (byte)(iSBox[(byte)b1] ^ (byte)ekey[ei++]);
+
+			outdata[20] = (byte)(iSBox[b5 >> 24] ^ (byte)(ekey[ei] >> 24));
+			outdata[21] = (byte)(iSBox[(byte)(b4 >> 16)] ^ (byte)(ekey[ei] >> 16));
+			outdata[22] = (byte)(iSBox[(byte)(b3 >> 8)] ^ (byte)(ekey[ei] >> 8));
+			outdata[23] = (byte)(iSBox[(byte)b2] ^ (byte)ekey[ei++]);
+		}
+		protected override unsafe void Decrypt256 (byte* indata, byte* outdata, uint[] ekey)
+		{
+			uint a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7;
+
+			/* Round 0 */
+			a0 = (((uint)indata[0] << 24) | ((uint)indata[1] << 16) | ((uint)indata[2] << 8) | (uint)indata[3]) ^ ekey[0];
+			a1 = (((uint)indata[4] << 24) | ((uint)indata[5] << 16) | ((uint)indata[6] << 8) | (uint)indata[7]) ^ ekey[1];
+			a2 = (((uint)indata[8] << 24) | ((uint)indata[9] << 16) | ((uint)indata[10] << 8) | (uint)indata[11]) ^ ekey[2];
+			a3 = (((uint)indata[12] << 24) | ((uint)indata[13] << 16) | ((uint)indata[14] << 8) | (uint)indata[15]) ^ ekey[3];
+			a4 = (((uint)indata[16] << 24) | ((uint)indata[17] << 16) | ((uint)indata[18] << 8) | (uint)indata[19]) ^ ekey[4];
+			a5 = (((uint)indata[20] << 24) | ((uint)indata[21] << 16) | ((uint)indata[22] << 8) | (uint)indata[23]) ^ ekey[5];
+			a6 = (((uint)indata[24] << 24) | ((uint)indata[25] << 16) | ((uint)indata[26] << 8) | (uint)indata[27]) ^ ekey[6];
+			a7 = (((uint)indata[28] << 24) | ((uint)indata[29] << 16) | ((uint)indata[30] << 8) | (uint)indata[31]) ^ ekey[7];
+
+			/* Round 1 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a7 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[8];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a6 >> 8)] ^ iT3[(byte)a5] ^ ekey[9];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a7 >> 8)] ^ iT3[(byte)a6] ^ ekey[10];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a7] ^ ekey[11];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[12];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[13];
+			b6 = iT0[a6 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[14];
+			b7 = iT0[a7 >> 24] ^ iT1[(byte)(a6 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[15];
+
+			/* Round 2 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b7 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[16];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b6 >> 8)] ^ iT3[(byte)b5] ^ ekey[17];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b7 >> 8)] ^ iT3[(byte)b6] ^ ekey[18];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b7] ^ ekey[19];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[20];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[21];
+			a6 = iT0[b6 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[22];
+			a7 = iT0[b7 >> 24] ^ iT1[(byte)(b6 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[23];
+
+			/* Round 3 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a7 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[24];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a6 >> 8)] ^ iT3[(byte)a5] ^ ekey[25];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a7 >> 8)] ^ iT3[(byte)a6] ^ ekey[26];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a7] ^ ekey[27];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[28];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[29];
+			b6 = iT0[a6 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[30];
+			b7 = iT0[a7 >> 24] ^ iT1[(byte)(a6 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[31];
+
+			/* Round 4 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b7 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[32];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b6 >> 8)] ^ iT3[(byte)b5] ^ ekey[33];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b7 >> 8)] ^ iT3[(byte)b6] ^ ekey[34];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b7] ^ ekey[35];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[36];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[37];
+			a6 = iT0[b6 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[38];
+			a7 = iT0[b7 >> 24] ^ iT1[(byte)(b6 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[39];
+
+			/* Round 5 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a7 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[40];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a6 >> 8)] ^ iT3[(byte)a5] ^ ekey[41];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a7 >> 8)] ^ iT3[(byte)a6] ^ ekey[42];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a7] ^ ekey[43];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[44];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[45];
+			b6 = iT0[a6 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[46];
+			b7 = iT0[a7 >> 24] ^ iT1[(byte)(a6 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[47];
+
+			/* Round 6 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b7 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[48];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b6 >> 8)] ^ iT3[(byte)b5] ^ ekey[49];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b7 >> 8)] ^ iT3[(byte)b6] ^ ekey[50];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b7] ^ ekey[51];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[52];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[53];
+			a6 = iT0[b6 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[54];
+			a7 = iT0[b7 >> 24] ^ iT1[(byte)(b6 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[55];
+
+			/* Round 7 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a7 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[56];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a6 >> 8)] ^ iT3[(byte)a5] ^ ekey[57];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a7 >> 8)] ^ iT3[(byte)a6] ^ ekey[58];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a7] ^ ekey[59];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[60];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[61];
+			b6 = iT0[a6 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[62];
+			b7 = iT0[a7 >> 24] ^ iT1[(byte)(a6 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[63];
+
+			/* Round 8 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b7 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[64];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b6 >> 8)] ^ iT3[(byte)b5] ^ ekey[65];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b7 >> 8)] ^ iT3[(byte)b6] ^ ekey[66];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b7] ^ ekey[67];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[68];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[69];
+			a6 = iT0[b6 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[70];
+			a7 = iT0[b7 >> 24] ^ iT1[(byte)(b6 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[71];
+
+			/* Round 9 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a7 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[72];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a6 >> 8)] ^ iT3[(byte)a5] ^ ekey[73];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a7 >> 8)] ^ iT3[(byte)a6] ^ ekey[74];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a7] ^ ekey[75];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[76];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[77];
+			b6 = iT0[a6 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[78];
+			b7 = iT0[a7 >> 24] ^ iT1[(byte)(a6 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[79];
+
+			/* Round 10 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b7 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[80];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b6 >> 8)] ^ iT3[(byte)b5] ^ ekey[81];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b7 >> 8)] ^ iT3[(byte)b6] ^ ekey[82];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b7] ^ ekey[83];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[84];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[85];
+			a6 = iT0[b6 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[86];
+			a7 = iT0[b7 >> 24] ^ iT1[(byte)(b6 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[87];
+
+			/* Round 11 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a7 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[88];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a6 >> 8)] ^ iT3[(byte)a5] ^ ekey[89];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a7 >> 8)] ^ iT3[(byte)a6] ^ ekey[90];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a7] ^ ekey[91];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[92];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[93];
+			b6 = iT0[a6 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[94];
+			b7 = iT0[a7 >> 24] ^ iT1[(byte)(a6 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[95];
+
+			/* Round 12 */
+			a0 = iT0[b0 >> 24] ^ iT1[(byte)(b7 >> 16)] ^ iT2[(byte)(b5 >> 8)] ^ iT3[(byte)b4] ^ ekey[96];
+			a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b6 >> 8)] ^ iT3[(byte)b5] ^ ekey[97];
+			a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b7 >> 8)] ^ iT3[(byte)b6] ^ ekey[98];
+			a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b7] ^ ekey[99];
+			a4 = iT0[b4 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[100];
+			a5 = iT0[b5 >> 24] ^ iT1[(byte)(b4 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[101];
+			a6 = iT0[b6 >> 24] ^ iT1[(byte)(b5 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[102];
+			a7 = iT0[b7 >> 24] ^ iT1[(byte)(b6 >> 16)] ^ iT2[(byte)(b4 >> 8)] ^ iT3[(byte)b3] ^ ekey[103];
+
+			/* Round 13 */
+			b0 = iT0[a0 >> 24] ^ iT1[(byte)(a7 >> 16)] ^ iT2[(byte)(a5 >> 8)] ^ iT3[(byte)a4] ^ ekey[104];
+			b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a6 >> 8)] ^ iT3[(byte)a5] ^ ekey[105];
+			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a7 >> 8)] ^ iT3[(byte)a6] ^ ekey[106];
+			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a7] ^ ekey[107];
+			b4 = iT0[a4 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[108];
+			b5 = iT0[a5 >> 24] ^ iT1[(byte)(a4 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[109];
+			b6 = iT0[a6 >> 24] ^ iT1[(byte)(a5 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[110];
+			b7 = iT0[a7 >> 24] ^ iT1[(byte)(a6 >> 16)] ^ iT2[(byte)(a4 >> 8)] ^ iT3[(byte)a3] ^ ekey[111];
+
+			/* Final Round */
+			outdata[0] = (byte)(iSBox[b0 >> 24] ^ (byte)(ekey[112] >> 24));
+			outdata[1] = (byte)(iSBox[(byte)(b7 >> 16)] ^ (byte)(ekey[112] >> 16));
+			outdata[2] = (byte)(iSBox[(byte)(b5 >> 8)] ^ (byte)(ekey[112] >> 8));
+			outdata[3] = (byte)(iSBox[(byte)b4] ^ (byte)ekey[112]);
+
+			outdata[4] = (byte)(iSBox[b1 >> 24] ^ (byte)(ekey[113] >> 24));
+			outdata[5] = (byte)(iSBox[(byte)(b0 >> 16)] ^ (byte)(ekey[113] >> 16));
+			outdata[6] = (byte)(iSBox[(byte)(b6 >> 8)] ^ (byte)(ekey[113] >> 8));
+			outdata[7] = (byte)(iSBox[(byte)b5] ^ (byte)ekey[113]);
+
+			outdata[8] = (byte)(iSBox[b2 >> 24] ^ (byte)(ekey[114] >> 24));
+			outdata[9] = (byte)(iSBox[(byte)(b1 >> 16)] ^ (byte)(ekey[114] >> 16));
+			outdata[10] = (byte)(iSBox[(byte)(b7 >> 8)] ^ (byte)(ekey[114] >> 8));
+			outdata[11] = (byte)(iSBox[(byte)b6] ^ (byte)ekey[114]);
+
+			outdata[12] = (byte)(iSBox[b3 >> 24] ^ (byte)(ekey[115] >> 24));
+			outdata[13] = (byte)(iSBox[(byte)(b2 >> 16)] ^ (byte)(ekey[115] >> 16));
+			outdata[14] = (byte)(iSBox[(byte)(b0 >> 8)] ^ (byte)(ekey[115] >> 8));
+			outdata[15] = (byte)(iSBox[(byte)b7] ^ (byte)ekey[115]);
+
+			outdata[16] = (byte)(iSBox[b4 >> 24] ^ (byte)(ekey[116] >> 24));
+			outdata[17] = (byte)(iSBox[(byte)(b3 >> 16)] ^ (byte)(ekey[116] >> 16));
+			outdata[18] = (byte)(iSBox[(byte)(b1 >> 8)] ^ (byte)(ekey[116] >> 8));
+			outdata[19] = (byte)(iSBox[(byte)b0] ^ (byte)ekey[116]);
+
+			outdata[20] = (byte)(iSBox[b5 >> 24] ^ (byte)(ekey[117] >> 24));
+			outdata[21] = (byte)(iSBox[(byte)(b4 >> 16)] ^ (byte)(ekey[117] >> 16));
+			outdata[22] = (byte)(iSBox[(byte)(b2 >> 8)] ^ (byte)(ekey[117] >> 8));
+			outdata[23] = (byte)(iSBox[(byte)b1] ^ (byte)ekey[117]);
+
+			outdata[24] = (byte)(iSBox[b6 >> 24] ^ (byte)(ekey[118] >> 24));
+			outdata[25] = (byte)(iSBox[(byte)(b5 >> 16)] ^ (byte)(ekey[118] >> 16));
+			outdata[26] = (byte)(iSBox[(byte)(b3 >> 8)] ^ (byte)(ekey[118] >> 8));
+			outdata[27] = (byte)(iSBox[(byte)b2] ^ (byte)ekey[118]);
+
+			outdata[28] = (byte)(iSBox[b7 >> 24] ^ (byte)(ekey[119] >> 24));
+			outdata[29] = (byte)(iSBox[(byte)(b6 >> 16)] ^ (byte)(ekey[119] >> 16));
+			outdata[30] = (byte)(iSBox[(byte)(b4 >> 8)] ^ (byte)(ekey[119] >> 8));
+			outdata[31] = (byte)(iSBox[(byte)b3] ^ (byte)ekey[119]);
+		}
+		#endregion
+
+		static readonly uint[] T1 = {
 			0xa5c66363, 0x84f87c7c, 0x99ee7777, 0x8df67b7b, 0x0dfff2f2, 0xbdd66b6b, 0xb1de6f6f, 0x5491c5c5,
 			0x50603030, 0x03020101, 0xa9ce6767, 0x7d562b2b, 0x19e7fefe, 0x62b5d7d7, 0xe64dabab, 0x9aec7676,
 			0x458fcaca, 0x9d1f8282, 0x4089c9c9, 0x87fa7d7d, 0x15effafa, 0xebb25959, 0xc98e4747, 0x0bfbf0f0,
@@ -528,7 +989,7 @@ namespace openCrypto
 			0x8f038c8c, 0xf859a1a1, 0x80098989, 0x171a0d0d, 0xda65bfbf, 0x31d7e6e6, 0xc6844242, 0xb8d06868,
 			0xc3824141, 0xb0299999, 0x775a2d2d, 0x111e0f0f, 0xcb7bb0b0, 0xfca85454, 0xd66dbbbb, 0x3a2c1616,
 		};
-		protected static readonly uint[] T2 = {
+		static readonly uint[] T2 = {
 			0x63a5c663, 0x7c84f87c, 0x7799ee77, 0x7b8df67b, 0xf20dfff2, 0x6bbdd66b, 0x6fb1de6f, 0xc55491c5,
 			0x30506030, 0x01030201, 0x67a9ce67, 0x2b7d562b, 0xfe19e7fe, 0xd762b5d7, 0xabe64dab, 0x769aec76,
 			0xca458fca, 0x829d1f82, 0xc94089c9, 0x7d87fa7d, 0xfa15effa, 0x59ebb259, 0x47c98e47, 0xf00bfbf0,
@@ -562,7 +1023,7 @@ namespace openCrypto
 			0x8c8f038c, 0xa1f859a1, 0x89800989, 0x0d171a0d, 0xbfda65bf, 0xe631d7e6, 0x42c68442, 0x68b8d068,
 			0x41c38241, 0x99b02999, 0x2d775a2d, 0x0f111e0f, 0xb0cb7bb0, 0x54fca854, 0xbbd66dbb, 0x163a2c16,
 		};
-		protected static readonly uint[] T3 = {
+		static readonly uint[] T3 = {
 			0x6363a5c6, 0x7c7c84f8, 0x777799ee, 0x7b7b8df6, 0xf2f20dff, 0x6b6bbdd6, 0x6f6fb1de, 0xc5c55491,
 			0x30305060, 0x01010302, 0x6767a9ce, 0x2b2b7d56, 0xfefe19e7, 0xd7d762b5, 0xababe64d, 0x76769aec,
 			0xcaca458f, 0x82829d1f, 0xc9c94089, 0x7d7d87fa, 0xfafa15ef, 0x5959ebb2, 0x4747c98e, 0xf0f00bfb,
@@ -595,6 +1056,108 @@ namespace openCrypto
 			0x9b9bb62d, 0x1e1e223c, 0x87879215, 0xe9e920c9, 0xcece4987, 0x5555ffaa, 0x28287850, 0xdfdf7aa5,
 			0x8c8c8f03, 0xa1a1f859, 0x89898009, 0x0d0d171a, 0xbfbfda65, 0xe6e631d7, 0x4242c684, 0x6868b8d0,
 			0x4141c382, 0x9999b029, 0x2d2d775a, 0x0f0f111e, 0xb0b0cb7b, 0x5454fca8, 0xbbbbd66d, 0x16163a2c,
+		};
+		static readonly uint[] iT1 = {
+			0x5051f4a7, 0x537e4165, 0xc31a17a4, 0x963a275e, 0xcb3bab6b, 0xf11f9d45, 0xabacfa58, 0x934be303,
+			0x552030fa, 0xf6ad766d, 0x9188cc76, 0x25f5024c, 0xfc4fe5d7, 0xd7c52acb, 0x80263544, 0x8fb562a3,
+			0x49deb15a, 0x6725ba1b, 0x9845ea0e, 0xe15dfec0, 0x02c32f75, 0x12814cf0, 0xa38d4697, 0xc66bd3f9,
+			0xe7038f5f, 0x9515929c, 0xebbf6d7a, 0xda955259, 0x2dd4be83, 0xd3587421, 0x2949e069, 0x448ec9c8,
+			0x6a75c289, 0x78f48e79, 0x6b99583e, 0xdd27b971, 0xb6bee14f, 0x17f088ad, 0x66c920ac, 0xb47dce3a,
+			0x1863df4a, 0x82e51a31, 0x60975133, 0x4562537f, 0xe0b16477, 0x84bb6bae, 0x1cfe81a0, 0x94f9082b,
+			0x58704868, 0x198f45fd, 0x8794de6c, 0xb7527bf8, 0x23ab73d3, 0xe2724b02, 0x57e31f8f, 0x2a6655ab,
+			0x07b2eb28, 0x032fb5c2, 0x9a86c57b, 0xa5d33708, 0xf2302887, 0xb223bfa5, 0xba02036a, 0x5ced1682,
+			0x2b8acf1c, 0x92a779b4, 0xf0f307f2, 0xa14e69e2, 0xcd65daf4, 0xd50605be, 0x1fd13462, 0x8ac4a6fe,
+			0x9d342e53, 0xa0a2f355, 0x32058ae1, 0x75a4f6eb, 0x390b83ec, 0xaa4060ef, 0x065e719f, 0x51bd6e10,
+			0xf93e218a, 0x3d96dd06, 0xaedd3e05, 0x464de6bd, 0xb591548d, 0x0571c45d, 0x6f0406d4, 0xff605015,
+			0x241998fb, 0x97d6bde9, 0xcc894043, 0x7767d99e, 0xbdb0e842, 0x8807898b, 0x38e7195b, 0xdb79c8ee,
+			0x47a17c0a, 0xe97c420f, 0xc9f8841e, 0x00000000, 0x83098086, 0x48322bed, 0xac1e1170, 0x4e6c5a72,
+			0xfbfd0eff, 0x560f8538, 0x1e3daed5, 0x27362d39, 0x640a0fd9, 0x21685ca6, 0xd19b5b54, 0x3a24362e,
+			0xb10c0a67, 0x0f9357e7, 0xd2b4ee96, 0x9e1b9b91, 0x4f80c0c5, 0xa261dc20, 0x695a774b, 0x161c121a,
+			0x0ae293ba, 0xe5c0a02a, 0x433c22e0, 0x1d121b17, 0x0b0e090d, 0xadf28bc7, 0xb92db6a8, 0xc8141ea9,
+			0x8557f119, 0x4caf7507, 0xbbee99dd, 0xfda37f60, 0x9ff70126, 0xbc5c72f5, 0xc544663b, 0x345bfb7e,
+			0x768b4329, 0xdccb23c6, 0x68b6edfc, 0x63b8e4f1, 0xcad731dc, 0x10426385, 0x40139722, 0x2084c611,
+			0x7d854a24, 0xf8d2bb3d, 0x11aef932, 0x6dc729a1, 0x4b1d9e2f, 0xf3dcb230, 0xec0d8652, 0xd077c1e3,
+			0x6c2bb316, 0x99a970b9, 0xfa119448, 0x2247e964, 0xc4a8fc8c, 0x1aa0f03f, 0xd8567d2c, 0xef223390,
+			0xc787494e, 0xc1d938d1, 0xfe8ccaa2, 0x3698d40b, 0xcfa6f581, 0x28a57ade, 0x26dab78e, 0xa43fadbf,
+			0xe42c3a9d, 0x0d507892, 0x9b6a5fcc, 0x62547e46, 0xc2f68d13, 0xe890d8b8, 0x5e2e39f7, 0xf582c3af,
+			0xbe9f5d80, 0x7c69d093, 0xa96fd52d, 0xb3cf2512, 0x3bc8ac99, 0xa710187d, 0x6ee89c63, 0x7bdb3bbb,
+			0x09cd2678, 0xf46e5918, 0x01ec9ab7, 0xa8834f9a, 0x65e6956e, 0x7eaaffe6, 0x0821bccf, 0xe6ef15e8,
+			0xd9bae79b, 0xce4a6f36, 0xd4ea9f09, 0xd629b07c, 0xaf31a4b2, 0x312a3f23, 0x30c6a594, 0xc035a266,
+			0x37744ebc, 0xa6fc82ca, 0xb0e090d0, 0x1533a7d8, 0x4af10498, 0xf741ecda, 0x0e7fcd50, 0x2f1791f6,
+			0x8d764dd6, 0x4d43efb0, 0x54ccaa4d, 0xdfe49604, 0xe39ed1b5, 0x1b4c6a88, 0xb8c12c1f, 0x7f466551,
+			0x049d5eea, 0x5d018c35, 0x73fa8774, 0x2efb0b41, 0x5ab3671d, 0x5292dbd2, 0x33e91056, 0x136dd647,
+			0x8c9ad761, 0x7a37a10c, 0x8e59f814, 0x89eb133c, 0xeecea927, 0x35b761c9, 0xede11ce5, 0x3c7a47b1,
+			0x599cd2df, 0x3f55f273, 0x791814ce, 0xbf73c737, 0xea53f7cd, 0x5b5ffdaa, 0x14df3d6f, 0x867844db,
+			0x81caaff3, 0x3eb968c4, 0x2c382434, 0x5fc2a340, 0x72161dc3, 0x0cbce225, 0x8b283c49, 0x41ff0d95,
+			0x7139a801, 0xde080cb3, 0x9cd8b4e4, 0x906456c1, 0x617bcb84, 0x70d532b6, 0x74486c5c, 0x42d0b857,
+		};
+		static readonly uint[] iT2 = {
+			0xa75051f4, 0x65537e41, 0xa4c31a17, 0x5e963a27, 0x6bcb3bab, 0x45f11f9d, 0x58abacfa, 0x03934be3,
+			0xfa552030, 0x6df6ad76, 0x769188cc, 0x4c25f502, 0xd7fc4fe5, 0xcbd7c52a, 0x44802635, 0xa38fb562,
+			0x5a49deb1, 0x1b6725ba, 0x0e9845ea, 0xc0e15dfe, 0x7502c32f, 0xf012814c, 0x97a38d46, 0xf9c66bd3,
+			0x5fe7038f, 0x9c951592, 0x7aebbf6d, 0x59da9552, 0x832dd4be, 0x21d35874, 0x692949e0, 0xc8448ec9,
+			0x896a75c2, 0x7978f48e, 0x3e6b9958, 0x71dd27b9, 0x4fb6bee1, 0xad17f088, 0xac66c920, 0x3ab47dce,
+			0x4a1863df, 0x3182e51a, 0x33609751, 0x7f456253, 0x77e0b164, 0xae84bb6b, 0xa01cfe81, 0x2b94f908,
+			0x68587048, 0xfd198f45, 0x6c8794de, 0xf8b7527b, 0xd323ab73, 0x02e2724b, 0x8f57e31f, 0xab2a6655,
+			0x2807b2eb, 0xc2032fb5, 0x7b9a86c5, 0x08a5d337, 0x87f23028, 0xa5b223bf, 0x6aba0203, 0x825ced16,
+			0x1c2b8acf, 0xb492a779, 0xf2f0f307, 0xe2a14e69, 0xf4cd65da, 0xbed50605, 0x621fd134, 0xfe8ac4a6,
+			0x539d342e, 0x55a0a2f3, 0xe132058a, 0xeb75a4f6, 0xec390b83, 0xefaa4060, 0x9f065e71, 0x1051bd6e,
+			0x8af93e21, 0x063d96dd, 0x05aedd3e, 0xbd464de6, 0x8db59154, 0x5d0571c4, 0xd46f0406, 0x15ff6050,
+			0xfb241998, 0xe997d6bd, 0x43cc8940, 0x9e7767d9, 0x42bdb0e8, 0x8b880789, 0x5b38e719, 0xeedb79c8,
+			0x0a47a17c, 0x0fe97c42, 0x1ec9f884, 0x00000000, 0x86830980, 0xed48322b, 0x70ac1e11, 0x724e6c5a,
+			0xfffbfd0e, 0x38560f85, 0xd51e3dae, 0x3927362d, 0xd9640a0f, 0xa621685c, 0x54d19b5b, 0x2e3a2436,
+			0x67b10c0a, 0xe70f9357, 0x96d2b4ee, 0x919e1b9b, 0xc54f80c0, 0x20a261dc, 0x4b695a77, 0x1a161c12,
+			0xba0ae293, 0x2ae5c0a0, 0xe0433c22, 0x171d121b, 0x0d0b0e09, 0xc7adf28b, 0xa8b92db6, 0xa9c8141e,
+			0x198557f1, 0x074caf75, 0xddbbee99, 0x60fda37f, 0x269ff701, 0xf5bc5c72, 0x3bc54466, 0x7e345bfb,
+			0x29768b43, 0xc6dccb23, 0xfc68b6ed, 0xf163b8e4, 0xdccad731, 0x85104263, 0x22401397, 0x112084c6,
+			0x247d854a, 0x3df8d2bb, 0x3211aef9, 0xa16dc729, 0x2f4b1d9e, 0x30f3dcb2, 0x52ec0d86, 0xe3d077c1,
+			0x166c2bb3, 0xb999a970, 0x48fa1194, 0x642247e9, 0x8cc4a8fc, 0x3f1aa0f0, 0x2cd8567d, 0x90ef2233,
+			0x4ec78749, 0xd1c1d938, 0xa2fe8cca, 0x0b3698d4, 0x81cfa6f5, 0xde28a57a, 0x8e26dab7, 0xbfa43fad,
+			0x9de42c3a, 0x920d5078, 0xcc9b6a5f, 0x4662547e, 0x13c2f68d, 0xb8e890d8, 0xf75e2e39, 0xaff582c3,
+			0x80be9f5d, 0x937c69d0, 0x2da96fd5, 0x12b3cf25, 0x993bc8ac, 0x7da71018, 0x636ee89c, 0xbb7bdb3b,
+			0x7809cd26, 0x18f46e59, 0xb701ec9a, 0x9aa8834f, 0x6e65e695, 0xe67eaaff, 0xcf0821bc, 0xe8e6ef15,
+			0x9bd9bae7, 0x36ce4a6f, 0x09d4ea9f, 0x7cd629b0, 0xb2af31a4, 0x23312a3f, 0x9430c6a5, 0x66c035a2,
+			0xbc37744e, 0xcaa6fc82, 0xd0b0e090, 0xd81533a7, 0x984af104, 0xdaf741ec, 0x500e7fcd, 0xf62f1791,
+			0xd68d764d, 0xb04d43ef, 0x4d54ccaa, 0x04dfe496, 0xb5e39ed1, 0x881b4c6a, 0x1fb8c12c, 0x517f4665,
+			0xea049d5e, 0x355d018c, 0x7473fa87, 0x412efb0b, 0x1d5ab367, 0xd25292db, 0x5633e910, 0x47136dd6,
+			0x618c9ad7, 0x0c7a37a1, 0x148e59f8, 0x3c89eb13, 0x27eecea9, 0xc935b761, 0xe5ede11c, 0xb13c7a47,
+			0xdf599cd2, 0x733f55f2, 0xce791814, 0x37bf73c7, 0xcdea53f7, 0xaa5b5ffd, 0x6f14df3d, 0xdb867844,
+			0xf381caaf, 0xc43eb968, 0x342c3824, 0x405fc2a3, 0xc372161d, 0x250cbce2, 0x498b283c, 0x9541ff0d,
+			0x017139a8, 0xb3de080c, 0xe49cd8b4, 0xc1906456, 0x84617bcb, 0xb670d532, 0x5c74486c, 0x5742d0b8,
+		};
+		static readonly uint[] iT3 = {
+			0xf4a75051, 0x4165537e, 0x17a4c31a, 0x275e963a, 0xab6bcb3b, 0x9d45f11f, 0xfa58abac, 0xe303934b,
+			0x30fa5520, 0x766df6ad, 0xcc769188, 0x024c25f5, 0xe5d7fc4f, 0x2acbd7c5, 0x35448026, 0x62a38fb5,
+			0xb15a49de, 0xba1b6725, 0xea0e9845, 0xfec0e15d, 0x2f7502c3, 0x4cf01281, 0x4697a38d, 0xd3f9c66b,
+			0x8f5fe703, 0x929c9515, 0x6d7aebbf, 0x5259da95, 0xbe832dd4, 0x7421d358, 0xe0692949, 0xc9c8448e,
+			0xc2896a75, 0x8e7978f4, 0x583e6b99, 0xb971dd27, 0xe14fb6be, 0x88ad17f0, 0x20ac66c9, 0xce3ab47d,
+			0xdf4a1863, 0x1a3182e5, 0x51336097, 0x537f4562, 0x6477e0b1, 0x6bae84bb, 0x81a01cfe, 0x082b94f9,
+			0x48685870, 0x45fd198f, 0xde6c8794, 0x7bf8b752, 0x73d323ab, 0x4b02e272, 0x1f8f57e3, 0x55ab2a66,
+			0xeb2807b2, 0xb5c2032f, 0xc57b9a86, 0x3708a5d3, 0x2887f230, 0xbfa5b223, 0x036aba02, 0x16825ced,
+			0xcf1c2b8a, 0x79b492a7, 0x07f2f0f3, 0x69e2a14e, 0xdaf4cd65, 0x05bed506, 0x34621fd1, 0xa6fe8ac4,
+			0x2e539d34, 0xf355a0a2, 0x8ae13205, 0xf6eb75a4, 0x83ec390b, 0x60efaa40, 0x719f065e, 0x6e1051bd,
+			0x218af93e, 0xdd063d96, 0x3e05aedd, 0xe6bd464d, 0x548db591, 0xc45d0571, 0x06d46f04, 0x5015ff60,
+			0x98fb2419, 0xbde997d6, 0x4043cc89, 0xd99e7767, 0xe842bdb0, 0x898b8807, 0x195b38e7, 0xc8eedb79,
+			0x7c0a47a1, 0x420fe97c, 0x841ec9f8, 0x00000000, 0x80868309, 0x2bed4832, 0x1170ac1e, 0x5a724e6c,
+			0x0efffbfd, 0x8538560f, 0xaed51e3d, 0x2d392736, 0x0fd9640a, 0x5ca62168, 0x5b54d19b, 0x362e3a24,
+			0x0a67b10c, 0x57e70f93, 0xee96d2b4, 0x9b919e1b, 0xc0c54f80, 0xdc20a261, 0x774b695a, 0x121a161c,
+			0x93ba0ae2, 0xa02ae5c0, 0x22e0433c, 0x1b171d12, 0x090d0b0e, 0x8bc7adf2, 0xb6a8b92d, 0x1ea9c814,
+			0xf1198557, 0x75074caf, 0x99ddbbee, 0x7f60fda3, 0x01269ff7, 0x72f5bc5c, 0x663bc544, 0xfb7e345b,
+			0x4329768b, 0x23c6dccb, 0xedfc68b6, 0xe4f163b8, 0x31dccad7, 0x63851042, 0x97224013, 0xc6112084,
+			0x4a247d85, 0xbb3df8d2, 0xf93211ae, 0x29a16dc7, 0x9e2f4b1d, 0xb230f3dc, 0x8652ec0d, 0xc1e3d077,
+			0xb3166c2b, 0x70b999a9, 0x9448fa11, 0xe9642247, 0xfc8cc4a8, 0xf03f1aa0, 0x7d2cd856, 0x3390ef22,
+			0x494ec787, 0x38d1c1d9, 0xcaa2fe8c, 0xd40b3698, 0xf581cfa6, 0x7ade28a5, 0xb78e26da, 0xadbfa43f,
+			0x3a9de42c, 0x78920d50, 0x5fcc9b6a, 0x7e466254, 0x8d13c2f6, 0xd8b8e890, 0x39f75e2e, 0xc3aff582,
+			0x5d80be9f, 0xd0937c69, 0xd52da96f, 0x2512b3cf, 0xac993bc8, 0x187da710, 0x9c636ee8, 0x3bbb7bdb,
+			0x267809cd, 0x5918f46e, 0x9ab701ec, 0x4f9aa883, 0x956e65e6, 0xffe67eaa, 0xbccf0821, 0x15e8e6ef,
+			0xe79bd9ba, 0x6f36ce4a, 0x9f09d4ea, 0xb07cd629, 0xa4b2af31, 0x3f23312a, 0xa59430c6, 0xa266c035,
+			0x4ebc3774, 0x82caa6fc, 0x90d0b0e0, 0xa7d81533, 0x04984af1, 0xecdaf741, 0xcd500e7f, 0x91f62f17,
+			0x4dd68d76, 0xefb04d43, 0xaa4d54cc, 0x9604dfe4, 0xd1b5e39e, 0x6a881b4c, 0x2c1fb8c1, 0x65517f46,
+			0x5eea049d, 0x8c355d01, 0x877473fa, 0x0b412efb, 0x671d5ab3, 0xdbd25292, 0x105633e9, 0xd647136d,
+			0xd7618c9a, 0xa10c7a37, 0xf8148e59, 0x133c89eb, 0xa927eece, 0x61c935b7, 0x1ce5ede1, 0x47b13c7a,
+			0xd2df599c, 0xf2733f55, 0x14ce7918, 0xc737bf73, 0xf7cdea53, 0xfdaa5b5f, 0x3d6f14df, 0x44db8678,
+			0xaff381ca, 0x68c43eb9, 0x24342c38, 0xa3405fc2, 0x1dc37216, 0xe2250cbc, 0x3c498b28, 0x0d9541ff,
+			0xa8017139, 0x0cb3de08, 0xb4e49cd8, 0x56c19064, 0xcb84617b, 0x32b670d5, 0x6c5c7448, 0xb85742d0,
 		};
 	}
 }

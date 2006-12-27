@@ -29,7 +29,7 @@ namespace openCrypto
 	public abstract class Rijndael : SymmetricAlgorithmPlus
 	{
 		static KeySizes[] _legalKeySizes = new KeySizes[] { new KeySizes (128, 256, 64) };
-		static KeySizes[] _legalBlockSizes = new KeySizes[] { new KeySizes (128, 256, 32) };
+		static KeySizes[] _legalBlockSizes = new KeySizes[] { new KeySizes (128, 256, 64) };
 
 		protected Rijndael ()
 		{

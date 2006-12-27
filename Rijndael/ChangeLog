@@ -1,3 +1,11 @@
+2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* Rijndael.cs: ブロックサイズのステップを32bitから64bitに変更
+	* RijndaelTransform32.cs: 復号用キースケジューリングと定数を追加
+	* RijndaelTransform32Balanced.cs: 基底クラスインターフェイス変更に追従
+	* RijndaelTransform32LowMemory.cs:
+	* RijndaelTransform32HighSpeed.cs: 復号コードを追加
+
 2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* RijndaelTransform32.cs:

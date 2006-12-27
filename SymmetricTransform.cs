@@ -36,7 +36,7 @@ namespace openCrypto
 	public abstract class SymmetricTransform : ICryptoTransform
 	{
 		private SymmetricAlgorithmPlus _algo;
-		private CipherModePlus _mode;
+		protected CipherModePlus _mode;
 		private int _blockBytes, _mt_threshold;
 		protected bool _encryptMode;
 		private Thread[] _threads;
