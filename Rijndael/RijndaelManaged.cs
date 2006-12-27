@@ -36,8 +36,6 @@ namespace openCrypto
 		private ICryptoTransform CreateTransformer (byte[] rgbKey, byte[] rgbIV, bool encryption)
 		{
 			switch (_implType) {
-			case CipherImplementationType.LowMemory:
-				return new RijndaelTransform32LowMemory (this, rgbKey, rgbIV, encryption);
 			case CipherImplementationType.Balanced:
 				return new RijndaelTransform32Balanced (this, rgbKey, rgbIV, encryption);
 			case CipherImplementationType.HighSpeed:
@@ -59,8 +57,7 @@ namespace openCrypto
 
 		public override bool HasImplementation (CipherImplementationType type)
 		{
-			return type == CipherImplementationType.LowMemory
-				|| type == CipherImplementationType.Balanced
+			return type == CipherImplementationType.Balanced
 				|| type == CipherImplementationType.HighSpeed;
 		}
 	}

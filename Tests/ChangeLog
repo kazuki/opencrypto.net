@@ -1,6 +1,11 @@
 2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* SymmetricAlgorithmTestBase.cs:
+	* RijndaelTest.cs: 勉強用実装の項目を削除
+
+2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* SymmetricAlgorithmTestBase.cs:
 	* CamelliaTest.cs:
 	* RijndaelTest.cs: 各種ブロック暗号モードのマルチブロックテストを追加
 

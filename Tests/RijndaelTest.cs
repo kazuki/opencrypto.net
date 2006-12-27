@@ -46,8 +46,6 @@ namespace openCrypto.Tests
 
 			foreach (string file in files) {
 				ECBTestReader helper = new ECBTestReader (file);
-				algo.ImplementationType = CipherImplementationType.Study;
-				TestECB (algo, helper);
 				algo.ImplementationType = CipherImplementationType.LowMemory;
 				TestECB (algo, helper);
 				algo.ImplementationType = CipherImplementationType.Balanced;

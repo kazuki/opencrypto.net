@@ -1,5 +1,9 @@
 2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* RijndaelTransform32Balanced.cs: RijndaelTransform32LowMemory.csから移動
+
+2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* RijndaelManaged.cs:
 	* SimpleRijndaelTransform.cs: 勉強用実装を削除
 

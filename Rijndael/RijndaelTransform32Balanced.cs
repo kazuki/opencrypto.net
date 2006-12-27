@@ -26,9 +26,9 @@ using System.Security.Cryptography;
 
 namespace openCrypto
 {
-	class RijndaelTransform32LowMemory : RijndaelTransform32
+	class RijndaelTransform32Balanced : RijndaelTransform32
 	{
-		public RijndaelTransform32LowMemory (RijndaelManaged algo, byte[] rgbKey, byte[] rgbIV, bool encryption)
+		public RijndaelTransform32Balanced (RijndaelManaged algo, byte[] rgbKey, byte[] rgbIV, bool encryption)
 			: base (algo, rgbKey, rgbIV, encryption)
 		{
 		}

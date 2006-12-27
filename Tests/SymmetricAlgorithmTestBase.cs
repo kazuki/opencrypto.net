@@ -35,7 +35,6 @@ namespace openCrypto.Tests
 	public abstract class SymmetricAlgorithmTestBase
 	{
 		static CipherImplementationType[] _types = new CipherImplementationType[] {
-			CipherImplementationType.Study,
 			CipherImplementationType.LowMemory,
 			CipherImplementationType.Balanced,
 			CipherImplementationType.HighSpeed

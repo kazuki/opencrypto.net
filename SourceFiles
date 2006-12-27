@@ -15,10 +15,8 @@ Properties/AssemblyInfo.cs
 Rijndael/Rijndael.cs
 Rijndael/RijndaelManaged.cs
 Rijndael/RijndaelTransform32.cs
-Rijndael/RijndaelTransform32LowMemory.cs
 Rijndael/RijndaelTransform32Balanced.cs
 Rijndael/RijndaelTransform32HighSpeed.cs
-Rijndael/SimpleRijndaelTransform.cs
 Tests/BlockCipherModeTest.cs
 Tests/CamelliaTest.cs
 Tests/ConfluentWaitHandleTest.cs

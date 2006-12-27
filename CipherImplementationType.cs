@@ -31,11 +31,6 @@ namespace openCrypto
 	public enum CipherImplementationType
 	{
 		/// <summary>
-		/// <ja>勉強用の実装</ja>
-		/// </summary>
-		Study,
-		
-		/// <summary>
 		/// <ja>速度よりも消費メモリ量の少なさを重視した実装</ja>
 		/// </summary>
 		LowMemory,
