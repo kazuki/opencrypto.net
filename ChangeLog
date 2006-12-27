@@ -1,5 +1,9 @@
 2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* Program.cs: 変換速度と鍵生成時間計測プログラムを追加
+
+2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* SymmetricTransform.cs: CipherModeを表す変数のアクセサを変更
 
 2006-12-26 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
