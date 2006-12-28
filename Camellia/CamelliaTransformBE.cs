@@ -31,8 +31,6 @@ namespace openCrypto
 	/// </summary>
 	internal sealed class CamelliaTransformBE : CamelliaTransform
 	{
-		private uint _x0, _x1, _x2, _x3;
-
 		public CamelliaTransformBE (SymmetricAlgorithmPlus algo, byte[] rgbKey, byte[] rgbIV, bool encrypt)
 			: base (algo, encrypt, rgbKey.Length == 16 ? 2 : 3, rgbIV, SBOX1_1110, SBOX2_0222, SBOX3_3033, SBOX4_4404)
 		{
@@ -53,14 +51,6 @@ namespace openCrypto
 		{
 			for (int i = 0; i < n; i++)
 				dst[i] = src[i];
-		}
-
-		static unsafe void CopyConvertEndianness16 (uint* src, uint* dst)
-		{
-			dst[0] = src[0];
-			dst[1] = src[1];
-			dst[2] = src[2];
-			dst[3] = src[3];
 		}
 
 		static unsafe void XorBlock (uint* x, uint* y, uint* z)
@@ -101,44 +91,6 @@ namespace openCrypto
 			x[1] ^= D ^ U ^ RightRotate8 (U);
 		}
 
-		unsafe void Feistel_Encrypt (uint* k)
-		{
-			uint s1 = _x0 ^ k[0];
-			uint U = SBOX4_4404[(byte)s1] ^ SBOX3_3033[(byte)(s1 >> 8)] ^ SBOX2_0222[(byte)(s1 >> 16)] ^ SBOX1_1110[(byte)(s1 >> 24)];
-			uint s2 = _x1 ^ k[1];
-			uint D = SBOX1_1110[(byte)s2] ^ SBOX4_4404[(byte)(s2 >> 8)] ^ SBOX3_3033[(byte)(s2 >> 16)] ^ SBOX2_0222[(byte)(s2 >> 24)];
-
-			_x2 ^= D ^ U;
-			_x3 ^= D ^ U ^ RightRotate8 (U);
-
-			s1 = _x2 ^ k[2];
-			U = SBOX4_4404[(byte)s1] ^ SBOX3_3033[(byte)(s1 >> 8)] ^ SBOX2_0222[(byte)(s1 >> 16)] ^ SBOX1_1110[(byte)(s1 >> 24)];
-			s2 = _x3 ^ k[3];
-			D = SBOX1_1110[(byte)s2] ^ SBOX4_4404[(byte)(s2 >> 8)] ^ SBOX3_3033[(byte)(s2 >> 16)] ^ SBOX2_0222[(byte)(s2 >> 24)];
-
-			_x0 ^= D ^ U;
-			_x1 ^= D ^ U ^ RightRotate8 (U);
-		}
-
-		unsafe void Feistel_Decrypt (uint* k)
-		{
-			uint s1 = _x0 ^ k[0];
-			uint U = SBOX4_4404[(byte)s1] ^ SBOX3_3033[(byte)(s1 >> 8)] ^ SBOX2_0222[(byte)(s1 >> 16)] ^ SBOX1_1110[(byte)(s1 >> 24)];
-			uint s2 = _x1 ^ k[1];
-			uint D = SBOX1_1110[(byte)s2] ^ SBOX4_4404[(byte)(s2 >> 8)] ^ SBOX3_3033[(byte)(s2 >> 16)] ^ SBOX2_0222[(byte)(s2 >> 24)];
-
-			_x2 ^= D ^ U;
-			_x3 ^= D ^ U ^ RightRotate8 (U);
-
-			s1 = _x2 ^ k[-2];
-			U = SBOX4_4404[(byte)s1] ^ SBOX3_3033[(byte)(s1 >> 8)] ^ SBOX2_0222[(byte)(s1 >> 16)] ^ SBOX1_1110[(byte)(s1 >> 24)];
-			s2 = _x3 ^ k[-1];
-			D = SBOX1_1110[(byte)s2] ^ SBOX4_4404[(byte)(s2 >> 8)] ^ SBOX3_3033[(byte)(s2 >> 16)] ^ SBOX2_0222[(byte)(s2 >> 24)];
-
-			_x0 ^= D ^ U;
-			_x1 ^= D ^ U ^ RightRotate8 (U);
-		}
-
 		static unsafe void GenerateKeyTable (byte[] rawKey, uint[] keyTable)
 		{
 			uint* t = stackalloc uint[16];
@@ -146,11 +98,11 @@ namespace openCrypto
 			fixed (byte* pKey = rawKey) {
 				switch (rawKey.Length) {
 				case 16: /* 128bit */
-					CopyConvertEndianness16 ((uint*)pKey, t);
+					memcpy4 (t, (uint*)pKey, 4);
 					t[4] = t[5] = t[6] = t[7] = 0;
 					break;
 				case 24: /* 192bit */
-					CopyConvertEndianness16 ((uint*)pKey, t);
+					memcpy4 (t, (uint*)pKey, 4);
 					for (int i = 4; i < 6; i++) {
 						uint tmp = (uint)((rawKey[4 * i] << 24) | (rawKey[4 * i + 1] << 16) |
 							(rawKey[4 * i + 2] << 8) | (rawKey[4 * i + 3] << 0));
@@ -159,8 +111,7 @@ namespace openCrypto
 					}
 					break;
 				case 32: /* 256bit */
-					CopyConvertEndianness16 ((uint*)pKey, t);
-					CopyConvertEndianness16 (((uint*)pKey) + 4, t + 4);
+					memcpy4 (t, (uint*)pKey, 8);
 					break;
 				default:
 					throw new NotSupportedException ();
@@ -196,32 +147,67 @@ namespace openCrypto
 		{
 			fixed (uint* pKeyTable = _keyTable) {
 				uint* k = pKeyTable;
+				uint x0 = plaintext[0] ^ k[0];
+				uint x1 = plaintext[1] ^ k[1];
+				uint x2 = plaintext[2] ^ k[2];
+				uint x3 = plaintext[3] ^ k[3];
 
-				_x0 = plaintext[0] ^ k[0];
-				_x1 = plaintext[1] ^ k[1];
-				_x2 = plaintext[2] ^ k[2];
-				_x3 = plaintext[3] ^ k[3];
+				for (int i = 0;; i++) {
+					uint s1 = x0 ^ k[4];
+					uint U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					uint s2 = x1 ^ k[5];
+					uint D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x2 ^= D ^ U;
+					x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
 
-				for (int grandRounds = 0; grandRounds < _flayerLimit; grandRounds++) {
-					Feistel_Encrypt (k + 4);
-					Feistel_Encrypt (k + 8);
-					Feistel_Encrypt (k + 12);
-					
+					s1 = x2 ^ k[6];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x3 ^ k[7];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x0 ^= D ^ U;
+					x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					s1 = x0 ^ k[8];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x1 ^ k[9];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x2 ^= D ^ U;
+					x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					s1 = x2 ^ k[10];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x3 ^ k[11];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x0 ^= D ^ U;
+					x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					s1 = x0 ^ k[12];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x1 ^ k[13];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x2 ^= D ^ U;
+					x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					s1 = x2 ^ k[14];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x3 ^ k[15];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x0 ^= D ^ U;
+					x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					if (i == _flayerLimit) break;
+
 					k += 16;
-					_x1 ^= LeftRotate1 (_x0 & k[0]);
-					_x0 ^= _x1 | k[1];
-					_x2 ^= _x3 | k[3];
-					_x3 ^= LeftRotate1 (_x2 & k[2]);
+					x1 ^= LeftRotate1 (x0 & k[0]);
+					x0 ^= x1 | k[1];
+					x2 ^= x3 | k[3];
+					x3 ^= LeftRotate1 (x2 & k[2]);
 				}
 
-				Feistel_Encrypt (k + 4);
-				Feistel_Encrypt (k + 8);
-				Feistel_Encrypt (k + 12);
-
-				ciphertext[0] = k[16] ^ _x2;
-				ciphertext[1] = k[17] ^ _x3;
-				ciphertext[2] = k[18] ^ _x0;
-				ciphertext[3] = k[19] ^ _x1;
+				ciphertext[0] = k[16] ^ x2;
+				ciphertext[1] = k[17] ^ x3;
+				ciphertext[2] = k[18] ^ x0;
+				ciphertext[3] = k[19] ^ x1;
 			}
 		}
 
@@ -229,32 +215,66 @@ namespace openCrypto
 		{
 			fixed (uint* pKeyTable = _keyTable) {
 				uint* k = pKeyTable + (_flayerLimit == 2 ? 46 : 62);
+				uint x0 = ciphertext[0] ^ k[2];
+				uint x1 = ciphertext[1] ^ k[3];
+				uint x2 = ciphertext[2] ^ k[4];
+				uint x3 = ciphertext[3] ^ k[5];
 
-				_x0 = ciphertext[0] ^ k[2];
-				_x1 = ciphertext[1] ^ k[3];
-				_x2 = ciphertext[2] ^ k[4];
-				_x3 = ciphertext[3] ^ k[5];
+				for (int i = 0;; i++) {
+					uint s1 = x0 ^ k[0];
+					uint U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					uint s2 = x1 ^ k[1];
+					uint D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x2 ^= D ^ U;
+					x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
 
-				for (int grandRounds = 0; grandRounds < _flayerLimit; grandRounds++) {
-					Feistel_Decrypt (k);
-					Feistel_Decrypt (k - 4);
-					Feistel_Decrypt (k - 8);
+					s1 = x2 ^ k[-2];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x3 ^ k[-1];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x0 ^= D ^ U;
+					x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
 
+					s1 = x0 ^ k[-4];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x1 ^ k[-3];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x2 ^= D ^ U;
+					x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					s1 = x2 ^ k[-6];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x3 ^ k[-5];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x0 ^= D ^ U;
+					x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					s1 = x0 ^ k[-8];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x1 ^ k[-7];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x2 ^= D ^ U;
+					x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					s1 = x2 ^ k[-10];
+					U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+					s2 = x3 ^ k[-9];
+					D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+					x0 ^= D ^ U;
+					x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+
+					if (i == _flayerLimit) break;
 					k -= 16;
-					_x1 ^= LeftRotate1 (_x0 & k[4]);
-					_x0 ^= _x1 | k[5];
-					_x2 ^= _x3 | k[3];
-					_x3 ^= LeftRotate1 (_x2 & k[2]);
+					x1 ^= LeftRotate1 (x0 & k[4]);
+					x0 ^= x1 | k[5];
+					x2 ^= x3 | k[3];
+					x3 ^= LeftRotate1 (x2 & k[2]);
 				}
 
-				Feistel_Decrypt (k);
-				Feistel_Decrypt (k - 4);
-				Feistel_Decrypt (k - 8);
-
-				plaintext[0] = k[-14] ^ _x2;
-				plaintext[1] = k[-13] ^ _x3;
-				plaintext[2] = k[-12] ^ _x0;
-				plaintext[3] = k[-11] ^ _x1;
+				plaintext[0] = k[-14] ^ x2;
+				plaintext[1] = k[-13] ^ x3;
+				plaintext[2] = k[-12] ^ x0;
+				plaintext[3] = k[-11] ^ x1;
 			}
 		}
 
