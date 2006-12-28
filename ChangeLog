@@ -1,3 +1,7 @@
+2006-12-29 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* Program.cs: ブロック間暗号モードの速度低下率を計測するプログラムを追加
+
 2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* Program.cs: 変換速度と鍵生成時間計測プログラムを追加

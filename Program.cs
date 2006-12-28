@@ -43,9 +43,19 @@ namespace openCrypto
 				CipherImplementationType.Balanced,
 				CipherImplementationType.HighSpeed
 			};
+			CipherModePlus[] modes = new CipherModePlus[] {
+				CipherModePlus.ECB,
+				CipherModePlus.CBC,
+				CipherModePlus.OFB,
+				CipherModePlus.CFB,
+				CipherModePlus.CTS,
+				CipherModePlus.CTR,
+			};
 			String[] list = new String[] {"Camellia", "Rijndael"};
 			String[] tlist = new String[]{"LowMemory", "Balanced", "HighSpeed"};
+			String[] mlist = new String[]{"ECB", "CBC", "OFB", "CFB", "CTS", "CTR"};
 
+			Console.WriteLine ("||アルゴリズム||実装タイプ||キーサイズ||ブロックサイズ||暗号化速度||復号速度||鍵生成時間(暗号)||鍵生成時間(復号)||");
 			for (int i = 0; i < algos.Length; i ++) {
 				for (int j = 0; j < types.Length; j ++) {
 					if (!algos[i].HasImplementation (types[j]))
@@ -82,6 +92,20 @@ namespace openCrypto
 						keySize += keySizes.SkipSize;
 					} while (keySize <= keySizes.MaxSize);
 				}
+			}
+
+			Console.WriteLine (String.Empty);
+			Console.WriteLine ("||ブロックモード||加速率(暗号化:%)||加速率(復号:%)||");
+			for (int i = 0; i < modes.Length; i ++) {
+				try {
+					double[] avg = new double[] {0.0, 0.0};
+					for (int k = 0; k < 5; k ++) {
+						double[] temp = BlockCipherModeCost (modes[i]);
+						avg[0] += temp[0];
+						avg[1] += temp[1];
+					}
+					Console.WriteLine ("||{0}||{1:f2}||{2:f2}||", mlist[i], avg[0] * 100.0 / 5.0, avg[1] * 100.0 / 5.0);
+				} catch {}
 			}
 		}
 
@@ -135,6 +159,50 @@ namespace openCrypto
 			sw.Stop ();
 
 			return new double[] {mbsize / time, mbsize / sw.Elapsed.TotalSeconds};
+		}
+
+		static double[] BlockCipherModeCost (CipherModePlus mode)
+		{
+			const int SIZE = 1 << 20;
+			RijndaelManaged algo = new RijndaelManaged ();
+			byte[] bufA = new byte[SIZE];
+			byte[] bufB = new byte[bufA.Length];
+			byte[] key  = new byte[algo.KeySize >> 3];
+			byte[] iv   = new byte[algo.BlockSize >> 3];
+			Stopwatch sw = new Stopwatch ();
+			double time1, time2, time3, time4;
+
+			Helpers.RNG.GetBytes (bufA);
+			Helpers.RNG.GetBytes (key);
+			Helpers.RNG.GetBytes (iv);
+
+			algo.ModePlus = CipherModePlus.ECB;
+			sw.Stop (); sw.Reset (); sw.Start ();
+			using (ICryptoTransform ct = algo.CreateEncryptor (key, iv))
+				ct.TransformBlock (bufA, 0, bufA.Length, bufB, 0);
+			sw.Stop ();
+			time1 = sw.Elapsed.TotalSeconds;
+
+			sw.Reset (); sw.Start ();
+			using (ICryptoTransform ct = algo.CreateDecryptor (key, iv))
+				ct.TransformBlock (bufB, 0, bufB.Length, bufA, 0);
+			sw.Stop ();
+			time2 = sw.Elapsed.TotalSeconds;
+
+			algo.ModePlus = mode;
+			sw.Reset (); sw.Start ();
+			using (ICryptoTransform ct = algo.CreateEncryptor (key, iv))
+				ct.TransformBlock (bufA, 0, bufA.Length, bufB, 0);
+			sw.Stop ();
+			time3 = sw.Elapsed.TotalSeconds;
+
+			sw.Reset (); sw.Start ();
+			using (ICryptoTransform ct = algo.CreateDecryptor (key, iv))
+				ct.TransformBlock (bufB, 0, bufB.Length, bufA, 0);
+			sw.Stop ();
+			time4 = sw.Elapsed.TotalSeconds;
+
+			return new double[] {time1 / time3, time2 / time4};
 		}
 	}
 }
