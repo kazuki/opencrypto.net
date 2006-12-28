@@ -40,17 +40,10 @@ namespace openCrypto
 		protected uint[] _keyTable = new uint[KeyTableByteLength];
 		protected uint[] _sbox1, _sbox2, _sbox3, _sbox4;
 
-		protected uint _fb0, _fb1, _fb2, _fb3;
-
 		protected CamelliaTransform (SymmetricAlgorithmPlus algo, bool encryptMode, int flayerLimit, byte[] iv, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
 			: base (algo, encryptMode, iv)
 		{
 			_flayerLimit = flayerLimit;
-
-			_fb0 = BitConverter.ToUInt32 (iv, 0);
-			_fb1 = BitConverter.ToUInt32 (iv, 4);
-			_fb2 = BitConverter.ToUInt32 (iv, 8);
-			_fb3 = BitConverter.ToUInt32 (iv, 12);
 
 			_sbox1 = sbox1;
 			_sbox2 = sbox2;

@@ -169,10 +169,10 @@ namespace openCrypto
 		{
 			fixed (uint* pKeyTable = _keyTable) {
 				uint* k = pKeyTable;
-				uint x0 = plaintext[0] ^ k[0] ^ _fb0;
-				uint x1 = plaintext[1] ^ k[1] ^ _fb1;
-				uint x2 = plaintext[2] ^ k[2] ^ _fb2;
-				uint x3 = plaintext[3] ^ k[3] ^ _fb3;
+				uint x0 = plaintext[0] ^ k[0];
+				uint x1 = plaintext[1] ^ k[1];
+				uint x2 = plaintext[2] ^ k[2];
+				uint x3 = plaintext[3] ^ k[3];
 
 				for (int i = 0;; i++) {
 					uint s1 = x0 ^ k[4];
@@ -293,10 +293,10 @@ namespace openCrypto
 					x3 ^= LeftRotate1 (x2 & k[2]);
 				}
 
-				plaintext[0] = k[-14] ^ x2 ^ _fb0;
-				plaintext[1] = k[-13] ^ x3 ^ _fb1;
-				plaintext[2] = k[-12] ^ x0 ^ _fb2;
-				plaintext[3] = k[-11] ^ x1 ^ _fb3;
+				plaintext[0] = k[-14] ^ x2;
+				plaintext[1] = k[-13] ^ x3;
+				plaintext[2] = k[-12] ^ x0;
+				plaintext[3] = k[-11] ^ x1;
 			}
 		}
 
