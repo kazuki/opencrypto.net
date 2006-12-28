@@ -61,44 +61,43 @@ namespace openCrypto
 			uint x3 = plaintext[3] ^ k[3];
 			
 			for (int i = 0;; i++) {
-				uint s1 = x0 ^ k[4];
+				uint s1 = x0 ^ k[4], s2 = x1 ^ k[5];
 				uint U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
-				uint s2 = x1 ^ k[5];
 				uint D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x2 ^= D ^ U;
 				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x2 ^ k[6];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x3 ^ k[7];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x0 ^= D ^ U;
 				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x0 ^ k[8];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x1 ^ k[9];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x2 ^= D ^ U;
 				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x2 ^ k[10];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x3 ^ k[11];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x0 ^= D ^ U;
 				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x0 ^ k[12];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x1 ^ k[13];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x2 ^= D ^ U;
 				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x2 ^ k[14];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x3 ^ k[15];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x0 ^= D ^ U;
 				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
@@ -127,44 +126,43 @@ namespace openCrypto
 			uint x3 = ciphertext[3] ^ k[5];
 			
 			for (int i = 0;; i++) {
-				uint s1 = x0 ^ k[0];
+				uint s1 = x0 ^ k[0], s2 = x1 ^ k[1];
 				uint U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
-				uint s2 = x1 ^ k[1];
 				uint D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x2 ^= D ^ U;
 				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x2 ^ k[-2];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x3 ^ k[-1];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x0 ^= D ^ U;
 				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x0 ^ k[-4];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x1 ^ k[-3];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x2 ^= D ^ U;
 				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x2 ^ k[-6];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x3 ^ k[-5];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x0 ^= D ^ U;
 				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x0 ^ k[-8];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x1 ^ k[-7];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x2 ^= D ^ U;
 				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
 				
 				s1 = x2 ^ k[-10];
-				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				s2 = x3 ^ k[-9];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
 				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
 				x0 ^= D ^ U;
 				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
