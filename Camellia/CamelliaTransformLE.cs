@@ -31,20 +31,12 @@ namespace openCrypto
 	/// </summary>
 	internal sealed class CamelliaTransformLE : CamelliaTransform
 	{
-		public CamelliaTransformLE (SymmetricAlgorithmPlus algo, byte[] rgbKey, byte[] rgbIV, bool encrypt)
+		public unsafe CamelliaTransformLE (SymmetricAlgorithmPlus algo, byte[] rgbKey, byte[] rgbIV, bool encrypt)
 			: base (algo, encrypt, rgbKey.Length == 16 ? 2 : 3, rgbIV, SBOX1_1110, SBOX2_0222, SBOX3_3033, SBOX4_4404)
 		{
-			GenerateKeyTable (rgbKey, _keyTable);
-		}
-
-		static uint RightRotate8 (uint value)
-		{
-			return (value << 8) | (value >> 24);
-		}
-
-		static uint LeftRotate1 (uint value)
-		{
-			return ((value << 1) & 0xfefefefe) | (((value >> 15) | (value << 17)) & ~0xfefefefe);
+			fixed (byte* pKey = rgbKey) {
+				GenerateKeyTable ((uint*)pKey, rgbKey.Length, _keyTable);
+			}
 		}
 
 		static uint LeftShift (uint value, int shift)
@@ -69,20 +61,6 @@ namespace openCrypto
 			return value;
 		}
 
-		static unsafe void memcpy4 (uint* dst, uint* src, int n)
-		{
-			for (int i = 0; i < n; i++)
-				dst[i] = src[i];
-		}
-
-		static unsafe void XorBlock (uint* x, uint* y, uint* z)
-		{
-			z[0] = x[0] ^ y[0];
-			z[1] = x[1] ^ y[1];
-			z[2] = x[2] ^ y[2];
-			z[3] = x[3] ^ y[3];
-		}
-
 		static unsafe void RotBlock (uint* x, int n, uint* y)
 		{
 			int r = (n & 31);   /* Must not be 0 */
@@ -94,69 +72,77 @@ namespace openCrypto
 			y[1] = LeftShift (x[idx1], r) | RightShift (x[idx2], 32 - r);
 		}
 
-		static unsafe void Feistel (uint* x, uint* k, int key_offset)
+		static unsafe void GenerateKeyTable (uint *pKey, int keyLen, uint[] keyTable)
 		{
-			uint s1 = x[0] ^ k[0];
-			uint U = SBOX1_1110[(byte)s1] ^ SBOX2_0222[(byte)(s1 >> 8)] ^ SBOX3_3033[(byte)(s1 >> 16)] ^ SBOX4_4404[(byte)(s1 >> 24)];
-			uint s2 = x[1] ^ k[1];
-			uint D = SBOX2_0222[(byte)s2] ^ SBOX3_3033[(byte)(s2 >> 8)] ^ SBOX4_4404[(byte)(s2 >> 16)] ^ SBOX1_1110[(byte)(s2 >> 24)];
-
-			x[2] ^= D ^ U;
-			x[3] ^= D ^ U ^ RightRotate8 (U);
-
-			s1 = x[2] ^ k[key_offset];
-			U = SBOX1_1110[(byte)s1] ^ SBOX2_0222[(byte)(s1 >> 8)] ^ SBOX3_3033[(byte)(s1 >> 16)] ^ SBOX4_4404[(byte)(s1 >> 24)];
-			s2 = x[3] ^ k[key_offset + 1];
-			D = SBOX2_0222[(byte)s2] ^ SBOX3_3033[(byte)(s2 >> 8)] ^ SBOX4_4404[(byte)(s2 >> 16)] ^ SBOX1_1110[(byte)(s2 >> 24)];
-
-			x[0] ^= D ^ U;
-			x[1] ^= D ^ U ^ RightRotate8 (U);
-		}
-
-		static unsafe void GenerateKeyTable (byte[] rawKey, uint[] keyTable)
-		{
+			uint s1, s2, U, D;
 			uint* t = stackalloc uint[16];
-			fixed (uint* pTable = keyTable, pSIGMA = SIGMA)
-			fixed (byte* pKey = rawKey) {
-				switch (rawKey.Length) {
+			fixed (uint* pTable = keyTable) {
+				switch (keyLen) {
 				case 16: /* 128bit */
-					memcpy4 (t, (uint*)pKey, 4);
+					t[0] = pKey[0]; t[1] = pKey[1];
+					t[2] = pKey[2]; t[3] = pKey[3];
 					t[4] = t[5] = t[6] = t[7] = 0;
 					break;
 				case 24: /* 192bit */
-					memcpy4 (t, (uint*)pKey, 4);
-					for (int i = 4; i < 6; i++) {
-						uint tmp = (uint)((rawKey[4 * i] << 0) | (rawKey[4 * i + 1] << 8) |
-							(rawKey[4 * i + 2] << 16) | (rawKey[4 * i + 3] << 24));
-						t[i] = tmp;
-						t[i + 2] = ~tmp;
-					}
+					t[0] = pKey[0]; t[1] = pKey[1];
+					t[2] = pKey[2]; t[3] = pKey[3];
+					t[4] = pKey[4]; t[5] = pKey[5];
+					t[6] =~pKey[4]; t[7] =~pKey[5];
 					break;
 				case 32: /* 256bit */
-					memcpy4 (t, (uint*)pKey, 8);
+					t[0] = pKey[0]; t[1] = pKey[1];
+					t[2] = pKey[2]; t[3] = pKey[3];
+					t[4] = pKey[4]; t[5] = pKey[5];
+					t[6] = pKey[6]; t[7] = pKey[7];
 					break;
 				default:
 					throw new NotSupportedException ();
 				}
 
-				XorBlock (t, t + 4, t + 8);
-				Feistel (t + 8, pSIGMA, 2);
-				XorBlock (t + 8, t, t + 8);
-				Feistel (t + 8, pSIGMA + 4, 2);
+				t[8] = t[0] ^ t[4]; t[9] = t[1] ^ t[5];
+				t[10]= t[2] ^ t[6]; t[11]= t[3] ^ t[7];
+				s1 = t[8] ^ 0x7f669ea0; s2 = t[9] ^ 0x8b90cc3b;
+				U = SBOX1_1110[(byte)s1] ^ SBOX2_0222[(byte)(s1 >> 8)] ^ SBOX3_3033[(byte)(s1 >> 16)] ^ SBOX4_4404[(byte)(s1 >> 24)];
+				D = SBOX2_0222[(byte)s2] ^ SBOX3_3033[(byte)(s2 >> 8)] ^ SBOX4_4404[(byte)(s2 >> 16)] ^ SBOX1_1110[(byte)(s2 >> 24)];
+				t[10] ^= D ^ U; t[11] ^= D ^ U ^ ((U << 8) | (U >> 24));
+				s1 = t[10] ^ 0x58e87ab6; s2 = t[11] ^ 0xb273aa4c;
+				U = SBOX1_1110[(byte)s1] ^ SBOX2_0222[(byte)(s1 >> 8)] ^ SBOX3_3033[(byte)(s1 >> 16)] ^ SBOX4_4404[(byte)(s1 >> 24)];
+				D = SBOX2_0222[(byte)s2] ^ SBOX3_3033[(byte)(s2 >> 8)] ^ SBOX4_4404[(byte)(s2 >> 16)] ^ SBOX1_1110[(byte)(s2 >> 24)];
+				t[8] ^= D ^ U; t[9] ^= D ^ U ^ ((U << 8) | (U >> 24));
+				t[8] ^= t[0]; t[9] ^= t[1];
+				t[10]^= t[2]; t[11]^= t[3];
+				s1 = t[8] ^ 0x2f37efc6; s2 = t[9] ^ 0xbe824fe9;
+				U = SBOX1_1110[(byte)s1] ^ SBOX2_0222[(byte)(s1 >> 8)] ^ SBOX3_3033[(byte)(s1 >> 16)] ^ SBOX4_4404[(byte)(s1 >> 24)];
+				D = SBOX2_0222[(byte)s2] ^ SBOX3_3033[(byte)(s2 >> 8)] ^ SBOX4_4404[(byte)(s2 >> 16)] ^ SBOX1_1110[(byte)(s2 >> 24)];
+				t[10] ^= D ^ U; t[11] ^= D ^ U ^ ((U << 8) | (U >> 24));
+				s1 = t[10] ^ 0xa553ff54; s2 = t[11] ^ 0x1c6fd3f1;
+				U = SBOX1_1110[(byte)s1] ^ SBOX2_0222[(byte)(s1 >> 8)] ^ SBOX3_3033[(byte)(s1 >> 16)] ^ SBOX4_4404[(byte)(s1 >> 24)];
+				D = SBOX2_0222[(byte)s2] ^ SBOX3_3033[(byte)(s2 >> 8)] ^ SBOX4_4404[(byte)(s2 >> 16)] ^ SBOX1_1110[(byte)(s2 >> 24)];
+				t[8] ^= D ^ U; t[9] ^= D ^ U ^ ((U << 8) | (U >> 24));
 
 				/* Fill the keyTable. Requires many block rotations. */
-				if (rawKey.Length == 16) {
-					memcpy4 (pTable, t, 4);
-					memcpy4 (pTable + 4, t + 8, 4);
+				if (keyLen == 16) {
+					pTable[0] = t[0]; pTable[1] = t[1];
+					pTable[2] = t[2]; pTable[3] = t[3];
+					pTable[4] = t[8]; pTable[5] = t[9];
+					pTable[6] = t[10];pTable[7] = t[11];
 					for (int i = 4; i < 26; i += 2) {
 						RotBlock (t + KIDX1[i + 0], KSFT1[i + 0], pTable + i * 2);
 						RotBlock (t + KIDX1[i + 1], KSFT1[i + 1], pTable + i * 2 + 2);
 					}
 				} else {
-					XorBlock (t + 8, t + 4, t + 12);
-					Feistel (t + 12, pSIGMA + 8, 2);
-					memcpy4 (pTable, t, 4);
-					memcpy4 (pTable + 4, t + 12, 4);
+					t[12] = t[8] ^ t[4]; t[13] = t[9] ^ t[5];
+					t[14] = t[10] ^ t[6];t[15] = t[11] ^ t[7];
+					s1 = t[12] ^ 0xfa27e510; s2 = t[13] ^ 0x1d2d68de;
+					U = SBOX1_1110[(byte)s1] ^ SBOX2_0222[(byte)(s1 >> 8)] ^ SBOX3_3033[(byte)(s1 >> 16)] ^ SBOX4_4404[(byte)(s1 >> 24)];
+					D = SBOX2_0222[(byte)s2] ^ SBOX3_3033[(byte)(s2 >> 8)] ^ SBOX4_4404[(byte)(s2 >> 16)] ^ SBOX1_1110[(byte)(s2 >> 24)];
+					t[14] ^= D ^ U; t[15] ^= D ^ U ^ ((U << 8) | (U >> 24));
+					s1 = t[14] ^ 0xc28856b0; s2 = t[15] ^ 0xfdc1e6b3;
+					U = SBOX1_1110[(byte)s1] ^ SBOX2_0222[(byte)(s1 >> 8)] ^ SBOX3_3033[(byte)(s1 >> 16)] ^ SBOX4_4404[(byte)(s1 >> 24)];
+					D = SBOX2_0222[(byte)s2] ^ SBOX3_3033[(byte)(s2 >> 8)] ^ SBOX4_4404[(byte)(s2 >> 16)] ^ SBOX1_1110[(byte)(s2 >> 24)];
+					t[12] ^= D ^ U; t[13] ^= D ^ U ^ ((U << 8) | (U >> 24));
+					pTable[0] = t[0]; pTable[1] = t[1]; pTable[2] = t[2]; pTable[3] = t[3];
+					pTable[4] = t[12];pTable[5] = t[13];pTable[6] = t[14];pTable[7] = t[15];
 					for (int i = 4; i < 34; i += 2) {
 						RotBlock (t + KIDX2[i + 0], KSFT2[i + 0], (uint*)(pTable + i * 2));
 						RotBlock (t + KIDX2[i + 1], KSFT2[i + 1], (uint*)(pTable + i * 2 + 2));
@@ -217,10 +203,12 @@ namespace openCrypto
 				if (i == _flayerLimit) break;
 				
 				k += 16;
-				x1 ^= LeftRotate1 (x0 & k[0]);
+				U = x0 & k[0];
+				x1 ^= ((U << 1) & 0xfefefefe) | (((U >> 15) | (U << 17)) & ~0xfefefefe);
 				x0 ^= x1 | k[1];
 				x2 ^= x3 | k[3];
-				x3 ^= LeftRotate1 (x2 & k[2]);
+				U = x2 & k[2];
+				x3 ^= ((U << 1) & 0xfefefefe) | (((U >> 15) | (U << 17)) & ~0xfefefefe);
 			}
 			
 			ciphertext[0] = k[16] ^ x2;
@@ -281,10 +269,12 @@ namespace openCrypto
 				
 				if (i == _flayerLimit) break;
 				k -= 16;
-				x1 ^= LeftRotate1 (x0 & k[4]);
+				U = x0 & k[4];
+				x1 ^= ((U << 1) & 0xfefefefe) | (((U >> 15) | (U << 17)) & ~0xfefefefe);
 				x0 ^= x1 | k[5];
 				x2 ^= x3 | k[3];
-				x3 ^= LeftRotate1 (x2 & k[2]);
+				U = x2 & k[2];
+				x3 ^= ((U << 1) & 0xfefefefe) | (((U >> 15) | (U << 17)) & ~0xfefefefe);
 			}
 			
 			plaintext[0] = k[-14] ^ x2;
@@ -433,15 +423,6 @@ namespace openCrypto
 			0x1b1b001b, 0xa4a400a4, 0x15150015, 0x34340034, 0x1e1e001e, 0x1c1c001c, 0xf8f800f8, 0x52520052,
 			0x20200020, 0x14140014, 0xe9e900e9, 0xbdbd00bd, 0xdddd00dd, 0xe4e400e4, 0xa1a100a1, 0xe0e000e0,
 			0x8a8a008a, 0xf1f100f1, 0xd6d600d6, 0x7a7a007a, 0xbbbb00bb, 0xe3e300e3, 0x40400040, 0x4f4f004f,
-		};
-		static uint[] SIGMA =
-		{
-			0x7f669ea0, 0x8b90cc3b,
-			0x58e87ab6, 0xb273aa4c,
-			0x2f37efc6, 0xbe824fe9,
-			0xa553ff54, 0x1c6fd3f1,
-			0xfa27e510, 0x1d2d68de,
-			0xc28856b0, 0xfdc1e6b3,
 		};
 
 		static int[] KSFT1 =
