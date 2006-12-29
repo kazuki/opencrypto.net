@@ -1,5 +1,10 @@
 2006-12-29 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* CamelliaTransform.cs, CamelliaTransformLE.cs, CamelliaTransformBE.cs:
+	r1846での変更を取消し、r1845に戻した
+
+2006-12-29 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* CamelliaTransform.cs: 削除
 	* CamelliaTransformLE.cs, CamelliaTransformBE.cs: 基底クラスのコードを展開
 

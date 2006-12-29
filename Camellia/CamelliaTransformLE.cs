@@ -29,15 +29,11 @@ namespace openCrypto
 	/// <summary>
 	/// <ja>Camelliaの32bit-LittleEndian実装</ja>
 	/// </summary>
-	internal sealed class CamelliaTransformLE : SymmetricTransform
+	internal sealed class CamelliaTransformLE : CamelliaTransform
 	{
-		private int _flayerLimit;
-		private uint[] _keyTable = new uint[272 / 4];
-
 		public CamelliaTransformLE (SymmetricAlgorithmPlus algo, byte[] rgbKey, byte[] rgbIV, bool encrypt)
-			: base (algo, encrypt, rgbIV)
+			: base (algo, encrypt, rgbKey.Length == 16 ? 2 : 3, rgbIV, SBOX1_1110, SBOX2_0222, SBOX3_3033, SBOX4_4404)
 		{
-			_flayerLimit = rgbKey.Length == 16 ? 2 : 3;
 			GenerateKeyTable (rgbKey, _keyTable);
 		}
 
@@ -169,21 +165,7 @@ namespace openCrypto
 			}
 		}
 
-		protected override unsafe void EncryptECB (byte[] inputBuffer, int inputOffset, byte[] outputBuffer, int outputOffset)
-		{
-			fixed (byte* input = &inputBuffer[inputOffset], output = &outputBuffer[outputOffset])
-			fixed (uint *k = _keyTable)
-				EncryptBlock ((uint*)input, (uint*)output, k, SBOX1_1110, SBOX2_0222, SBOX3_3033, SBOX4_4404);
-		}
-
-		protected override unsafe void DecryptECB (byte[] inputBuffer, int inputOffset, byte[] outputBuffer, int outputOffset)
-		{
-			fixed (byte* input = &inputBuffer[inputOffset], output = &outputBuffer[outputOffset])
-			fixed (uint *k = _keyTable)
-				DecryptBlock ((uint*)input, (uint*)output, k, SBOX1_1110, SBOX2_0222, SBOX3_3033, SBOX4_4404);
-		}
-
-		private unsafe void EncryptBlock (uint* plaintext, uint* ciphertext, uint *k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
+		protected override unsafe void EncryptBlock (uint* plaintext, uint* ciphertext, uint *k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
 		{
 			uint x0 = plaintext[0] ^ k[0];
 			uint x1 = plaintext[1] ^ k[1];
@@ -247,7 +229,7 @@ namespace openCrypto
 			ciphertext[3] = k[19] ^ x1;
 		}
 
-		private unsafe void DecryptBlock (uint* ciphertext, uint* plaintext, uint* k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
+		protected override unsafe void DecryptBlock (uint* ciphertext, uint* plaintext, uint* k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
 		{
 			k += (_flayerLimit == 2 ? 46 : 62);
 			uint x0 = ciphertext[0] ^ k[2];
