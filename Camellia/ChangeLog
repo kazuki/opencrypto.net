@@ -1,5 +1,9 @@
 2006-12-29 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* CamelliaTransformBE.cs: インライン展開による最適化 (キースケジューリング部を重点的に)
+
+2006-12-29 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* CamelliaTransform.cs, CamelliaTransformLE.cs, CamelliaTransformBE.cs:
 	r1846での変更を取消し、r1845に戻した
 
