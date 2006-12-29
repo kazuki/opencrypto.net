@@ -42,7 +42,7 @@ namespace openCrypto
 			return (value << 8) | (value >> 24);
 		}
 
-		protected override uint LeftRotate1 (uint value)
+		static uint LeftRotate1 (uint value)
 		{
 			return ((value << 1) & 0xfefefefe) | (((value >> 15) | (value << 17)) & ~0xfefefefe);
 		}
@@ -163,6 +163,134 @@ namespace openCrypto
 					}
 				}
 			}
+		}
+
+		protected override unsafe void EncryptBlock (uint* plaintext, uint* ciphertext, uint *k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
+		{
+			uint x0 = plaintext[0] ^ k[0];
+			uint x1 = plaintext[1] ^ k[1];
+			uint x2 = plaintext[2] ^ k[2];
+			uint x3 = plaintext[3] ^ k[3];
+			
+			for (int i = 0;; i++) {
+				uint s1 = x0 ^ k[4], s2 = x1 ^ k[5];
+				uint U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				uint D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x2 ^= D ^ U;
+				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x2 ^ k[6];
+				s2 = x3 ^ k[7];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x0 ^= D ^ U;
+				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x0 ^ k[8];
+				s2 = x1 ^ k[9];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x2 ^= D ^ U;
+				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x2 ^ k[10];
+				s2 = x3 ^ k[11];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x0 ^= D ^ U;
+				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x0 ^ k[12];
+				s2 = x1 ^ k[13];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x2 ^= D ^ U;
+				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x2 ^ k[14];
+				s2 = x3 ^ k[15];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x0 ^= D ^ U;
+				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				if (i == _flayerLimit) break;
+				
+				k += 16;
+				x1 ^= LeftRotate1 (x0 & k[0]);
+				x0 ^= x1 | k[1];
+				x2 ^= x3 | k[3];
+				x3 ^= LeftRotate1 (x2 & k[2]);
+			}
+			
+			ciphertext[0] = k[16] ^ x2;
+			ciphertext[1] = k[17] ^ x3;
+			ciphertext[2] = k[18] ^ x0;
+			ciphertext[3] = k[19] ^ x1;
+		}
+
+		protected override unsafe void DecryptBlock (uint* ciphertext, uint* plaintext, uint* k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
+		{
+			k += (_flayerLimit == 2 ? 46 : 62);
+			uint x0 = ciphertext[0] ^ k[2];
+			uint x1 = ciphertext[1] ^ k[3];
+			uint x2 = ciphertext[2] ^ k[4];
+			uint x3 = ciphertext[3] ^ k[5];
+			
+			for (int i = 0;; i++) {
+				uint s1 = x0 ^ k[0], s2 = x1 ^ k[1];
+				uint U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				uint D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x2 ^= D ^ U;
+				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x2 ^ k[-2];
+				s2 = x3 ^ k[-1];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x0 ^= D ^ U;
+				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x0 ^ k[-4];
+				s2 = x1 ^ k[-3];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x2 ^= D ^ U;
+				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x2 ^ k[-6];
+				s2 = x3 ^ k[-5];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x0 ^= D ^ U;
+				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x0 ^ k[-8];
+				s2 = x1 ^ k[-7];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x2 ^= D ^ U;
+				x3 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				s1 = x2 ^ k[-10];
+				s2 = x3 ^ k[-9];
+				U = sbox1[(byte)s1] ^ sbox2[(byte)(s1 >> 8)] ^ sbox3[(byte)(s1 >> 16)] ^ sbox4[(byte)(s1 >> 24)];
+				D = sbox2[(byte)s2] ^ sbox3[(byte)(s2 >> 8)] ^ sbox4[(byte)(s2 >> 16)] ^ sbox1[(byte)(s2 >> 24)];
+				x0 ^= D ^ U;
+				x1 ^= D ^ U ^ ((U << 8) | (U >> 24));
+				
+				if (i == _flayerLimit) break;
+				k -= 16;
+				x1 ^= LeftRotate1 (x0 & k[4]);
+				x0 ^= x1 | k[5];
+				x2 ^= x3 | k[3];
+				x3 ^= LeftRotate1 (x2 & k[2]);
+			}
+			
+			plaintext[0] = k[-14] ^ x2;
+			plaintext[1] = k[-13] ^ x3;
+			plaintext[2] = k[-12] ^ x0;
+			plaintext[3] = k[-11] ^ x1;
 		}
 
 		#region Data

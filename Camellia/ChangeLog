@@ -1,3 +1,8 @@
+2006-12-29 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* CamelliaTransform.cs, CamelliaTransformLB.cs, CamelliaTransformBE.cs:
+	基底クラスに統合したコードを分離。ビッグエンディアン用のコードを修正
+
 2006-12-28 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* CamelliaTransform.cs: EncryptBlock, DecryptBlock中の演算の順序を変更

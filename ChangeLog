@@ -1,5 +1,9 @@
 2006-12-29 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* Program.cs: NUnitコンソールが動かない環境でも簡易テストを行えるように改良
+
+2006-12-29 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* Program.cs: ブロック間暗号モードの速度低下率を計測するプログラムを追加
 
 2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>

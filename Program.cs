@@ -24,6 +24,9 @@
 using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
+#if TEST
+using openCrypto.Tests;
+#endif
 
 namespace openCrypto
 {
@@ -34,6 +37,13 @@ namespace openCrypto
 		/// </summary>
 		static void Main (string[] args)
 		{
+#if TEST
+			if (args.Length == 1 && args[0] == "test") {
+				RunTests ();
+				return;
+			}
+#endif
+
 			SymmetricAlgorithmPlus[] algos = new SymmetricAlgorithmPlus[] {
 				new CamelliaManaged (),
 				new RijndaelManaged ()
@@ -204,5 +214,36 @@ namespace openCrypto
 
 			return new double[] {time1 / time3, time2 / time4};
 		}
+
+#if TEST
+		static void RunTests ()
+		{
+			RijndaelTest rt = new RijndaelTest ();
+			rt.TestECB ();
+			rt.TestECB_MultiBlock_1 ();
+			rt.TestECB_MultiBlock_2 ();
+			rt.TestCBC_MultiBlock_1 ();
+			rt.TestCBC_MultiBlock_2 ();
+			rt.TestOFB_MultiBlock_1 ();
+			rt.TestOFB_MultiBlock_2 ();
+			rt.TestCFB_MultiBlock_1 ();
+			rt.TestCFB_MultiBlock_2 ();
+			rt.TestCTR_MultiBlock_1 ();
+			rt.TestCTR_MultiBlock_2 ();
+
+			CamelliaTest ct = new CamelliaTest ();
+			ct.TestECB ();
+			ct.TestECB_MultiBlock_1 ();
+			ct.TestECB_MultiBlock_2 ();
+			ct.TestCBC_MultiBlock_1 ();
+			ct.TestCBC_MultiBlock_2 ();
+			ct.TestOFB_MultiBlock_1 ();
+			ct.TestOFB_MultiBlock_2 ();
+			ct.TestCFB_MultiBlock_1 ();
+			ct.TestCFB_MultiBlock_2 ();
+			ct.TestCTR_MultiBlock_1 ();
+			ct.TestCTR_MultiBlock_2 ();
+		}
+#endif
 	}
 }
