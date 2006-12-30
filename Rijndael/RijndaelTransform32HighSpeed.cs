@@ -152,7 +152,7 @@ namespace openCrypto
 			outdata[12] = (byte)(SBox[b3 >> 24] ^ (byte)(ekey[ei] >> 24));
 			outdata[13] = (byte)(SBox[(byte)(b0 >> 16)] ^ (byte)(ekey[ei] >> 16));
 			outdata[14] = (byte)(SBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[15] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei++]);
+			outdata[15] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei]);
 		}
 		protected override unsafe void Encrypt192 (byte* indata, byte* outdata, uint[] ekey)
 		{
@@ -305,7 +305,7 @@ namespace openCrypto
 			outdata[20] = (byte)(SBox[b5 >> 24] ^ (byte)(ekey[ei] >> 24));
 			outdata[21] = (byte)(SBox[(byte)(b0 >> 16)] ^ (byte)(ekey[ei] >> 16));
 			outdata[22] = (byte)(SBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[23] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei++]);
+			outdata[23] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei]);
 		}
 		protected override unsafe void Encrypt256 (byte* indata, byte* outdata, uint[] ekey)
 		{
@@ -613,7 +613,7 @@ namespace openCrypto
 			outdata[12] = (byte)(iSBox[b3 >> 24] ^ (byte)(ekey[ei] >> 24));
 			outdata[13] = (byte)(iSBox[(byte)(b2 >> 16)] ^ (byte)(ekey[ei] >> 16));
 			outdata[14] = (byte)(iSBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[15] = (byte)(iSBox[(byte)b0] ^ (byte)ekey[ei++]);
+			outdata[15] = (byte)(iSBox[(byte)b0] ^ (byte)ekey[ei]);
 		}
 		protected override unsafe void Decrypt192 (byte* indata, byte* outdata, uint[] ekey)
 		{
@@ -766,7 +766,7 @@ namespace openCrypto
 			outdata[20] = (byte)(iSBox[b5 >> 24] ^ (byte)(ekey[ei] >> 24));
 			outdata[21] = (byte)(iSBox[(byte)(b4 >> 16)] ^ (byte)(ekey[ei] >> 16));
 			outdata[22] = (byte)(iSBox[(byte)(b3 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[23] = (byte)(iSBox[(byte)b2] ^ (byte)ekey[ei++]);
+			outdata[23] = (byte)(iSBox[(byte)b2] ^ (byte)ekey[ei]);
 		}
 		protected override unsafe void Decrypt256 (byte* indata, byte* outdata, uint[] ekey)
 		{
