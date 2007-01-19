@@ -1,3 +1,8 @@
+2007-01-19 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* CamelliaTransform64LE.cs, CamelliaManaged.cs: 64bit実装を削除
+	(Opteronにおいて、32bit実装よりも遅く、メンテする時間も無いため)
+
 2007-01-18 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* CamelliaTransform.cs: r1847での戻し忘れ

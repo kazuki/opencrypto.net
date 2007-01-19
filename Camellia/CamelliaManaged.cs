@@ -52,9 +52,7 @@ namespace openCrypto
 				throw new NotImplementedException ();
 
 			if (BitConverter.IsLittleEndian) {
-				if (IntPtr.Size != 8)
-					return new CamelliaTransformLE (this, rgbKey, rgbIV, encrypt);
-				return new CamelliaTransform64LE (rgbKey, rgbIV, this, encrypt);
+				return new CamelliaTransformLE (this, rgbKey, rgbIV, encrypt);
 			} else {
 				return new CamelliaTransformBE (this, rgbKey, rgbIV, encrypt);
 			}
