@@ -8,7 +8,6 @@ SymmetricTransform.cs
 Camellia/Camellia.cs
 Camellia/CamelliaManaged.cs
 Camellia/CamelliaTransform.cs
-Camellia/CamelliaTransform64LE.cs
 Camellia/CamelliaTransformBE.cs
 Camellia/CamelliaTransformLE.cs
 Properties/AssemblyInfo.cs
