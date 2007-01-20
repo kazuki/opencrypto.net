@@ -55,7 +55,7 @@ namespace openCrypto
 			if (_mode != CipherModePlus.ECB)
 				_temp = new byte[iv.Length];
 
-			if (_algo.NumberOfThreads >= 1 && (algo.ModePlus == CipherModePlus.ECB/* || algo.ModePlus == CipherModePlus.CTR*/)) {
+			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB/* || algo.ModePlus == CipherModePlus.CTR*/)) {
 				_threads = new ProcessThread [algo.NumberOfThreads];
 				for (int i = 0; i < _threads.Length; i ++)
 					_threads[i] = new ProcessThread (this, _mode);

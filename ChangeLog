@@ -1,5 +1,10 @@
 2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricTransform.cs: スレッド数が1でも、新たなスレッドを生成していたのを修正
+	(デバッグ用に有効にしていたのを直し忘れてた)
+
+2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* ConfluentWaitHandle.cs: 一度に複数のスレッド数を待機対象に追加するメソッドを追加
 	* SymmetricTransform.cs: ECBモード時のマルチスレッド化機能を追加
 
