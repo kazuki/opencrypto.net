@@ -1,3 +1,7 @@
+2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* SymmetricAlgorithmTestBase.cs: ICryptoTransformを開放していない部分があったのを修正
+
 2006-12-27 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* SymmetricAlgorithmTestBase.cs: 最大長のブロック／鍵サイズでテストを行えていなかったのを修正

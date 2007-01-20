@@ -50,18 +50,23 @@ namespace openCrypto.Tests
 			int counter = 0;
 			algo.Mode = CipherMode.ECB;
 			String keyText = "";
-			while (helper.ReadNext ()) {
-				counter ++;
-				if (ct == null || helper.IsUpdateKey) {
-					byte[] key = helper.Key;
-					keyText = ToString (key);
-					ct = algo.CreateEncryptor (key, new byte[algo.BlockSize >> 3]);
+			try {
+				while (helper.ReadNext ()) {
+					counter ++;
+					if (ct == null || helper.IsUpdateKey) {
+						byte[] key = helper.Key;
+						keyText = ToString (key);
+						if (ct != null) ct.Dispose ();
+						ct = algo.CreateEncryptor (key, new byte[algo.BlockSize >> 3]);
+					}
+					byte[] output = new byte[ct.OutputBlockSize];
+					ct.TransformBlock (helper.PlainText, 0, helper.PlainText.Length, output, 0);
+					for (int i = 0; i < output.Length; i ++)
+						if (output[i] != helper.CryptText[i])
+							Assert.Fail (counter.ToString () + " " + ToString(helper.CryptText) + " != " + ToString (output) + " [Key=" + keyText + "]");
 				}
-				byte[] output = new byte[ct.OutputBlockSize];
-				ct.TransformBlock (helper.PlainText, 0, helper.PlainText.Length, output, 0);
-				for (int i = 0; i < output.Length; i ++)
-					if (output[i] != helper.CryptText[i])
-						Assert.Fail (counter.ToString () + " " + ToString(helper.CryptText) + " != " + ToString (output) + " [Key=" + keyText + "]");
+			} finally {
+				if (ct != null) ct.Dispose ();
 			}
 		}
 

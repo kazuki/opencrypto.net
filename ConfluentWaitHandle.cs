@@ -50,6 +50,15 @@ namespace openCrypto
 		}
 
 		/// <summary>
+		/// <ja>終了を待機するスレッドを追加するメソッド</ja>
+		/// </summary>
+		public void StartThreads (int num)
+		{
+			_handle.Reset ();
+			Interlocked.Add (ref _counter, num);
+		}
+
+		/// <summary>
 		/// <ja>待機しているスレッドが終了したことを通知するメソッド</ja>
 		/// </summary>
 		public void EndThread ()

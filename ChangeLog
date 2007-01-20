@@ -1,5 +1,10 @@
 2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* ConfluentWaitHandle.cs: 一度に複数のスレッド数を待機対象に追加するメソッドを追加
+	* SymmetricTransform.cs: ECBモード時のマルチスレッド化機能を追加
+
+2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* Program.cs:
 	- 鍵生成速度計測部分からリソース開放コストを除外
 	- 変換速度計測に利用するバッファサイズを拡張

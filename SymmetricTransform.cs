@@ -39,7 +39,8 @@ namespace openCrypto
 		protected CipherModePlus _mode;
 		private int _blockBytes, _mt_threshold;
 		protected bool _encryptMode;
-		private Thread[] _threads;
+		private ProcessThread[] _threads;
+		private ConfluentWaitHandle _waitHandle;
 		private byte[] _iv;
 		private byte[] _temp;
 
@@ -54,8 +55,11 @@ namespace openCrypto
 			if (_mode != CipherModePlus.ECB)
 				_temp = new byte[iv.Length];
 
-			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB || algo.ModePlus == CipherModePlus.CTR)) {
-				_threads = new Thread [algo.NumberOfThreads];
+			if (_algo.NumberOfThreads >= 1 && (algo.ModePlus == CipherModePlus.ECB/* || algo.ModePlus == CipherModePlus.CTR*/)) {
+				_threads = new ProcessThread [algo.NumberOfThreads];
+				for (int i = 0; i < _threads.Length; i ++)
+					_threads[i] = new ProcessThread (this, _mode);
+				_waitHandle = new ConfluentWaitHandle ();
 			} else {
 				_threads = null;
 			}
@@ -152,7 +156,18 @@ namespace openCrypto
 					throw new CryptographicException ();
 				}
 			} else {
-				throw new NotImplementedException ();
+				int blocks = inputCount / _blockBytes;
+				int div = blocks / _threads.Length;
+				int rem = blocks % _threads.Length;
+				int q = 0;
+				_waitHandle.StartThreads (_threads.Length + 1);
+				for (int i = 0; i < _threads.Length; i ++) {
+					int size = _blockBytes * (div + (rem-- > 0 ? 1 : 0));
+					_threads[i].Start (inputBuffer, inputOffset + q, size, outputBuffer, outputOffset + q);
+					q += size;
+				}
+				_waitHandle.EndThread ();
+				_waitHandle.WaitOne ();
 			}
 
 			return inputCount;
@@ -234,6 +249,75 @@ namespace openCrypto
 
 		public virtual void Dispose ()
 		{
+			if (_threads == null) return;
+			for (int i = 0; i < _threads.Length; i ++)
+				_threads[i].Close ();
+			for (int i = 0; i < _threads.Length; i ++)
+				_threads[i].Join ();
+			_waitHandle.Close ();
+		}
+
+		internal class ProcessThread {
+			byte[] _inputBuffer, _outputBuffer;
+			int _inputOffset, _outputOffset, _inputCount;
+			SymmetricTransform _st;
+			Thread _thrd;
+			CipherModePlus _mode;
+			AutoResetEvent _done;
+			bool _closing = false, _encryptMode;
+
+			public ProcessThread (SymmetricTransform st, CipherModePlus mode)
+			{
+				_st = st;
+				_done = new AutoResetEvent (false);
+				_thrd = new Thread (Run);
+				_mode = mode;
+				_encryptMode = _st._encryptMode;
+				_thrd.Start ();
+			}
+
+			public void Start (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+			{
+				_inputBuffer = inputBuffer; _outputBuffer = outputBuffer;
+				_inputOffset = inputOffset; _outputOffset = outputOffset;
+				_inputCount = inputCount;
+				_done.Set ();
+			}
+
+			void Run ()
+			{
+				if (_closing) return;
+				while (_done.WaitOne ()) {
+					if (_closing) {
+						_done.Close ();
+						return;
+					}
+
+					if (_mode == CipherModePlus.ECB) {
+						if (_encryptMode) {
+							for (int q = 0; q < _inputCount; q += _st.InputBlockSize)
+								_st.EncryptECB (_inputBuffer, _inputOffset + q, _outputBuffer, _outputOffset + q);
+						} else {
+							for (int q = 0; q < _inputCount; q += _st.InputBlockSize)
+								_st.DecryptECB (_inputBuffer, _inputOffset + q, _outputBuffer, _outputOffset + q);
+						}
+					}
+					_st._waitHandle.EndThread ();
+				}
+			}
+
+			public void Close ()
+			{
+				if (_closing) return;
+				_closing = true;
+				_done.Set ();
+			}
+
+			public void Join ()
+			{
+				if (_thrd.IsAlive)
+					_thrd.Join ();
+			}
 		}
 	}
 }
