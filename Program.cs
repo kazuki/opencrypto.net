@@ -121,7 +121,8 @@ namespace openCrypto
 
 		static double[] keygenSpeedTest (SymmetricAlgorithmPlus algo)
 		{
-			const int LOOPS = 1 << 10;
+			const int LOOPS = 1 << 2;
+			ICryptoTransform[] list = new ICryptoTransform[LOOPS];
 			byte[] key  = new byte[algo.KeySize >> 3];
 			byte[] iv   = new byte[algo.BlockSize >> 3];
 			Stopwatch sw = new Stopwatch ();
@@ -129,25 +130,25 @@ namespace openCrypto
 
 			Helpers.RNG.GetBytes (key);
 			sw.Stop (); sw.Reset (); sw.Start ();
-			for (int i = 0; i < LOOPS; i ++) {
-				using (ICryptoTransform ct = algo.CreateEncryptor (key, iv)) {
-				}
-			}
+			for (int i = 0; i < LOOPS; i ++)
+				list[i] = algo.CreateEncryptor (key, iv);
 			sw.Stop ();
+			for (int i = 0; i < LOOPS; i ++)
+				list[i].Dispose ();
 			time = sw.ElapsedTicks / (double)LOOPS;
 
 			sw.Reset (); sw.Start ();
-			for (int i = 0; i < LOOPS; i ++) {
-				using (ICryptoTransform ct = algo.CreateDecryptor (key, iv)) {
-				}
-			}
+			for (int i = 0; i < LOOPS; i ++)
+				list[i] = algo.CreateDecryptor (key, iv);
 			sw.Stop ();
+			for (int i = 0; i < LOOPS; i ++)
+				list[i].Dispose ();
 			return new double[] {time, sw.Elapsed.Ticks / (double)LOOPS};
 		}
 
 		static double[] cryptoSpeedTest (SymmetricAlgorithmPlus algo)
 		{
-			const int SIZE = 1 << 20;
+			const int SIZE = 1 << 26;
 			byte[] bufA = new byte[SIZE];
 			byte[] bufB = new byte[bufA.Length];
 			byte[] key  = new byte[algo.KeySize >> 3];
