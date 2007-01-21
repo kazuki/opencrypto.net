@@ -38,11 +38,8 @@ namespace openCrypto
 		static void Main (string[] args)
 		{
 #if TEST
-			if (args.Length == 1 && args[0] == "test") {
-				RunTests ();
-				return;
-			}
-#endif
+			RunTests ();
+#else
 
 			SymmetricAlgorithmPlus[] algos = new SymmetricAlgorithmPlus[] {
 				new CamelliaManaged (),
@@ -117,6 +114,7 @@ namespace openCrypto
 					Console.WriteLine ("||{0}||{1:f2}||{2:f2}||", mlist[i], avg[0] * 100.0 / 5.0, avg[1] * 100.0 / 5.0);
 				} catch {}
 			}
+#endif
 		}
 
 		static double[] keygenSpeedTest (SymmetricAlgorithmPlus algo)
@@ -220,7 +218,7 @@ namespace openCrypto
 		static void RunTests ()
 		{
 			RijndaelTest rt = new RijndaelTest ();
-			rt.TestECB ();
+			//rt.TestECB ();
 			rt.TestECB_MultiBlock_1 ();
 			rt.TestECB_MultiBlock_2 ();
 			rt.TestCBC_MultiBlock_1 ();
@@ -233,7 +231,7 @@ namespace openCrypto
 			rt.TestCTR_MultiBlock_2 ();
 
 			CamelliaTest ct = new CamelliaTest ();
-			ct.TestECB ();
+			//ct.TestECB ();
 			ct.TestECB_MultiBlock_1 ();
 			ct.TestECB_MultiBlock_2 ();
 			ct.TestCBC_MultiBlock_1 ();
