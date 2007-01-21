@@ -1,5 +1,9 @@
 2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricTransform.cs: スレッドプールを利用するように変更
+
+2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* Program.cs: TESTビルド時は一部のテストだけを実行するように変更
 	* openCrypto.NET.csproj: 更新
 
