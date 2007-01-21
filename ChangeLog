@@ -1,5 +1,9 @@
 2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* Program.cs: 速度計測時に鍵生成時間等が含まれていたのを修正
+
+2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* SymmetricTransform.cs: スレッドプールを利用するように変更
 
 2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
