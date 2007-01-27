@@ -54,7 +54,7 @@ namespace openCrypto
 			_iv = (byte[])iv.Clone ();
 			_mode = algo.ModePlus;
 
-			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB || algo.ModePlus == CipherModePlus.CTR)) {
+			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB || algo.ModePlus == CipherModePlus.CTR || (algo.ModePlus == CipherModePlus.CBC && !encryptMode))) {
 				_useThread = true;
 				_waitHandle = new ConfluentWaitHandle ();
 				_threads = _algo.NumberOfThreads;
@@ -258,6 +258,7 @@ namespace openCrypto
 		void ThreadProcess (object o)
 		{
 			ProcessThreadInfo info = (ProcessThreadInfo)o;
+			byte[] temp = (_mode == CipherModePlus.ECB ? null : _mt_temp[info.ThreadIndex]);
 			switch (_mode) {
 			case CipherModePlus.ECB:
 				if (_encryptMode) {
@@ -268,8 +269,29 @@ namespace openCrypto
 						DecryptECB (info.InputBuffer, info.InputOffset + q, info.OutputBuffer, info.OutputOffset + q);
 				}
 				break;
+			case CipherModePlus.CBC:
+				if (info.BlockIndex == 0) {
+					for (int i = 0; i < _iv.Length; i ++)
+						temp[i] = _iv[i];
+				} else {
+					for (int i = 0; i < _iv.Length; i ++)
+						temp[i] = info.InputBuffer[info.InputOffset - InputBlockSize + i];
+				}
+
+				for (int q = 0; q < info.InputCount; q += InputBlockSize) {
+					DecryptECB (info.InputBuffer, info.InputOffset + q, info.OutputBuffer, info.OutputOffset + q);
+					for (int j = 0; j < InputBlockSize; j ++) {
+						info.OutputBuffer[info.OutputOffset + q + j] ^= temp[j];
+						temp[j] = info.InputBuffer[info.InputOffset + q + j];
+					}
+				}
+
+				if (info.NeedsUpdateIV) {
+					for (int i = 0; i < temp.Length; i ++)
+						_iv[i] = temp[i];
+				}
+				break;
 			case CipherModePlus.CTR:
-				byte[] temp = _mt_temp[info.ThreadIndex];
 				if (info.BlockIndex == 0) {
 					for (int i = 0; i < _iv.Length; i ++)
 						temp[i] = _iv[i];

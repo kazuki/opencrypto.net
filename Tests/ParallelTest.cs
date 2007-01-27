@@ -33,6 +33,12 @@ namespace openCrypto.Tests
 	public class ParallelTest
 	{
 		[Test]
+		public void TestCBC ()
+		{
+			RunTest (new CamelliaManaged (), CipherModePlus.CBC);
+		}
+
+		[Test]
 		public void TestCTR ()
 		{
 			RunTest (new CamelliaManaged (), CipherModePlus.CTR);
@@ -76,3 +82,4 @@ namespace openCrypto.Tests
 		}
 	}
 }
+#endif

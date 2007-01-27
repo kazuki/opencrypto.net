@@ -1,5 +1,9 @@
 2007-01-28 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricTransform.cs: CBCモード利用の復号時の並列化処理を実装
+
+2007-01-28 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* SymmetricTransform.cs: CTRモード利用時の並列化処理を実装
 
 2007-01-28 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
