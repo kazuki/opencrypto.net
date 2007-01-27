@@ -1,3 +1,7 @@
+2007-01-28 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* Program.cs: 計測プログラムをマルチスレッドに対応させた
+
 2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* Program.cs: 速度計測時に鍵生成時間等が含まれていたのを修正

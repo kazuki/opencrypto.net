@@ -45,11 +45,6 @@ namespace openCrypto
 				new CamelliaManaged (),
 				new RijndaelManaged ()
 			};
-			CipherImplementationType[] types = new CipherImplementationType[] {
-				CipherImplementationType.LowMemory,
-				CipherImplementationType.Balanced,
-				CipherImplementationType.HighSpeed
-			};
 			CipherModePlus[] modes = new CipherModePlus[] {
 				CipherModePlus.ECB,
 				CipherModePlus.CBC,
@@ -59,15 +54,14 @@ namespace openCrypto
 				CipherModePlus.CTR,
 			};
 			String[] list = new String[] {"Camellia", "Rijndael"};
-			String[] tlist = new String[]{"LowMemory", "Balanced", "HighSpeed"};
 			String[] mlist = new String[]{"ECB", "CBC", "OFB", "CFB", "CTS", "CTR"};
 
-			Console.WriteLine ("||アルゴリズム||実装タイプ||キーサイズ||ブロックサイズ||暗号化速度||復号速度||鍵生成時間(暗号)||鍵生成時間(復号)||");
-			for (int i = 0; i < algos.Length; i ++) {
-				for (int j = 0; j < types.Length; j ++) {
-					if (!algos[i].HasImplementation (types[j]))
-						continue;
-					algos[i].ImplementationType = types[j];
+			for (int threads = 1; threads <= Environment.ProcessorCount; threads ++) {
+				Console.WriteLine ("===== スレッド数 = {0} =====", threads);
+				Console.WriteLine ("||アルゴリズム||キーサイズ||ブロックサイズ||暗号化速度||復号速度||鍵生成時間(暗号)||鍵生成時間(復号)||");
+				for (int i = 0; i < algos.Length; i ++) {
+					algos[i].ImplementationType = CipherImplementationType.HighSpeed;
+					algos[i].NumberOfThreads = threads;
 					KeySizes keySizes = algos[i].LegalKeySizes[0];
 					KeySizes blockSizes = algos[i].LegalBlockSizes[0];
 					int keySize = keySizes.MinSize;
@@ -89,9 +83,9 @@ namespace openCrypto
 							for (int k = 0; k < 4; k ++)
 								speeds[k] /= 5.0;
 							
-							Console.WriteLine ("||{0}||{5}||{1} bits||{2} bits||{3:f2} Mbps||{4:f2} Mbps||{6:f2} ticks||{7:f2} ticks||",
+							Console.WriteLine ("||{0}||{1} bits||{2} bits||{3:f2} Mbps||{4:f2} Mbps||{5:f2} ticks||{6:f2} ticks||",
 													 list[i], algos[i].KeySize, algos[i].BlockSize,
-													 speeds[0], speeds[1], tlist[j], speeds[2], speeds[3]);
+													 speeds[0], speeds[1], speeds[2], speeds[3]);
 							if (blockSizes.SkipSize == 0) break;
 							blockSize += blockSizes.SkipSize;
 						} while (blockSize <= blockSizes.MaxSize);
@@ -99,20 +93,20 @@ namespace openCrypto
 						keySize += keySizes.SkipSize;
 					} while (keySize <= keySizes.MaxSize);
 				}
-			}
-
-			Console.WriteLine (String.Empty);
-			Console.WriteLine ("||ブロックモード||加速率(暗号化:%)||加速率(復号:%)||");
-			for (int i = 0; i < modes.Length; i ++) {
-				try {
-					double[] avg = new double[] {0.0, 0.0};
-					for (int k = 0; k < 5; k ++) {
-						double[] temp = BlockCipherModeCost (modes[i]);
-						avg[0] += temp[0];
-						avg[1] += temp[1];
-					}
-					Console.WriteLine ("||{0}||{1:f2}||{2:f2}||", mlist[i], avg[0] * 100.0 / 5.0, avg[1] * 100.0 / 5.0);
-				} catch {}
+				
+				Console.WriteLine (String.Empty);
+				Console.WriteLine ("||ブロックモード||加速率(暗号化:%)||加速率(復号:%)||");
+				for (int i = 0; i < modes.Length; i ++) {
+					try {
+						double[] avg = new double[] {0.0, 0.0};
+						for (int k = 0; k < 5; k ++) {
+							double[] temp = BlockCipherModeCost (modes[i], threads);
+							avg[0] += temp[0];
+							avg[1] += temp[1];
+						}
+						Console.WriteLine ("||{0}||{1:f2}||{2:f2}||", mlist[i], avg[0] * 100.0 / 5.0, avg[1] * 100.0 / 5.0);
+					} catch {}
+				}
 			}
 #endif
 		}
@@ -172,7 +166,7 @@ namespace openCrypto
 			return new double[] {mbsize / time, mbsize / sw.Elapsed.TotalSeconds};
 		}
 
-		static double[] BlockCipherModeCost (CipherModePlus mode)
+		static double[] BlockCipherModeCost (CipherModePlus mode, int threads)
 		{
 			const int SIZE = 1 << 20;
 			RijndaelManaged algo = new RijndaelManaged ();
@@ -187,6 +181,7 @@ namespace openCrypto
 			Helpers.RNG.GetBytes (key);
 			Helpers.RNG.GetBytes (iv);
 
+			algo.NumberOfThreads = threads;
 			algo.ModePlus = CipherModePlus.ECB;
 			sw.Stop (); sw.Reset (); sw.Start ();
 			using (ICryptoTransform ct = algo.CreateEncryptor (key, iv))
