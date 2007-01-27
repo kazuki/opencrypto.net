@@ -21,6 +21,7 @@ Tests/CamelliaTest.cs
 Tests/ConfluentWaitHandleTest.cs
 Tests/DummyAlgorithm.cs
 Tests/PaddingModeTest.cs
+Tests/ParallelTest.cs
 Tests/RijndaelTest.cs
 Tests/SymmetricAlgorithmPlusTest.cs
 Tests/SymmetricAlgorithmTestBase.cs

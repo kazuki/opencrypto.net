@@ -1,3 +1,7 @@
+2007-01-28 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* ParallelTest.cs: 追加
+
 2007-01-21 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* SymmetricAlgorithmTestBase.cs: ICryptoTransformを開放していない部分があったのを修正

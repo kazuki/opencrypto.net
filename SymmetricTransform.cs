@@ -43,6 +43,7 @@ namespace openCrypto
 		private ConfluentWaitHandle _waitHandle;
 		private byte[] _iv;
 		private byte[] _temp;
+		private byte[][] _mt_temp;
 
 		public SymmetricTransform (SymmetricAlgorithmPlus algo, bool encryptMode, byte[] iv)
 		{
@@ -52,14 +53,18 @@ namespace openCrypto
 			_mt_threshold = _blockBytes * 2;
 			_iv = (byte[])iv.Clone ();
 			_mode = algo.ModePlus;
-			if (_mode != CipherModePlus.ECB)
-				_temp = new byte[iv.Length];
 
-			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB/* || algo.ModePlus == CipherModePlus.CTR*/)) {
+			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB || algo.ModePlus == CipherModePlus.CTR)) {
 				_useThread = true;
 				_waitHandle = new ConfluentWaitHandle ();
 				_threads = _algo.NumberOfThreads;
-			}
+				if (_mode != CipherModePlus.ECB) {
+					_mt_temp = new byte[_threads][];
+					for (int i = 0; i < _mt_temp.Length; i ++)
+						_mt_temp[i] = new byte[iv.Length];
+				}
+			} else if (_mode != CipherModePlus.ECB)
+				_temp = new byte[iv.Length];
 		}
 
 		public bool CanReuseTransform {
@@ -156,11 +161,12 @@ namespace openCrypto
 				int blocks = inputCount / _blockBytes;
 				int div = blocks / _threads;
 				int rem = blocks % _threads;
-				int q = 0;
 				_waitHandle.StartThreads (_threads);
-				for (int i = 0; i < _threads; i ++) {
+				for (int i = 0, idx = 0, q = 0; i < _threads; i ++) {
 					int size = _blockBytes * (div + (rem-- > 0 ? 1 : 0));
-					ThreadPool.QueueUserWorkItem (ThreadProcess, new ProcessThreadInfo (this, inputBuffer, inputOffset + q, size, outputBuffer, outputOffset + q));
+					bool isLast = (q + size) == inputCount;
+					ThreadPool.QueueUserWorkItem (ThreadProcess, new ProcessThreadInfo (this, inputBuffer, inputOffset + q, size, outputBuffer, outputOffset + q, idx, i, isLast));
+					idx += size / _blockBytes;
 					q += size;
 				}
 				_waitHandle.WaitOne ();
@@ -252,29 +258,71 @@ namespace openCrypto
 		void ThreadProcess (object o)
 		{
 			ProcessThreadInfo info = (ProcessThreadInfo)o;
-			if (_mode == CipherModePlus.ECB) {
+			switch (_mode) {
+			case CipherModePlus.ECB:
 				if (_encryptMode) {
-					for (int q = 0; q < info._inputCount; q += InputBlockSize)
-						EncryptECB (info._inputBuffer, info._inputOffset + q, info._outputBuffer, info._outputOffset + q);
+					for (int q = 0; q < info.InputCount; q += InputBlockSize)
+						EncryptECB (info.InputBuffer, info.InputOffset + q, info.OutputBuffer, info.OutputOffset + q);
 				} else {
-					for (int q = 0; q < info._inputCount; q += InputBlockSize)
-						DecryptECB (info._inputBuffer, info._inputOffset + q, info._outputBuffer, info._outputOffset + q);
+					for (int q = 0; q < info.InputCount; q += InputBlockSize)
+						DecryptECB (info.InputBuffer, info.InputOffset + q, info.OutputBuffer, info.OutputOffset + q);
 				}
+				break;
+			case CipherModePlus.CTR:
+				byte[] temp = _mt_temp[info.ThreadIndex];
+				if (info.BlockIndex == 0) {
+					for (int i = 0; i < _iv.Length; i ++)
+						temp[i] = _iv[i];
+				} else {
+					int indexbuf = info.BlockIndex;
+					for (int i = _iv.Length - 1; i >= 0; i --) {
+						int tmp = _iv[i] + (indexbuf & 0xFF);
+						indexbuf >>= 8;
+						if (tmp > 0xFF)
+							indexbuf += tmp >> 8;
+						temp[i] = (byte)tmp;
+					}
+				}
+
+				for (int q = 0; q < info.InputCount; q += InputBlockSize) {
+					EncryptECB (temp, 0, info.OutputBuffer, info.OutputOffset + q);
+					Xor (info.OutputBuffer, info.OutputOffset + q, info.InputBuffer, info.InputOffset + q, temp.Length);
+					for (int j = temp.Length - 1; j >= 0; j --) {
+						temp[j] ++;
+						if (temp[j] != 0)
+							break;
+					}
+				}
+
+				if (info.NeedsUpdateIV) {
+					for (int i = 0; i < temp.Length; i ++)
+						_iv[i] = temp[i];
+				}
+				break;
 			}
 			_waitHandle.EndThread ();
 		}
 
-		
-		internal class ProcessThreadInfo
+		private static void Xor (byte[] x, int x_offset, byte[] y, int y_offset, int count)
 		{
-			public byte[] _inputBuffer, _outputBuffer;
-			public int _inputOffset, _outputOffset, _inputCount;
+			for (int i = 0; i < count; i ++)
+				x[x_offset + i] ^= y[y_offset + i];
+		}
+		
+		internal struct ProcessThreadInfo
+		{
+			public byte[] InputBuffer, OutputBuffer;
+			public int InputOffset, OutputOffset, InputCount, BlockIndex, ThreadIndex;
+			public bool NeedsUpdateIV;
 
-			public ProcessThreadInfo (SymmetricTransform st, byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+			public ProcessThreadInfo (SymmetricTransform st, byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset, int blockIndex, int threadIndex, bool updateIV)
 			{
-				_inputBuffer = inputBuffer; _outputBuffer = outputBuffer;
-				_inputOffset = inputOffset; _outputOffset = outputOffset;
-				_inputCount = inputCount;
+				InputBuffer = inputBuffer; OutputBuffer = outputBuffer;
+				InputOffset = inputOffset; OutputOffset = outputOffset;
+				InputCount = inputCount;
+				ThreadIndex = threadIndex;
+				BlockIndex = blockIndex;
+				NeedsUpdateIV = updateIV;
 			}
 		}
 	}
