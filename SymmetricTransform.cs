@@ -62,6 +62,7 @@ namespace openCrypto
 					_mt_temp = new byte[_threads][];
 					for (int i = 0; i < _mt_temp.Length; i ++)
 						_mt_temp[i] = new byte[iv.Length];
+					_temp = _mt_temp[0];
 				}
 			} else if (_mode != CipherModePlus.ECB)
 				_temp = new byte[iv.Length];

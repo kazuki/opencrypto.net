@@ -1,5 +1,10 @@
 2007-03-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricTransform.cs: 並列処理有効時、入力したデータ量が閾値を下回る場合に
+	null参照してしまう問題を修正
+
+2007-03-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* SymmetricAlgorithmPlus.cs: ブロックモードの初期値が設定されていなかったのを修正
 
 2007-03-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
