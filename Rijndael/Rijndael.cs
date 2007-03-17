@@ -52,7 +52,7 @@ namespace openCrypto
 			Helpers.RNG.GetBytes (base.KeyValue);
 		}
 
-		public override bool SupportsMultiThread {
+		public override bool SupportsBlockModeParallelization {
 			get {
 				return true;
 			}

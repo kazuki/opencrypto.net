@@ -1,3 +1,17 @@
+2007-03-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* SymmetricTransform.cs: publicクラスからprivateクラスに変更
+	* SymmetricAlgorithmPlus.cs:
+	- デフォルトの実装モードをバランスから速度重視に変更
+	* SymmetricAlgorithmPlus.cs, Camellia.cs, Rijndael.cs:
+	- SupportsMultiThreadという現実に即していないプロパティ名とその説明を変更
+
+2007-03-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
+	* openCrypto.NET.csproj: 出力の種類をクラスライブラリに変更
+	* Program.cs: エントリポイントを削除
+	* AssemblyInfo.cs: コピーライトの更新
+
 2007-01-28 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
 	* SymmetricTransform.cs: CBCモード利用の復号時の並列化処理を実装

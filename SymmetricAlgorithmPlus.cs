@@ -34,12 +34,12 @@ namespace openCrypto
 	{
 		protected int _threads = 1;
 		protected CipherModePlus _mode;
-		protected CipherImplementationType _implType = CipherImplementationType.Balanced;
+		protected CipherImplementationType _implType = CipherImplementationType.HighSpeed;
 
 		/// <summary>
-		/// <ja>アルゴリズムレベルで並列化に対応しているかを返す</ja>
+		/// <ja>ブロックモードを利用した並列化に対応しているかを返す</ja>
 		/// </summary>
-		public abstract bool SupportsMultiThread {
+		public abstract bool SupportsBlockModeParallelization {
 			get;
 		}
 
@@ -49,7 +49,7 @@ namespace openCrypto
 		public int NumberOfThreads {
 			get { return _threads; }
 			set {
-				if (!SupportsMultiThread)
+				if (!SupportsBlockModeParallelization)
 					return;
 				if (value < 1)
 					throw new ArgumentOutOfRangeException ();

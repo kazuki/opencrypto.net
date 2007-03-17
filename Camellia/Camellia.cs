@@ -43,7 +43,7 @@ namespace openCrypto
 			base.LegalKeySizesValue = _legalKeySizes;
 		}
 		
-		public override bool SupportsMultiThread {
+		public override bool SupportsBlockModeParallelization {
 			get {
 				return true;
 			}
