@@ -33,7 +33,7 @@ namespace openCrypto
 	public abstract class SymmetricAlgorithmPlus : SymmetricAlgorithm
 	{
 		protected int _threads = 1;
-		protected CipherModePlus _mode;
+		protected CipherModePlus _mode = CipherModePlus.CBC;
 		protected CipherImplementationType _implType = CipherImplementationType.HighSpeed;
 
 		/// <summary>

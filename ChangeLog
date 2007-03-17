@@ -1,5 +1,9 @@
 2007-03-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
 
+	* SymmetricAlgorithmPlus.cs: ブロックモードの初期値が設定されていなかったのを修正
+
+2007-03-17 Kazuki Oikawa <kazuki at panicode.com, g031d019 at edu.soft.iwate-pu.ac.jp>
+
 	* SymmetricTransform.cs: publicクラスからprivateクラスに変更
 	* SymmetricAlgorithmPlus.cs:
 	- デフォルトの実装モードをバランスから速度重視に変更
