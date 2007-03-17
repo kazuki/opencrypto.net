@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
 [assembly: AssemblyProduct ("openCrypto.NET")]
-[assembly: AssemblyCopyright ("Copyright (C)  2006")]
+[assembly: AssemblyCopyright("Copyright (C)  2006 Kazuki Oikawa")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
