@@ -40,8 +40,12 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Tests' ">
+    <Reference Include="nunit.framework, Version=2.2.9.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.2.9.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +71,7 @@
     <Compile Include="Tests\ConfluentWaitHandleTest.cs" />
     <Compile Include="Tests\DummyAlgorithm.cs" />
     <Compile Include="Tests\PaddingModeTest.cs" />
+    <Compile Include="Tests\ParallelTest.cs" />
     <Compile Include="Tests\RijndaelTest.cs" />
     <Compile Include="Tests\SymmetricAlgorithmPlusTest.cs" />
     <Compile Include="Tests\SymmetricAlgorithmTestBase.cs" />

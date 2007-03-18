@@ -46,7 +46,7 @@ namespace openCrypto.Tests
 			base.LegalKeySizesValue = new KeySizes[] { new KeySizes (64, 64, 0) };
 		}
 
-		public override bool SupportsMultiThread {
+		public override bool SupportsBlockModeParallelization {
 			get { return true; }
 		}
 
