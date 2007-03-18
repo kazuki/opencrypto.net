@@ -41,7 +41,13 @@ namespace openCrypto.Tests
 		[Test]
 		public void TestECB ()
 		{
-			string[] files = new string[] {"ecb_tbl.txt", "ecb_vk.txt", "ecb_vt.txt"};
+			string[] files = new string[] {
+#if MSCSC
+				"openCrypto.Tests.ecb_tbl.txt", "openCrypto.Tests.ecb_vk.txt", "openCrypto.Tests.ecb_vt.txt"
+#else
+				"ecb_tbl.txt", "ecb_vk.txt", "ecb_vt.txt"
+#endif
+			};
 			RijndaelManaged algo = new RijndaelManaged ();
 
 			foreach (string file in files) {

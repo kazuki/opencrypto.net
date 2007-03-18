@@ -34,18 +34,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Tests|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Tests\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TEST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TEST;MSCSC</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(Configuration)' == 'Tests' ">
-    <Reference Include="nunit.framework, Version=2.2.9.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.0.2, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +81,13 @@
   <ItemGroup>
     <None Include="LICENSE.MIT.X11" />
     <None Include="Tests\ChangeLog" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Tests\ecb_e_m.txt" />
+    <EmbeddedResource Include="Tests\ecb_tbl.txt" />
+    <EmbeddedResource Include="Tests\ecb_vk.txt" />
+    <EmbeddedResource Include="Tests\ecb_vt.txt" />
+    <EmbeddedResource Include="Tests\t_camellia.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

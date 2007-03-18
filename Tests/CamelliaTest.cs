@@ -135,7 +135,13 @@ namespace openCrypto.Tests
 			public ECBTestReader ()
 			{
 				Assembly asm = Assembly.GetExecutingAssembly ();
-				_reader = new StreamReader (asm.GetManifestResourceStream ("t_camellia.txt"));
+				_reader = new StreamReader (asm.GetManifestResourceStream (
+#if MSCSC
+					"openCrypto.Tests.t_camellia.txt"
+#else
+					"t_camellia.txt"
+#endif
+				));
 			}
 
 			public override bool ReadNext ()
