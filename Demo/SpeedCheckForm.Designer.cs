@@ -42,6 +42,7 @@
 			this.btnClear = new System.Windows.Forms.Button ();
 			this.listResult = new System.Windows.Forms.ListView ();
 			this.checkBox1 = new System.Windows.Forms.CheckBox ();
+			this.chkKillTime = new System.Windows.Forms.CheckBox ();
 			label1 = new System.Windows.Forms.Label ();
 			label2 = new System.Windows.Forms.Label ();
 			label3 = new System.Windows.Forms.Label ();
@@ -213,10 +214,17 @@
 			this.cbDataSize.FormattingEnabled = true;
 			this.cbDataSize.Items.AddRange (new object[] {
             "1 KB",
+			"2 KB",
+			"4 KB",
             "8 KB",
+			"16 KB",
+			"32 KB",
             "64 KB",
+			"128 KB",
+			"256 KB",
             "512 KB",
             "1 MB",
+			"2 MB",
             "4 MB",
             "8 MB",
             "16 MB",
@@ -319,7 +327,7 @@
 			this.listResult.MultiSelect = false;
 			this.listResult.Name = "listResult";
 			this.listResult.ShowGroups = false;
-			this.listResult.Size = new System.Drawing.Size (442, 389);
+			this.listResult.Size = new System.Drawing.Size (442, 497);
 			this.listResult.TabIndex = 20;
 			this.listResult.UseCompatibleStateImageBehavior = false;
 			this.listResult.View = System.Windows.Forms.View.Details;
@@ -337,11 +345,26 @@
 			this.checkBox1.UseVisualStyleBackColor = true;
 			this.checkBox1.CheckedChanged += new System.EventHandler (this.checkBox1_CheckedChanged);
 			// 
+			// chkKillTime
+			// 
+			this.chkKillTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.chkKillTime.Appearance = System.Windows.Forms.Appearance.Button;
+			this.chkKillTime.AutoSize = true;
+			this.chkKillTime.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.chkKillTime.Location = new System.Drawing.Point (12, 515);
+			this.chkKillTime.Name = "chkKillTime";
+			this.chkKillTime.Size = new System.Drawing.Size (113, 37);
+			this.chkKillTime.TabIndex = 22;
+			this.chkKillTime.Text = "kill-time mode";
+			this.chkKillTime.UseVisualStyleBackColor = true;
+			this.chkKillTime.CheckedChanged += new System.EventHandler (this.chkKillTime_CheckedChanged);
+			// 
 			// SpeedCheckForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF (12F, 25F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size (861, 456);
+			this.ClientSize = new System.Drawing.Size (861, 564);
+			this.Controls.Add (this.chkKillTime);
 			this.Controls.Add (this.checkBox1);
 			this.Controls.Add (this.listResult);
 			this.Controls.Add (this.btnClear);
@@ -388,5 +411,6 @@
 		private System.Windows.Forms.Button btnClear;
 		private System.Windows.Forms.ListView listResult;
 		private System.Windows.Forms.CheckBox checkBox1;
+		private System.Windows.Forms.CheckBox chkKillTime;
 	}
 }

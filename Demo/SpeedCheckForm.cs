@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 
@@ -21,11 +22,11 @@ namespace Demo
 			foreach (ImplementationType impl in impls)
 				cbImpl.Items.Add (Helper.ToName(impl));
 			cbImpl.SelectedIndex = 0;
-			cbDataSize.SelectedIndex = 5;
+			cbDataSize.SelectedIndex = 10;
 			listResult.ListViewItemSorter = _sorter;
 			listResult.Sorting = SortOrder.None;
 
-			numThreads.Maximum = Environment.ProcessorCount;
+			numThreads.Maximum = Environment.ProcessorCount * 4;
 		}
 
 		private void cbImpl_SelectedIndexChanged (object sender, EventArgs e)
@@ -37,9 +38,10 @@ namespace Demo
 			object algo = Helper.CreateInstance (Helper.ToImplementationType ((string)cbImpl.SelectedItem));
 			Type modeType = Helper.IsSymmetricAlgorithmPlus (algo)
 			                ? typeof (openCrypto.CipherModePlus) : typeof (CipherMode);
+			bool quickHack = (algo as RijndaelManaged != null ? true : false);
 			string[] modes = Enum.GetNames (modeType);
 			for (int i = 0; i < modes.Length; i ++) {
-				if (!"CTS".Equals (modes [i]))
+				if (!"CTS".Equals (modes [i]) && !(quickHack && "OFB".Equals (modes[i])))
 					cbBlockMode.Items.Add (modes [i]);
 			}
 			cbBlockMode.SelectedIndex = 0;
@@ -139,7 +141,9 @@ namespace Demo
 				items[5] = "N/A";
 			}
 			listResult.Items.Add (new ListViewItem (items));
-			listResult.TopItem = listResult.Items[listResult.Items.Count - 1];
+			while (listResult.Items.Count > 100) listResult.Items.RemoveAt (0);
+			listResult.EnsureVisible (listResult.Items.Count - 1);
+			Application.DoEvents ();
 		}
 
 		private void btnRunSpeedTest_Click (object sender, EventArgs e)
@@ -162,7 +166,9 @@ namespace Demo
 				items[5] = "N/A";
 			}
 			listResult.Items.Add (new ListViewItem (items));
-			listResult.TopItem = listResult.Items[listResult.Items.Count - 1];
+			while (listResult.Items.Count > 100) listResult.Items.RemoveAt (0);
+			listResult.EnsureVisible (listResult.Items.Count - 1);
+			Application.DoEvents ();
 		}
 
 		static int ToSize (string text)
@@ -254,6 +260,47 @@ namespace Demo
 				set { OrderOfSort = value; }
 				get { return OrderOfSort;  }
 			}
+		}
+
+		private void chkKillTime_CheckedChanged (object sender, EventArgs e)
+		{
+			Thread thrd = new Thread (KillTimeThread);
+			thrd.Start ();
+		}
+
+		delegate void SetComboBoxSelectedIndexHandler (ComboBox cb, int index);
+		void SetComboBoxSelectedIndex (ComboBox cb, int index)
+		{
+			cb.SelectedIndex = index;
+		}
+
+		void KillTimeThread ()
+		{
+			object[] args = new object[] {null, EventArgs.Empty};
+			EventHandler handler = new EventHandler (btnRunSpeedTest_Click);
+			SetComboBoxSelectedIndexHandler set = new SetComboBoxSelectedIndexHandler (SetComboBoxSelectedIndex);
+
+			while (true) {
+				if (!chkKillTime.Checked) break;
+				for (int i1 = 0; i1 < cbImpl.Items.Count; i1++) {
+					if (!chkKillTime.Checked) break;
+					Invoke (set, cbImpl, i1);
+					for (int i2 = 0; i2 < cbBlockMode.Items.Count; i2++) {
+						if (!chkKillTime.Checked) break;
+						Invoke (set, cbBlockMode, i2);
+						for (int i3 = 0; i3 < cbKeySize.Items.Count; i3++) {
+							if (!chkKillTime.Checked) break;
+							Invoke (set, cbKeySize, i3);
+							for (int i4 = 0; i4 < cbBlockSize.Items.Count; i4++) {
+								if (!chkKillTime.Checked) break;
+								Invoke (set, cbBlockSize, i4);
+								Invoke (handler, args);
+							}
+						}
+					}
+				}
+			}
+			Invoke (new EventHandler (btnClear_Click), args);
 		}
 	}
 }
