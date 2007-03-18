@@ -14,6 +14,8 @@ namespace Demo
 	{
 		ListViewColumnSorter _sorter = new ListViewColumnSorter ();
 
+		object _state1, _state2, _state3, _state4;
+
 		public SpeedCheckForm()
 		{
 			InitializeComponent();
@@ -85,11 +87,28 @@ namespace Demo
 			RunAllPattern (btnKeySchedulingSpeed_Click, false, true, true);
 		}
 
+		void BackupState ()
+		{
+			_state1 = cbImpl.SelectedItem;
+			_state2 = cbBlockMode.SelectedItem;
+			_state3 = cbKeySize.SelectedItem;
+			_state4 = cbBlockSize.SelectedItem;
+		}
+
+		void RestoreState ()
+		{
+			cbImpl.SelectedItem = _state1;
+			cbBlockMode.SelectedItem = _state2;
+			cbKeySize.SelectedItem = _state3;
+			cbBlockSize.SelectedItem = _state4;
+		}
+
 		void RunAllImplementation (EventHandler handler, bool checkMode, bool checkKeySize, bool checkBlockSize)
 		{
 			object mode = cbBlockMode.SelectedItem;
 			object keySize = cbKeySize.SelectedItem;
 			object blockSize = cbBlockSize.SelectedItem;
+			BackupState ();
 			for (int i1 = 0; i1 < cbImpl.Items.Count; i1++) {
 				cbImpl.SelectedIndex = i1;
 				if (checkMode && !cbBlockMode.Items.Contains (mode)) continue;
@@ -100,10 +119,12 @@ namespace Demo
 				if (checkBlockSize) cbBlockSize.SelectedItem = blockSize;
 				handler (null, EventArgs.Empty);
 			}
+			RestoreState ();
 		}
 
 		void RunAllPattern (EventHandler handler, bool checkMode, bool checkKeySize, bool checkBlockSize)
 		{
+			BackupState ();
 			for (int i1 = 0; i1 < cbImpl.Items.Count; i1++) {
 				cbImpl.SelectedIndex = i1;
 				for (int i2 = 0; i2 < cbBlockMode.Items.Count; i2++) {
@@ -120,6 +141,7 @@ namespace Demo
 					if (!checkMode) break;
 				}
 			}
+			RestoreState ();
 		}
 
 		private void btnKeySchedulingSpeed_Click (object sender, EventArgs e)
