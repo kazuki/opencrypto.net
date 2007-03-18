@@ -2,7 +2,6 @@ CipherImplementationType.cs
 CipherModePlus.cs
 ConfluentWaitHandle.cs
 Helpers.cs
-Program.cs
 SymmetricAlgorithmPlus.cs
 SymmetricTransform.cs
 Camellia/Camellia.cs

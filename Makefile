@@ -1,4 +1,4 @@
-TARGET=openCrypto.exe
+TARGET=openCrypto.NET.dll
 RELEASE_DIR=bin/Release
 RELEASE_TARGET=${RELEASE_DIR}/${TARGET}
 DEBUG_DIR=bin/Debug
@@ -7,7 +7,7 @@ TEST_DIR=bin/Tests
 TEST_TARGET=${TEST_DIR}/${TARGET}
 SOURCE_FILES:=$(foreach f,$(shell cat SourceFiles),$(f))
 COMPILER=gmcs
-FLAGS=-codepage:utf8 -unsafe+
+FLAGS=-codepage:utf8 -unsafe+ -target:library
 
 all: release
 release: ${RELEASE_TARGET}
