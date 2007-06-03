@@ -30,9 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="bccrypto-net-1.0, Version=1.0.2574.41227, Culture=neutral">
+    <Reference Include="bccrypto-net-1.1, Version=1.1.2680.38453, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\bccrypto-net-1.0.dll</HintPath>
+      <HintPath>.\bccrypto-net-1.1.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -54,16 +54,16 @@
     <Compile Include="SpeedTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\openCrypto.NET.csproj">
-      <Project>{59AD989B-7DD7-400B-B2D5-EFBD0004A749}</Project>
-      <Name>openCrypto.NET</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="SpeedCheckForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SpeedCheckForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\openCrypto.NET\openCrypto.NET.csproj">
+      <Project>{59AD989B-7DD7-400B-B2D5-EFBD0004A749}</Project>
+      <Name>openCrypto.NET</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
