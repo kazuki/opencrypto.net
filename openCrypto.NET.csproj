@@ -72,14 +72,10 @@
     <Compile Include="Tests\SymmetricAlgorithmTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ChangeLog" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="README.ja" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE.MIT.X11" />
-    <None Include="Tests\ChangeLog" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Tests\ecb_e_m.txt" />
