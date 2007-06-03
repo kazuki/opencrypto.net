@@ -28,14 +28,28 @@ namespace openCrypto.Executable
 {
 	class AppLoader
 	{
+		static double[] Run (SymmetricAlgorithm algo, CipherMode mode, int keySize, int blockSize, int dataSize)
+		{
+			double[] result = SpeedTest.Run (algo, mode, keySize, blockSize, dataSize);
+			for (int i = 0; i < 10; i++) {
+				double[] temp = SpeedTest.Run (algo, mode, keySize, blockSize, dataSize);
+				result[0] = Math.Max (result[0], temp[0]);
+				result[1] = Math.Max (result[1], temp[1]);
+			}
+			return result;
+		}
+
 		static void Main ()
 		{
 			CipherMode mode = CipherMode.ECB;
 			int keySize = 128, blockSize = 128, dataSize = 1024 * 1024 * 8;
+			double[] result;
 
-			double[] result = SpeedTest.Run (new CamelliaManaged (), mode, keySize, blockSize, 1024 * 1024);
-			result = SpeedTest.Run (new CamelliaManaged (), mode, keySize, blockSize, dataSize);
-			Console.WriteLine ("Encrypt: {0}Mbps, Decrypt: {1}Mbps", result[0], result[1]);
+			result = Run (new CamelliaManaged (), mode, keySize, blockSize, dataSize);
+			Console.WriteLine ("Camellia Encrypt: {0}Mbps, Decrypt: {1}Mbps", result[0], result[1]);
+
+			result = Run (new RijndaelManaged (), mode, keySize, blockSize, dataSize);
+			Console.WriteLine ("Rijndael Encrypt: {0}Mbps, Decrypt: {1}Mbps", result[0], result[1]);
 		}
 	}
 }

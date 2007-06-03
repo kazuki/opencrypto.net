@@ -130,7 +130,7 @@ namespace openCrypto
 			}
 		}
 
-		protected override unsafe void EncryptBlock (uint* plaintext, uint* ciphertext, uint *k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
+		protected override unsafe void EncryptBlock (uint* k, uint* sbox1, uint* sbox2, uint* sbox3, uint* sbox4, uint* plaintext, uint* ciphertext)
 		{
 			uint x0 = plaintext[0] ^ k[0];
 			uint x1 = plaintext[1] ^ k[1];
@@ -196,7 +196,7 @@ namespace openCrypto
 			ciphertext[3] = k[19] ^ x1;
 		}
 
-		protected override unsafe void DecryptBlock (uint* ciphertext, uint* plaintext, uint* k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4)
+		protected override unsafe void DecryptBlock (uint* k, uint* sbox1, uint* sbox2, uint* sbox3, uint* sbox4, uint* ciphertext, uint* plaintext)
 		{
 			k += (_flayerLimit == 2 ? 46 : 62);
 			uint x0 = ciphertext[0] ^ k[2];

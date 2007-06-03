@@ -66,15 +66,15 @@ namespace openCrypto
 			for (int i = _Nk; i < expandedKey.Length; i ++) {
 				temp = expandedKey[i - 1];
 				if (i % _Nk == 0) {
-					temp = (((uint)SBox[(temp >> 24) & 0xFF] << 0) |
-						((uint)SBox[(temp >> 16) & 0xFF] << 24) |
-						((uint)SBox[(temp >> 8) & 0xFF] << 16) |
-						((uint)SBox[(temp >> 0) & 0xFF] << 8)) ^ Rcon[i / _Nk];
+					temp = (((uint)SBox[(byte)(temp >> 24)] << 0) |
+						((uint)SBox[(byte)(temp >> 16)] << 24) |
+						((uint)SBox[(byte)(temp >> 8)] << 16) |
+						((uint)SBox[(byte)(temp >> 0)] << 8)) ^ Rcon[i / _Nk];
 				} else if (_Nk > 6 && (i % _Nk) == 4) {
-					temp = ((uint)SBox[(temp >> 24) & 0xFF] << 24) |
-						((uint)SBox[(temp >> 16) & 0xFF] << 16) |
-						((uint)SBox[(temp >> 8) & 0xFF] << 8) |
-						((uint)SBox[(temp >> 0) & 0xFF] << 0);
+					temp = ((uint)SBox[(byte)(temp >> 24)] << 24) |
+						((uint)SBox[(byte)(temp >> 16)] << 16) |
+						((uint)SBox[(byte)(temp >> 8)] << 8) |
+						((uint)SBox[(byte)(temp >> 0)] << 0);
 				}
 				expandedKey[i] = expandedKey[i - _Nk] ^ temp;
 			}
@@ -92,77 +92,26 @@ namespace openCrypto
 					expandedKey[i] =
 						iT0[SBox[(expandedKey[i] >> 24)]] ^
 						RotByte (iT0[SBox[(byte)(expandedKey[i] >> 16)]]) ^
-						RotByte (RotByte (iT0[SBox[(byte)(expandedKey[i] >> 8)]])) ^
-						RotByte (RotByte (RotByte (iT0[SBox[(byte)expandedKey[i]]])));
+						Rot2Bytes (iT0[SBox[(byte)(expandedKey[i] >> 8)]]) ^
+						Rot3Bytes (iT0[SBox[(byte)expandedKey[i]]]);
 				}
 			}
-
-#if DEBUG
-			/*for (int i = 0; i < expandedKey.Length; i++) {
-				byte[] raw = toBytes (expandedKey[i]);
-				Console.Write ("{0:x2} ", raw[0]);
-				Console.Write ("{0:x2} ", raw[1]);
-				Console.Write ("{0:x2} ", raw[2]);
-				Console.Write ("{0:x2} ", raw[3]);
-				if ((i + 1) % 4 == 0) Console.WriteLine ("");
-			}*/
-#endif
 		}
 		#endregion
 
-		#region Encrypt
+		#region Helper
 		protected static uint RotByte (uint x)
 		{
 			return (x >> 8) | (x << 24);
 		}
-		protected unsafe abstract void Encrypt128 (byte* indata, byte* outdata, uint[] ekey);
-		protected unsafe abstract void Encrypt192 (byte* indata, byte* outdata, uint[] ekey);
-		protected unsafe abstract void Encrypt256 (byte* indata, byte* outdata, uint[] ekey);
-		protected unsafe abstract void Decrypt128 (byte* indata, byte* outdata, uint[] ekey);
-		protected unsafe abstract void Decrypt192 (byte* indata, byte* outdata, uint[] ekey);
-		protected unsafe abstract void Decrypt256 (byte* indata, byte* outdata, uint[] ekey);
-		#endregion
-
-		#region SymmetricTransform members
-
-		protected override unsafe void EncryptECB (byte[] inputBuffer, int inputOffset, byte[] outputBuffer, int outputOffset)
+		static uint Rot2Bytes (uint x)
 		{
-			fixed (byte *pi = inputBuffer, po = outputBuffer) {
-				switch (_Nb) {
-				case 4:
-					Encrypt128 (pi + inputOffset, po + outputOffset, _expandedKey);
-					break;
-				case 6:
-					Encrypt192 (pi + inputOffset, po + outputOffset, _expandedKey);
-					break;
-				case 8:
-					Encrypt256 (pi + inputOffset, po + outputOffset, _expandedKey);
-					break;
-				default:
-					throw new NotSupportedException ();
-				}
-			}
+			return (x >> 16) | (x << 16);
 		}
-
-		protected override unsafe void DecryptECB (byte[] inputBuffer, int inputOffset, byte[] outputBuffer, int outputOffset)
+		static uint Rot3Bytes (uint x)
 		{
-			fixed (byte *pi = inputBuffer, po = outputBuffer) {
-				switch (_Nb) {
-				case 4:
-					Decrypt128 (pi + inputOffset, po + outputOffset, _expandedKey);
-					break;
-				case 6:
-					Decrypt192 (pi + inputOffset, po + outputOffset, _expandedKey);
-					break;
-				case 8:
-					Decrypt256 (pi + inputOffset, po + outputOffset, _expandedKey);
-					break;
-				default:
-					throw new NotSupportedException ();
-				}
-			}
+			return (x >> 24) | (x << 8);
 		}
-
 		#endregion
 
 		#region Constant Table

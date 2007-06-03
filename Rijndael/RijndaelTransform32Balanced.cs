@@ -33,8 +33,50 @@ namespace openCrypto
 		{
 		}
 
+		#region SymmetricTransform members
+
+		protected override unsafe void EncryptECB (byte[] inputBuffer, int inputOffset, byte[] outputBuffer, int outputOffset)
+		{
+			fixed (byte* pi = inputBuffer, po = outputBuffer) {
+				switch (_Nb) {
+					case 4:
+						Encrypt128 (pi + inputOffset, po + outputOffset, _expandedKey);
+						break;
+					case 6:
+						Encrypt192 (pi + inputOffset, po + outputOffset, _expandedKey);
+						break;
+					case 8:
+						Encrypt256 (pi + inputOffset, po + outputOffset, _expandedKey);
+						break;
+					default:
+						throw new NotSupportedException ();
+				}
+			}
+		}
+
+		protected override unsafe void DecryptECB (byte[] inputBuffer, int inputOffset, byte[] outputBuffer, int outputOffset)
+		{
+			fixed (byte* pi = inputBuffer, po = outputBuffer) {
+				switch (_Nb) {
+					case 4:
+						Decrypt128 (pi + inputOffset, po + outputOffset, _expandedKey);
+						break;
+					case 6:
+						Decrypt192 (pi + inputOffset, po + outputOffset, _expandedKey);
+						break;
+					case 8:
+						Decrypt256 (pi + inputOffset, po + outputOffset, _expandedKey);
+						break;
+					default:
+						throw new NotSupportedException ();
+				}
+			}
+		}
+
+		#endregion
+
 		#region Encrypt
-		protected override unsafe void Encrypt128 (byte* indata, byte* outdata, uint[] ekey)
+		private unsafe void Encrypt128 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, b0, b1, b2, b3;
 			int ei = 8;
@@ -85,7 +127,7 @@ namespace openCrypto
 			outdata[15] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei++]);
 		}
 
-		protected override unsafe void Encrypt192 (byte* indata, byte* outdata, uint[] ekey)
+		private unsafe void Encrypt192 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, a4, a5, b0, b1, b2, b3, b4, b5;
 			int ei = 12;
@@ -154,7 +196,7 @@ namespace openCrypto
 			outdata[23] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei++]);
 		}
 
-		protected override unsafe void Encrypt256 (byte* indata, byte* outdata, uint[] ekey)
+		private unsafe void Encrypt256 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7;
 
@@ -241,7 +283,7 @@ namespace openCrypto
 		#endregion
 
 		#region Decrypt
-		protected override unsafe void Decrypt128 (byte* indata, byte* outdata, uint[] ekey)
+		private unsafe void Decrypt128 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, b0, b1, b2, b3;
 			int ei = 8;
@@ -292,7 +334,7 @@ namespace openCrypto
 			outdata[15] = (byte)(iSBox[(byte)b0] ^ (byte)ekey[ei++]);
 		}
 
-		protected override unsafe void Decrypt192 (byte* indata, byte* outdata, uint[] ekey)
+		private unsafe void Decrypt192 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, a4, a5, b0, b1, b2, b3, b4, b5;
 			int ei = 12;
@@ -361,7 +403,7 @@ namespace openCrypto
 			outdata[23] = (byte)(iSBox[(byte)b2] ^ (byte)ekey[ei++]);
 		}
 
-		protected override unsafe void Decrypt256 (byte* indata, byte* outdata, uint[] ekey)
+		private unsafe void Decrypt256 (byte* indata, byte* outdata, uint[] ekey)
 		{
 			uint a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7;
 

@@ -51,21 +51,21 @@ namespace openCrypto
 			_sbox4 = sbox4;
 		}
 
-		protected abstract unsafe void EncryptBlock (uint* plaintext, uint* ciphertext, uint *k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4);
-		protected abstract unsafe void DecryptBlock (uint* ciphertext, uint* plaintext, uint* k, uint[] sbox1, uint[] sbox2, uint[] sbox3, uint[] sbox4);
+		protected abstract unsafe void EncryptBlock (uint* k, uint* sbox1, uint* sbox2, uint* sbox3, uint* sbox4, uint* plaintext, uint* ciphertext);
+		protected abstract unsafe void DecryptBlock (uint* k, uint* sbox1, uint* sbox2, uint* sbox3, uint* sbox4, uint* ciphertext, uint* plaintext);
 
 		protected override unsafe void EncryptECB (byte[] inputBuffer, int inputOffset, byte[] outputBuffer, int outputOffset)
 		{
 			fixed (byte* input = &inputBuffer[inputOffset], output = &outputBuffer[outputOffset])
-			fixed (uint *k = _keyTable)
-				EncryptBlock ((uint*)input, (uint*)output, k, _sbox1, _sbox2, _sbox3, _sbox4);
+			fixed (uint *k = _keyTable, p1 = _sbox1, p2 = _sbox2, p3 = _sbox3, p4 = _sbox4)
+				EncryptBlock (k, p1, p2, p3, p4, (uint*)input, (uint*)output);
 		}
 
 		protected override unsafe void DecryptECB (byte[] inputBuffer, int inputOffset, byte[] outputBuffer, int outputOffset)
 		{
 			fixed (byte* input = &inputBuffer[inputOffset], output = &outputBuffer[outputOffset])
-			fixed (uint *k = _keyTable)
-				DecryptBlock ((uint*)input, (uint*)output, k, _sbox1, _sbox2, _sbox3, _sbox4);
+			fixed (uint* k = _keyTable, p1 = _sbox1, p2 = _sbox2, p3 = _sbox3, p4 = _sbox4)
+				DecryptBlock (k, p1, p2, p3, p4, (uint*)input, (uint*)output);
 		}
 	}
 }
