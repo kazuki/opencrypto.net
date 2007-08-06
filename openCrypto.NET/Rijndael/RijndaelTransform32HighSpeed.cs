@@ -81,6 +81,56 @@ namespace openCrypto
 		private unsafe void Encrypt128 (uint* ekey, uint* T0, uint* T1, uint* T2, uint* T3, byte* indata, byte* outdata)
 		{
 			uint a0, a1, a2, a3, b0, b1, b2, b3;
+			uint *ekey_last = ekey + (_Nr <= 10 ? 40 : _Nr <= 12 ? 48 : 56);
+
+			/* Round 0 */
+			a0 = (((uint)indata[0] << 24) | ((uint)indata[1] << 16) | ((uint)indata[2] << 8) | (uint)indata[3]) ^ ekey[0];
+			a1 = (((uint)indata[4] << 24) | ((uint)indata[5] << 16) | ((uint)indata[6] << 8) | (uint)indata[7]) ^ ekey[1];
+			a2 = (((uint)indata[8] << 24) | ((uint)indata[9] << 16) | ((uint)indata[10] << 8) | (uint)indata[11]) ^ ekey[2];
+			a3 = (((uint)indata[12] << 24) | ((uint)indata[13] << 16) | ((uint)indata[14] << 8) | (uint)indata[15]) ^ ekey[3];
+
+			/* Round 1 */
+			b0 = T0[a0 >> 24] ^ RotByte (T0[(byte)(a1 >> 16)]) ^ T2[(byte)(a2 >> 8)] ^ RotByte (T2[(byte)a3]) ^ ekey[4];
+			b1 = T0[a1 >> 24] ^ RotByte (T0[(byte)(a2 >> 16)]) ^ T2[(byte)(a3 >> 8)] ^ RotByte (T2[(byte)a0]) ^ ekey[5];
+			b2 = T0[a2 >> 24] ^ RotByte (T0[(byte)(a3 >> 16)]) ^ T2[(byte)(a0 >> 8)] ^ RotByte (T2[(byte)a1]) ^ ekey[6];
+			b3 = T0[a3 >> 24] ^ RotByte (T0[(byte)(a0 >> 16)]) ^ T2[(byte)(a1 >> 8)] ^ RotByte (T2[(byte)a2]) ^ ekey[7];
+			ekey += 8;
+
+			for (; ekey < ekey_last; ekey += 8) {
+				a0 = T0[b0 >> 24] ^ RotByte (T0[(byte)(b1 >> 16)]) ^ T2[(byte)(b2 >> 8)] ^ RotByte (T2[(byte)b3]) ^ ekey[0];
+				a1 = T0[b1 >> 24] ^ RotByte (T0[(byte)(b2 >> 16)]) ^ T2[(byte)(b3 >> 8)] ^ RotByte (T2[(byte)b0]) ^ ekey[1];
+				a2 = T0[b2 >> 24] ^ RotByte (T0[(byte)(b3 >> 16)]) ^ T2[(byte)(b0 >> 8)] ^ RotByte (T2[(byte)b1]) ^ ekey[2];
+				a3 = T0[b3 >> 24] ^ RotByte (T0[(byte)(b0 >> 16)]) ^ T2[(byte)(b1 >> 8)] ^ RotByte (T2[(byte)b2]) ^ ekey[3];
+				b0 = T0[a0 >> 24] ^ RotByte (T0[(byte)(a1 >> 16)]) ^ T2[(byte)(a2 >> 8)] ^ RotByte (T2[(byte)a3]) ^ ekey[4];
+				b1 = T0[a1 >> 24] ^ RotByte (T0[(byte)(a2 >> 16)]) ^ T2[(byte)(a3 >> 8)] ^ RotByte (T2[(byte)a0]) ^ ekey[5];
+				b2 = T0[a2 >> 24] ^ RotByte (T0[(byte)(a3 >> 16)]) ^ T2[(byte)(a0 >> 8)] ^ RotByte (T2[(byte)a1]) ^ ekey[6];
+				b3 = T0[a3 >> 24] ^ RotByte (T0[(byte)(a0 >> 16)]) ^ T2[(byte)(a1 >> 8)] ^ RotByte (T2[(byte)a2]) ^ ekey[7];
+			}
+
+			/* Final Round */
+			outdata[0] = (byte)(SBox[b0 >> 24] ^ (byte)(ekey[0] >> 24));
+			outdata[1] = (byte)(SBox[(byte)(b1 >> 16)] ^ (byte)(ekey[0] >> 16));
+			outdata[2] = (byte)(SBox[(byte)(b2 >> 8)] ^ (byte)(ekey[0] >> 8));
+			outdata[3] = (byte)(SBox[(byte)b3] ^ (byte)ekey[0]);
+
+			outdata[4] = (byte)(SBox[b1 >> 24] ^ (byte)(ekey[1] >> 24));
+			outdata[5] = (byte)(SBox[(byte)(b2 >> 16)] ^ (byte)(ekey[1] >> 16));
+			outdata[6] = (byte)(SBox[(byte)(b3 >> 8)] ^ (byte)(ekey[1] >> 8));
+			outdata[7] = (byte)(SBox[(byte)b0] ^ (byte)ekey[1]);
+
+			outdata[8] = (byte)(SBox[b2 >> 24] ^ (byte)(ekey[2] >> 24));
+			outdata[9] = (byte)(SBox[(byte)(b3 >> 16)] ^ (byte)(ekey[2] >> 16));
+			outdata[10] = (byte)(SBox[(byte)(b0 >> 8)] ^ (byte)(ekey[2] >> 8));
+			outdata[11] = (byte)(SBox[(byte)b1] ^ (byte)ekey[2]);
+
+			outdata[12] = (byte)(SBox[b3 >> 24] ^ (byte)(ekey[3] >> 24));
+			outdata[13] = (byte)(SBox[(byte)(b0 >> 16)] ^ (byte)(ekey[3] >> 16));
+			outdata[14] = (byte)(SBox[(byte)(b1 >> 8)] ^ (byte)(ekey[3] >> 8));
+			outdata[15] = (byte)(SBox[(byte)b2] ^ (byte)ekey[3]);
+		}
+		private unsafe void Encrypt128_2 (uint* ekey, uint* T0, uint* T1, uint* T2, uint* T3, byte* indata, byte* outdata)
+		{
+			uint a0, a1, a2, a3, b0, b1, b2, b3;
 			int ei = 40;
 
 			/* Round 0 */
