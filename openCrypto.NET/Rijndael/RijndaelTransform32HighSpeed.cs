@@ -81,7 +81,6 @@ namespace openCrypto
 		private unsafe void Encrypt128 (uint* ekey, uint* T0, uint* T1, uint* T2, uint* T3, byte* indata, byte* outdata)
 		{
 			uint a0, a1, a2, a3, b0, b1, b2, b3;
-			int ei = 40;
 
 			/* Round 0 */
 			a0 = (((uint)indata[0] << 24) | ((uint)indata[1] << 16) | ((uint)indata[2] << 8) | (uint)indata[3]) ^ ekey[0];
@@ -143,60 +142,70 @@ namespace openCrypto
 			b2 = T0[a2 >> 24] ^ T1[(byte)(a3 >> 16)] ^ T2[(byte)(a0 >> 8)] ^ T3[(byte)a1] ^ ekey[38];
 			b3 = T0[a3 >> 24] ^ T1[(byte)(a0 >> 16)] ^ T2[(byte)(a1 >> 8)] ^ T3[(byte)a2] ^ ekey[39];
 
+			ekey += 40;
+
 			if (_Nr > 10) {
 
 				/* Round 10 */
-				a0 = T0[b0 >> 24] ^ T1[(byte)(b1 >> 16)] ^ T2[(byte)(b2 >> 8)] ^ T3[(byte)b3] ^ ekey[40];
-				a1 = T0[b1 >> 24] ^ T1[(byte)(b2 >> 16)] ^ T2[(byte)(b3 >> 8)] ^ T3[(byte)b0] ^ ekey[41];
-				a2 = T0[b2 >> 24] ^ T1[(byte)(b3 >> 16)] ^ T2[(byte)(b0 >> 8)] ^ T3[(byte)b1] ^ ekey[42];
-				a3 = T0[b3 >> 24] ^ T1[(byte)(b0 >> 16)] ^ T2[(byte)(b1 >> 8)] ^ T3[(byte)b2] ^ ekey[43];
+				a0 = T0[b0 >> 24] ^ T1[(byte)(b1 >> 16)] ^ T2[(byte)(b2 >> 8)] ^ T3[(byte)b3] ^ ekey[0];
+				a1 = T0[b1 >> 24] ^ T1[(byte)(b2 >> 16)] ^ T2[(byte)(b3 >> 8)] ^ T3[(byte)b0] ^ ekey[1];
+				a2 = T0[b2 >> 24] ^ T1[(byte)(b3 >> 16)] ^ T2[(byte)(b0 >> 8)] ^ T3[(byte)b1] ^ ekey[2];
+				a3 = T0[b3 >> 24] ^ T1[(byte)(b0 >> 16)] ^ T2[(byte)(b1 >> 8)] ^ T3[(byte)b2] ^ ekey[3];
 
 				/* Round 11 */
-				b0 = T0[a0 >> 24] ^ T1[(byte)(a1 >> 16)] ^ T2[(byte)(a2 >> 8)] ^ T3[(byte)a3] ^ ekey[44];
-				b1 = T0[a1 >> 24] ^ T1[(byte)(a2 >> 16)] ^ T2[(byte)(a3 >> 8)] ^ T3[(byte)a0] ^ ekey[45];
-				b2 = T0[a2 >> 24] ^ T1[(byte)(a3 >> 16)] ^ T2[(byte)(a0 >> 8)] ^ T3[(byte)a1] ^ ekey[46];
-				b3 = T0[a3 >> 24] ^ T1[(byte)(a0 >> 16)] ^ T2[(byte)(a1 >> 8)] ^ T3[(byte)a2] ^ ekey[47];
+				b0 = T0[a0 >> 24] ^ T1[(byte)(a1 >> 16)] ^ T2[(byte)(a2 >> 8)] ^ T3[(byte)a3] ^ ekey[4];
+				b1 = T0[a1 >> 24] ^ T1[(byte)(a2 >> 16)] ^ T2[(byte)(a3 >> 8)] ^ T3[(byte)a0] ^ ekey[5];
+				b2 = T0[a2 >> 24] ^ T1[(byte)(a3 >> 16)] ^ T2[(byte)(a0 >> 8)] ^ T3[(byte)a1] ^ ekey[6];
+				b3 = T0[a3 >> 24] ^ T1[(byte)(a0 >> 16)] ^ T2[(byte)(a1 >> 8)] ^ T3[(byte)a2] ^ ekey[7];
 
-				ei = 48;
+				ekey += 8;
 
 				if (_Nr > 12) {
 
 					/* Round 12 */
-					a0 = T0[b0 >> 24] ^ T1[(byte)(b1 >> 16)] ^ T2[(byte)(b2 >> 8)] ^ T3[(byte)b3] ^ ekey[48];
-					a1 = T0[b1 >> 24] ^ T1[(byte)(b2 >> 16)] ^ T2[(byte)(b3 >> 8)] ^ T3[(byte)b0] ^ ekey[49];
-					a2 = T0[b2 >> 24] ^ T1[(byte)(b3 >> 16)] ^ T2[(byte)(b0 >> 8)] ^ T3[(byte)b1] ^ ekey[50];
-					a3 = T0[b3 >> 24] ^ T1[(byte)(b0 >> 16)] ^ T2[(byte)(b1 >> 8)] ^ T3[(byte)b2] ^ ekey[51];
+					a0 = T0[b0 >> 24] ^ T1[(byte)(b1 >> 16)] ^ T2[(byte)(b2 >> 8)] ^ T3[(byte)b3] ^ ekey[0];
+					a1 = T0[b1 >> 24] ^ T1[(byte)(b2 >> 16)] ^ T2[(byte)(b3 >> 8)] ^ T3[(byte)b0] ^ ekey[1];
+					a2 = T0[b2 >> 24] ^ T1[(byte)(b3 >> 16)] ^ T2[(byte)(b0 >> 8)] ^ T3[(byte)b1] ^ ekey[2];
+					a3 = T0[b3 >> 24] ^ T1[(byte)(b0 >> 16)] ^ T2[(byte)(b1 >> 8)] ^ T3[(byte)b2] ^ ekey[3];
 
 					/* Round 13 */
-					b0 = T0[a0 >> 24] ^ T1[(byte)(a1 >> 16)] ^ T2[(byte)(a2 >> 8)] ^ T3[(byte)a3] ^ ekey[52];
-					b1 = T0[a1 >> 24] ^ T1[(byte)(a2 >> 16)] ^ T2[(byte)(a3 >> 8)] ^ T3[(byte)a0] ^ ekey[53];
-					b2 = T0[a2 >> 24] ^ T1[(byte)(a3 >> 16)] ^ T2[(byte)(a0 >> 8)] ^ T3[(byte)a1] ^ ekey[54];
-					b3 = T0[a3 >> 24] ^ T1[(byte)(a0 >> 16)] ^ T2[(byte)(a1 >> 8)] ^ T3[(byte)a2] ^ ekey[55];
+					b0 = T0[a0 >> 24] ^ T1[(byte)(a1 >> 16)] ^ T2[(byte)(a2 >> 8)] ^ T3[(byte)a3] ^ ekey[4];
+					b1 = T0[a1 >> 24] ^ T1[(byte)(a2 >> 16)] ^ T2[(byte)(a3 >> 8)] ^ T3[(byte)a0] ^ ekey[5];
+					b2 = T0[a2 >> 24] ^ T1[(byte)(a3 >> 16)] ^ T2[(byte)(a0 >> 8)] ^ T3[(byte)a1] ^ ekey[6];
+					b3 = T0[a3 >> 24] ^ T1[(byte)(a0 >> 16)] ^ T2[(byte)(a1 >> 8)] ^ T3[(byte)a2] ^ ekey[7];
 
-					ei = 56;
+					ekey += 8;
 				}
 			}
 
 			/* Final Round */
-			outdata[0] = (byte)(SBox[b0 >> 24] ^ (byte)(ekey[ei] >> 24));
-			outdata[1] = (byte)(SBox[(byte)(b1 >> 16)] ^ (byte)(ekey[ei] >> 16));
-			outdata[2] = (byte)(SBox[(byte)(b2 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[3] = (byte)(SBox[(byte)b3] ^ (byte)ekey[ei++]);
+			uint tmp = (uint)(SBox[b0 >> 24] << 24) ^ (uint)(SBox[(byte)(b1 >> 16)] << 16)
+				^ (uint)(SBox[(byte)(b2 >> 8)] << 8) ^ (uint)SBox[(byte)b3] ^ ekey[0];
+			outdata[0] = (byte)(tmp >> 24);
+			outdata[1] = (byte)(tmp >> 16);
+			outdata[2] = (byte)(tmp >> 8);
+			outdata[3] = (byte)(tmp);
 
-			outdata[4] = (byte)(SBox[b1 >> 24] ^ (byte)(ekey[ei] >> 24));
-			outdata[5] = (byte)(SBox[(byte)(b2 >> 16)] ^ (byte)(ekey[ei] >> 16));
-			outdata[6] = (byte)(SBox[(byte)(b3 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[7] = (byte)(SBox[(byte)b0] ^ (byte)ekey[ei++]);
+			tmp = (uint)(SBox[b1 >> 24] << 24) ^ (uint)(SBox[(byte)(b2 >> 16)] << 16)
+				^ (uint)(SBox[(byte)(b3 >> 8)] << 8) ^ (uint)SBox[(byte)b0] ^ ekey[1];
+			outdata[4] = (byte)(tmp >> 24);
+			outdata[5] = (byte)(tmp >> 16);
+			outdata[6] = (byte)(tmp >> 8);
+			outdata[7] = (byte)(tmp);
 
-			outdata[8] = (byte)(SBox[b2 >> 24] ^ (byte)(ekey[ei] >> 24));
-			outdata[9] = (byte)(SBox[(byte)(b3 >> 16)] ^ (byte)(ekey[ei] >> 16));
-			outdata[10] = (byte)(SBox[(byte)(b0 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[11] = (byte)(SBox[(byte)b1] ^ (byte)ekey[ei++]);
+			tmp = (uint)(SBox[b2 >> 24] << 24) ^ (uint)(SBox[(byte)(b3 >> 16)] << 16)
+				^ (uint)(SBox[(byte)(b0 >> 8)] << 8) ^ (uint)SBox[(byte)b1] ^ ekey[2];
+			outdata[8] = (byte)(tmp >> 24);
+			outdata[9] = (byte)(tmp >> 16);
+			outdata[10] = (byte)(tmp >> 8);
+			outdata[11] = (byte)(tmp);
 
-			outdata[12] = (byte)(SBox[b3 >> 24] ^ (byte)(ekey[ei] >> 24));
-			outdata[13] = (byte)(SBox[(byte)(b0 >> 16)] ^ (byte)(ekey[ei] >> 16));
-			outdata[14] = (byte)(SBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[15] = (byte)(SBox[(byte)b2] ^ (byte)ekey[ei]);
+			tmp = (uint)(SBox[b3 >> 24] << 24) ^ (uint)(SBox[(byte)(b0 >> 16)] << 16)
+				^ (uint)(SBox[(byte)(b1 >> 8)] << 8) ^ (uint)SBox[(byte)b2] ^ ekey[3];
+			outdata[12] = (byte)(tmp >> 24);
+			outdata[13] = (byte)(tmp >> 16);
+			outdata[14] = (byte)(tmp >> 8);
+			outdata[15] = (byte)(tmp);
 		}
 		private unsafe void Encrypt192 (uint* ekey, uint* T0, uint* T1, uint* T2, uint* T3, byte* indata, byte* outdata)
 		{
@@ -542,7 +551,6 @@ namespace openCrypto
 		private unsafe void Decrypt128 (uint* ekey, uint *iT0, uint *iT1, uint *iT2, uint *iT3, byte* indata, byte* outdata)
 		{
 			uint a0, a1, a2, a3, b0, b1, b2, b3;
-			int ei = 40;
 
 			/* Round 0 */
 			a0 = (((uint)indata[0] << 24) | ((uint)indata[1] << 16) | ((uint)indata[2] << 8) | (uint)indata[3]) ^ ekey[0];
@@ -604,60 +612,70 @@ namespace openCrypto
 			b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[38];
 			b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[39];
 
+			ekey += 40;
+
 			if (_Nr > 10) {
 
 				/* Round 10 */
-				a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[40];
-				a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[41];
-				a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[42];
-				a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[43];
+				a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[0];
+				a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[1];
+				a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[2];
+				a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[3];
 
 				/* Round 11 */
-				b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[44];
-				b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[45];
-				b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[46];
-				b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[47];
+				b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[4];
+				b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[5];
+				b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[6];
+				b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[7];
 
-				ei = 48;
+				ekey += 8;
 
 				if (_Nr > 12) {
 
 					/* Round 12 */
-					a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[48];
-					a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[49];
-					a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[50];
-					a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[51];
+					a0 = iT0[b0 >> 24] ^ iT1[(byte)(b3 >> 16)] ^ iT2[(byte)(b2 >> 8)] ^ iT3[(byte)b1] ^ ekey[0];
+					a1 = iT0[b1 >> 24] ^ iT1[(byte)(b0 >> 16)] ^ iT2[(byte)(b3 >> 8)] ^ iT3[(byte)b2] ^ ekey[1];
+					a2 = iT0[b2 >> 24] ^ iT1[(byte)(b1 >> 16)] ^ iT2[(byte)(b0 >> 8)] ^ iT3[(byte)b3] ^ ekey[2];
+					a3 = iT0[b3 >> 24] ^ iT1[(byte)(b2 >> 16)] ^ iT2[(byte)(b1 >> 8)] ^ iT3[(byte)b0] ^ ekey[3];
 
 					/* Round 13 */
-					b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[52];
-					b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[53];
-					b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[54];
-					b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[55];
+					b0 = iT0[a0 >> 24] ^ iT1[(byte)(a3 >> 16)] ^ iT2[(byte)(a2 >> 8)] ^ iT3[(byte)a1] ^ ekey[4];
+					b1 = iT0[a1 >> 24] ^ iT1[(byte)(a0 >> 16)] ^ iT2[(byte)(a3 >> 8)] ^ iT3[(byte)a2] ^ ekey[5];
+					b2 = iT0[a2 >> 24] ^ iT1[(byte)(a1 >> 16)] ^ iT2[(byte)(a0 >> 8)] ^ iT3[(byte)a3] ^ ekey[6];
+					b3 = iT0[a3 >> 24] ^ iT1[(byte)(a2 >> 16)] ^ iT2[(byte)(a1 >> 8)] ^ iT3[(byte)a0] ^ ekey[7];
 					
-					ei = 56;
+					ekey += 8;
 				}
 			}
 
 			/* Final Round */
-			outdata[0] = (byte)(iSBox[b0 >> 24] ^ (byte)(ekey[ei] >> 24));
-			outdata[1] = (byte)(iSBox[(byte)(b3 >> 16)] ^ (byte)(ekey[ei] >> 16));
-			outdata[2] = (byte)(iSBox[(byte)(b2 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[3] = (byte)(iSBox[(byte)b1] ^ (byte)ekey[ei++]);
+			uint tmp = (uint)(iSBox[b0 >> 24] << 24) ^ (uint)(iSBox[(byte)(b3 >> 16)] << 16)
+				^ (uint)(iSBox[(byte)(b2 >> 8)] << 8) ^ (uint)iSBox[(byte)b1] ^ ekey[0];
+			outdata[0] = (byte)(tmp >> 24);
+			outdata[1] = (byte)(tmp >> 16);
+			outdata[2] = (byte)(tmp >> 8);
+			outdata[3] = (byte)(tmp);
 
-			outdata[4] = (byte)(iSBox[b1 >> 24] ^ (byte)(ekey[ei] >> 24));
-			outdata[5] = (byte)(iSBox[(byte)(b0 >> 16)] ^ (byte)(ekey[ei] >> 16));
-			outdata[6] = (byte)(iSBox[(byte)(b3 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[7] = (byte)(iSBox[(byte)b2] ^ (byte)ekey[ei++]);
+			tmp = (uint)(iSBox[b1 >> 24] << 24) ^ (uint)(iSBox[(byte)(b0 >> 16)] << 16)
+				^ (uint)(iSBox[(byte)(b3 >> 8)] << 8) ^ (uint)iSBox[(byte)b2] ^ ekey[1];
+			outdata[4] = (byte)(tmp >> 24);
+			outdata[5] = (byte)(tmp >> 16);
+			outdata[6] = (byte)(tmp >> 8);
+			outdata[7] = (byte)(tmp);
 
-			outdata[8] = (byte)(iSBox[b2 >> 24] ^ (byte)(ekey[ei] >> 24));
-			outdata[9] = (byte)(iSBox[(byte)(b1 >> 16)] ^ (byte)(ekey[ei] >> 16));
-			outdata[10] = (byte)(iSBox[(byte)(b0 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[11] = (byte)(iSBox[(byte)b3] ^ (byte)ekey[ei++]);
+			tmp = (uint)(iSBox[b2 >> 24] << 24) ^ (uint)(iSBox[(byte)(b1 >> 16)] << 16)
+				^ (uint)(iSBox[(byte)(b0 >> 8)] << 8) ^ (uint)iSBox[(byte)b3] ^ ekey[2];
+			outdata[8] = (byte)(tmp >> 24);
+			outdata[9] = (byte)(tmp >> 16);
+			outdata[10] = (byte)(tmp >> 8);
+			outdata[11] = (byte)(tmp);
 
-			outdata[12] = (byte)(iSBox[b3 >> 24] ^ (byte)(ekey[ei] >> 24));
-			outdata[13] = (byte)(iSBox[(byte)(b2 >> 16)] ^ (byte)(ekey[ei] >> 16));
-			outdata[14] = (byte)(iSBox[(byte)(b1 >> 8)] ^ (byte)(ekey[ei] >> 8));
-			outdata[15] = (byte)(iSBox[(byte)b0] ^ (byte)ekey[ei]);
+			tmp = (uint)(iSBox[b3 >> 24] << 24) ^ (uint)(iSBox[(byte)(b2 >> 16)] << 16)
+				^ (uint)(iSBox[(byte)(b1 >> 8)] << 8) ^ (uint)iSBox[(byte)b0] ^ ekey[3];
+			outdata[12] = (byte)(tmp >> 24);
+			outdata[13] = (byte)(tmp >> 16);
+			outdata[14] = (byte)(tmp >> 8);
+			outdata[15] = (byte)(tmp);
 		}
 		private unsafe void Decrypt192 (uint* ekey, uint* iT0, uint* iT1, uint* iT2, uint* iT3, byte* indata, byte* outdata)
 		{
