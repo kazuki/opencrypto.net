@@ -29,7 +29,7 @@ using NUnit.Framework;
 
 namespace openCrypto.Tests
 {
-	[TestFixture]
+	[TestFixture, Category ("Thread")]
 	public class ConfluentWaitHandleTest
 	{
 		[Test]

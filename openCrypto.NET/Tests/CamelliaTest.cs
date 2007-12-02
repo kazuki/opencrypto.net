@@ -34,7 +34,7 @@ namespace openCrypto.Tests
 	/// <summary>
 	/// <ja>Camellia対称鍵アルゴリズムのテストを行うクラス</ja>
 	/// </summary>
-	[TestFixture]
+	[TestFixture, Category ("SymmetricCryptography")]
 	public class CamelliaTest : SymmetricAlgorithmTestBase
 	{
 		public CamelliaTest ()

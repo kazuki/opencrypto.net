@@ -108,7 +108,7 @@ namespace openCrypto.Tests
 							for (int i = 0; i < ct.Length; i += blockSize >> 3)
 								t.TransformBlock (ct, i, blockSize >> 3, tmp, i);
 						for (int i = 0; i < pt.Length; i ++)
-							Assert.AreEqual (pt[i], tmp[i], "Mode:" + type.ToString () + " Pos:" + i.ToString ());
+							Assert.AreEqual (pt[i], tmp[i], "Mode:" + type.ToString () + " Key:" + keySize.ToString () + "bits Block:" + blockSize.ToString () + "bits Pos:" + i.ToString ());
 					}
 					if (blockSizes.SkipSize == 0)
 						break;
@@ -148,7 +148,7 @@ namespace openCrypto.Tests
 						using (ICryptoTransform t = algo.CreateDecryptor (key, iv))
 							Assert.AreEqual (ct.Length, t.TransformBlock (ct, 0, ct.Length, tmp, 0), "Mode:" + type.ToString () + " Encryption");
 						for (int i = 0; i < pt.Length; i ++)
-							Assert.AreEqual (pt[i], tmp[i], "Mode:" + type.ToString () + " Pos:" + i.ToString ());
+							Assert.AreEqual (pt[i], tmp[i], "Mode:" + type.ToString () + " Key:" + keySize.ToString () + "bits Block:" + blockSize.ToString () + "bits Pos:" + i.ToString ());
 					}
 					if (blockSizes.SkipSize == 0)
 						break;

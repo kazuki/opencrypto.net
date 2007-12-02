@@ -29,7 +29,7 @@ using NUnit.Framework;
 
 namespace openCrypto.Tests
 {
-	[TestFixture]
+	[TestFixture, Category ("SymmetricCryptography")]
 	public class SymmetricAlgorithmPlusTest
 	{
 		/// <summary>
