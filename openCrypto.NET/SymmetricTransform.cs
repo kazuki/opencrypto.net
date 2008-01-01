@@ -43,6 +43,7 @@ namespace openCrypto
 		private ConfluentWaitHandle _waitHandle;
 		private byte[] _iv;
 		private byte[] _temp;
+		private byte[] _decryptBuffer;
 		private byte[][] _mt_temp;
 
 		public SymmetricTransform (SymmetricAlgorithmPlus algo, bool encryptMode, byte[] iv)
@@ -53,6 +54,7 @@ namespace openCrypto
 			_mt_threshold = _blockBytes * 2;
 			_iv = (byte[])iv.Clone ();
 			_mode = algo.ModePlus;
+			_decryptBuffer = new byte[OutputBlockSize];
 
 			if (_algo.NumberOfThreads > 1 && (algo.ModePlus == CipherModePlus.ECB || algo.ModePlus == CipherModePlus.CTR || (algo.ModePlus == CipherModePlus.CBC && !encryptMode))) {
 				_useThread = true;
@@ -173,6 +175,11 @@ namespace openCrypto
 				_waitHandle.WaitOne ();
 			}
 
+			if (inputCount > 0) {
+				int outputLen = outputOffset + inputCount / InputBlockSize * OutputBlockSize;
+				for (int i = outputLen - OutputBlockSize, q = 0; i < outputLen; i ++, q ++)
+					_decryptBuffer[q] = outputBuffer[i];
+			}
 			return inputCount;
 		}
 
@@ -242,6 +249,9 @@ namespace openCrypto
 
 			if (_algo.Padding == PaddingMode.None || _algo.Padding == PaddingMode.Zeros)
 				return tmp;
+			if (inputCount == 0 && inputBuffer.Length - inputOffset == InputBlockSize) {
+				tmp = _decryptBuffer;
+			}
 			byte[] tmp2 = new byte[tmp.Length - tmp[tmp.Length - 1]];
 			Buffer.BlockCopy (tmp, 0, tmp2, 0, tmp2.Length);
 			return tmp2;
