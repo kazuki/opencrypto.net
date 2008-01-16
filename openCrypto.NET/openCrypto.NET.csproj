@@ -50,6 +50,8 @@
     <Compile Include="CipherImplementationType.cs" />
     <Compile Include="CipherModePlus.cs" />
     <Compile Include="ConfluentWaitHandle.cs" />
+    <Compile Include="ECDSA\ECDSA.cs" />
+    <Compile Include="ECDSA\ECDSAParameters.cs" />
     <Compile Include="EllipticCurve\ECDomainParameters.cs" />
     <Compile Include="EllipticCurve\ECGroup.cs" />
     <Compile Include="EllipticCurve\ECPoint.cs" />
