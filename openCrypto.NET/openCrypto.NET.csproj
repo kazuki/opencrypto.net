@@ -52,6 +52,8 @@
     <Compile Include="ConfluentWaitHandle.cs" />
     <Compile Include="ECDSA\ECDSA.cs" />
     <Compile Include="ECDSA\ECDSAParameters.cs" />
+    <Compile Include="EllipticCurve\ECDomainNames.cs" />
+    <Compile Include="EllipticCurve\ECDomains.cs" />
     <Compile Include="EllipticCurve\ECDomainParameters.cs" />
     <Compile Include="EllipticCurve\ECGroup.cs" />
     <Compile Include="EllipticCurve\ECPoint.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Tests\DummyAlgorithm.cs" />
     <Compile Include="Tests\PaddingModeTest.cs" />
     <Compile Include="Tests\ParallelTest.cs" />
+    <Compile Include="Tests\RecommendedCurveTest.cs" />
     <Compile Include="Tests\RijndaelTest.cs" />
     <Compile Include="Tests\SymmetricAlgorithmPlusTest.cs" />
     <Compile Include="Tests\SymmetricAlgorithmTestBase.cs" />

@@ -97,9 +97,9 @@ namespace openCrypto.Tests
 					foreach (CipherImplementationType type in _types) {
 						if (!algo.HasImplementation (type))
 							continue;
-						Helpers.RNG.GetBytes (pt);
-						Helpers.RNG.GetBytes (key);
-						Helpers.RNG.GetBytes (iv);
+						RNG.Instance.GetBytes (pt);
+						RNG.Instance.GetBytes (key);
+						RNG.Instance.GetBytes (iv);
 						algo.ImplementationType = type;
 						using (ICryptoTransform t = algo.CreateEncryptor (key, iv))
 							for (int i = 0; i < pt.Length; i += blockSize >> 3)
@@ -139,9 +139,9 @@ namespace openCrypto.Tests
 					foreach (CipherImplementationType type in _types) {
 						if (!algo.HasImplementation (type))
 							continue;
-						Helpers.RNG.GetBytes (pt);
-						Helpers.RNG.GetBytes (key);
-						Helpers.RNG.GetBytes (iv);
+						RNG.Instance.GetBytes (pt);
+						RNG.Instance.GetBytes (key);
+						RNG.Instance.GetBytes (iv);
 						algo.ImplementationType = type;
 						using (ICryptoTransform t = algo.CreateEncryptor (key, iv))
 							Assert.AreEqual (pt.Length, t.TransformBlock (pt, 0, pt.Length, ct, 0), "Mode:" + type.ToString () + " Encryption");

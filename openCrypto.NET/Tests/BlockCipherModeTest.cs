@@ -37,7 +37,7 @@ namespace openCrypto.Tests
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
 			algo.Mode = CipherMode.ECB;
-			Test (algo, "ECB #1", Helpers.GetRNGBytes (8), Helpers.GetRNGBytes (8),
+			Test (algo, "ECB #1", RNG.GetRNGBytes (8), RNG.GetRNGBytes (8),
 					new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 255, 254, 253, 252, 251, 250, 249, 248},
 					new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 255, 254, 253, 252, 251, 250, 249, 248});
 		}
@@ -47,7 +47,7 @@ namespace openCrypto.Tests
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
 			algo.Mode = CipherMode.CBC;
-			Test (algo, "CBC #1", Helpers.GetRNGBytes (8),
+			Test (algo, "CBC #1", RNG.GetRNGBytes (8),
 					new byte[] {2, 3, 4, 5, 6, 7, 8, 9},
 					new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 255, 254, 253, 252, 251, 250, 249, 248},
 					new byte[] {3, 1, 7, 1, 3, 1, 15, 1, 255 ^ 3, 254 ^ 1, 253 ^ 7, 252 ^ 1, 251 ^ 3, 250 ^ 1, 249 ^ 15, 248 ^ 1});
@@ -58,7 +58,7 @@ namespace openCrypto.Tests
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
 			algo.Mode = CipherMode.CFB;
-			Test (algo, "CFB #1", Helpers.GetRNGBytes (8),
+			Test (algo, "CFB #1", RNG.GetRNGBytes (8),
 					new byte[] {2, 3, 4, 5, 6, 7, 8, 9},
 					new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 255, 254, 253, 252, 251, 250, 249, 248},
 					new byte[] {2 ^ 1, 3 ^ 2, 4 ^ 3, 5 ^ 4, 6 ^ 5, 7 ^ 6, 8 ^ 7, 9 ^ 8,
@@ -70,7 +70,7 @@ namespace openCrypto.Tests
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
 			algo.Mode = CipherMode.OFB;
-			Test (algo, "OFB #1", Helpers.GetRNGBytes (8),
+			Test (algo, "OFB #1", RNG.GetRNGBytes (8),
 					new byte[] {2, 3, 4, 5, 6, 7, 8, 9},
 					new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 255, 254, 253, 252, 251, 250, 249, 248},
 					new byte[] {2 ^ 1, 3 ^ 2, 4 ^ 3, 5 ^ 4, 6 ^ 5, 7 ^ 6, 8 ^ 7, 9 ^ 8,
@@ -82,7 +82,7 @@ namespace openCrypto.Tests
 		{
 			DummyAlgorithm algo = new DummyAlgorithm ();
 			algo.ModePlus = CipherModePlus.CTR;
-			Test (algo, "CTR #1", Helpers.GetRNGBytes (8),
+			Test (algo, "CTR #1", RNG.GetRNGBytes (8),
 					new byte[] {0, 0xFF, 1, 0xFF, 2, 0xFF, 3, 0xFF},
 					new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 255, 254, 253, 252, 251, 250, 249, 248},
 					new byte[] {1 ^ 0, 2 ^ 0xFF, 3 ^ 1, 4 ^ 0xFF, 5 ^ 2, 6 ^ 0xFF, 7 ^ 3, 8 ^ 0xFF,
