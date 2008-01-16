@@ -14,6 +14,8 @@ ECDSA/ECDSAParameters.cs
 EllipticCurve/ECDomainParameters.cs
 EllipticCurve/ECGroup.cs
 EllipticCurve/ECPoint.cs
+EllipticCurve/ECDomainNames.cs
+EllipticCurve/ECDomains.cs
 FiniteField/Barrett.cs
 FiniteField/Classical.cs
 FiniteField/GeneralizedMersennePrimeField.cs
@@ -37,3 +39,4 @@ Tests/ParallelTest.cs
 Tests/RijndaelTest.cs
 Tests/SymmetricAlgorithmPlusTest.cs
 Tests/SymmetricAlgorithmTestBase.cs
+Tests/RecommendedCurveTest.cs
