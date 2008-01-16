@@ -52,13 +52,13 @@ namespace openCrypto
 		public override void GenerateIV ()
 		{
 			base.IVValue = new byte [base.BlockSizeValue >> 3];
-			Helpers.RNG.GetBytes (base.IVValue);
+			RNG.Instance.GetBytes (base.IVValue);
 		}
 
 		public override void GenerateKey ()
 		{
 			base.KeyValue = new byte [base.KeySizeValue >> 3];
-			Helpers.RNG.GetBytes (base.KeyValue);
+			RNG.Instance.GetBytes (base.KeyValue);
 		}
 	}
 }

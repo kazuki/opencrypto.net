@@ -26,36 +26,24 @@ using System.Security.Cryptography;
 
 namespace openCrypto
 {
-	public abstract class Rijndael : SymmetricAlgorithmPlus
+	/// <summary>
+	/// <ja>内部的に利用される補助メソッド群</ja>
+	/// </summary>
+	static class RNG
 	{
-		static KeySizes[] _legalKeySizes = new KeySizes[] { new KeySizes (128, 256, 64) };
-		static KeySizes[] _legalBlockSizes = new KeySizes[] { new KeySizes (128, 256, 64) };
+		static RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider ();
 
-		protected Rijndael ()
+		public static RNGCryptoServiceProvider Instance {
+			get { return _rng; }
+		}
+
+#if TEST
+		public static byte[] GetRNGBytes (int size)
 		{
-			base.KeySizeValue = _legalKeySizes[0].MinSize;
-			base.BlockSizeValue = _legalBlockSizes[0].MinSize;
-			base.FeedbackSizeValue = _legalBlockSizes[0].MinSize;
-			base.LegalBlockSizesValue = _legalBlockSizes;
-			base.LegalKeySizesValue = _legalKeySizes;
+			byte[] buf = new byte [size];
+			_rng.GetBytes (buf);
+			return buf;
 		}
-
-		public override void GenerateIV ()
-		{
-			base.IVValue = new byte [base.BlockSizeValue >> 3];
-			RNG.Instance.GetBytes (base.IVValue);
-		}
-
-		public override void GenerateKey ()
-		{
-			base.KeyValue = new byte [base.KeySizeValue >> 3];
-			RNG.Instance.GetBytes (base.KeyValue);
-		}
-
-		public override bool SupportsBlockModeParallelization {
-			get {
-				return true;
-			}
-		}
+#endif
 	}
 }

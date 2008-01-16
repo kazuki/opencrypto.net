@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2006, Kazuki Oikawa
+// Copyright (c) 2008, Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,40 +22,37 @@
 //
 
 using System;
-using System.Security.Cryptography;
+using openCrypto.FiniteField;
 
-namespace openCrypto
+namespace openCrypto.EllipticCurve
 {
-	public abstract class Rijndael : SymmetricAlgorithmPlus
+	class ECGroup
 	{
-		static KeySizes[] _legalKeySizes = new KeySizes[] { new KeySizes (128, 256, 64) };
-		static KeySizes[] _legalBlockSizes = new KeySizes[] { new KeySizes (128, 256, 64) };
+		Number _a, _b, _mod;
+		IFiniteField _field;
 
-		protected Rijndael ()
+		public ECGroup (Number a, Number b, Number mod, IFiniteField field)
 		{
-			base.KeySizeValue = _legalKeySizes[0].MinSize;
-			base.BlockSizeValue = _legalBlockSizes[0].MinSize;
-			base.FeedbackSizeValue = _legalBlockSizes[0].MinSize;
-			base.LegalBlockSizesValue = _legalBlockSizes;
-			base.LegalKeySizesValue = _legalKeySizes;
+			_a = a;
+			_b = b;
+			_mod = mod;
+			_field = field;
 		}
 
-		public override void GenerateIV ()
-		{
-			base.IVValue = new byte [base.BlockSizeValue >> 3];
-			RNG.Instance.GetBytes (base.IVValue);
+		public Number A {
+			get { return _a; }
 		}
 
-		public override void GenerateKey ()
-		{
-			base.KeyValue = new byte [base.KeySizeValue >> 3];
-			RNG.Instance.GetBytes (base.KeyValue);
+		public Number B {
+			get { return _b; }
 		}
 
-		public override bool SupportsBlockModeParallelization {
-			get {
-				return true;
-			}
+		public Number Q {
+			get { return _mod; }
+		}
+
+		public IFiniteField FiniteField {
+			get { return _field; }
 		}
 	}
 }

@@ -223,8 +223,7 @@ namespace openCrypto
 							lastBlock[i] = padSize;
 						break;
 					case PaddingMode.ISO10126:
-						RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider ();
-						rng.GetBytes (lastBlock);
+						RNG.Instance.GetBytes (lastBlock);
 						Buffer.BlockCopy (inputBuffer, inputOffset + norSize, lastBlock, 0, mod);
 						lastBlock[lastBlock.Length - 1] = padSize;
 						break;

@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2006, Kazuki Oikawa
+// Copyright (c) 2008, Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,24 +22,13 @@
 //
 
 using System;
-using System.Security.Cryptography;
 
-namespace openCrypto
+namespace openCrypto.FiniteField
 {
-	/// <summary>
-	/// <ja>内部的に利用される補助メソッド群</ja>
-	/// </summary>
-	static class Helpers
+	abstract class GeneralizedMersennePrimeField : Classical
 	{
-		public static RNGCryptoServiceProvider RNG = new RNGCryptoServiceProvider ();
-
-#if TEST
-		public static byte[] GetRNGBytes (int size)
+		protected GeneralizedMersennePrimeField (Number mod) : base (mod)
 		{
-			byte[] buf = new byte [size];
-			RNG.GetBytes (buf);
-			return buf;
 		}
-#endif
 	}
 }
