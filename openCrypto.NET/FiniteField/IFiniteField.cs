@@ -26,7 +26,7 @@ using openCrypto.EllipticCurve;
 
 namespace openCrypto.FiniteField
 {
-	interface IFiniteField
+	public interface IFiniteField
 	{
 		/// <summary>ˆø”‚É—^‚¦‚ç‚ê‚½“ñ‚Â‚ÌŒ³‚Ì‰ÁZ‚ğs‚¢Œ‹‰Ê‚ğ•Ô‚·</summary>
 		Number Add (Number x, Number y);

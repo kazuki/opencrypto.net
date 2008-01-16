@@ -26,7 +26,7 @@ using openCrypto.FiniteField;
 
 namespace openCrypto.EllipticCurve
 {
-	class ECGroup
+	public class ECGroup
 	{
 		Number _a, _b, _mod;
 		IFiniteField _field;

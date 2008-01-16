@@ -26,7 +26,7 @@ using openCrypto.EllipticCurve;
 
 namespace openCrypto.FiniteField
 {
-	class NIST_P192 : GeneralizedMersennePrimeField
+	public class NIST_P192 : GeneralizedMersennePrimeField
 	{
 		const uint P1 = 4294967295;
 		const uint P2 = 4294967295;

@@ -26,7 +26,7 @@ using openCrypto.EllipticCurve;
 
 namespace openCrypto.FiniteField
 {
-	class Montgomery : Classical
+	public class Montgomery : Classical
 	{
 		uint invMod;
 		Number montOne = null;
