@@ -56,6 +56,29 @@ namespace openCrypto.FiniteField
 			Normalize ();
 		}
 
+		public Number (byte[] data)
+			: this (ToUInt32Array (data))
+		{
+		}
+
+		static uint[] ToUInt32Array (byte[] data)
+		{
+			int i = 0, q = 0;
+			uint[] tmp = new uint [(data.Length >> 2) + ((data.Length & 3) == 0 ? 0 : 1)];
+			for (; i < data.Length - 3; i += 4)
+				tmp[q ++] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 2]) << 16) | (((uint)data[i + 3]) << 24);
+			if (data.Length == i)
+				return tmp;
+			int diff = data.Length - i;
+			if (diff == 1)
+				tmp[q] = data[i];
+			else if (diff == 2)
+				tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8);
+			else
+				tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 1]) << 16);
+			return tmp;
+		}
+
 		public Number (Number x)
 		{
 			length = x.length;
@@ -621,13 +644,11 @@ namespace openCrypto.FiniteField
 
 		public static Number CreateRandomElement (Number max)
 		{
-			uint[] tmp = new uint [max.length];
-			byte[] raw = new byte [tmp.Length << 2];
+			int bits = max.BitCount ();
+			byte[] raw = new byte [bits >> 3];
 			while (true) {
 				RNG.Instance.GetBytes (raw);
-				for (int i = 0, q = 0; i < tmp.Length; i ++, q += 4)
-					tmp[i] = (uint)raw[q] | ((uint)raw[q + 1] << 8) | ((uint)raw[q + 2] << 16) | ((uint)raw[q + 3] << 24);
-				Number ret = new Number (tmp);
+				Number ret = new Number (raw);
 				if (max.CompareTo (ret) > 0)
 					return ret;
 			}

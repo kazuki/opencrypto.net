@@ -92,7 +92,11 @@ namespace openCrypto.ECDSA
 
 			// Step.4
 			//ECPoint X = _param.Domain.G.Multiply (u1).Add (_param.Q.Multiply (u2));
-			ECPoint X = ECPoint.MultiplyAndAdd (_param.Domain.G, u1, _param.Q, u2);
+			ECPoint X;
+			if (u1.IsZero ())
+				X = _param.Domain.FieldN.GetInfinityPoint (_param.Domain.Group) .Add (_param.Q.Multiply (u2));
+			else
+				X = ECPoint.MultiplyAndAdd (_param.Domain.G, u1, _param.Q, u2);
 
 			// Step.5
 			if (X.IsInifinity ())

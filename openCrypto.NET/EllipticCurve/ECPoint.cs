@@ -69,6 +69,8 @@ namespace openCrypto.EllipticCurve
 
 		public ECPoint Double ()
 		{
+			if (this.IsInifinity ())
+				return this;
 			if (_x2 == null) _x2 = _field.Multiply (_x, _x);
 			if (_z2 == null) _z2 = _field.Multiply (_z, _z);
 			if (_y2 == null) _y2 = _field.Multiply (_y, _y);
