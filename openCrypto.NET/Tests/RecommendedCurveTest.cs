@@ -33,6 +33,19 @@ namespace openCrypto.Tests
 	public class RecommendedCurveTest
 	{
 		[Test]
+		public void Test_secp160r1 ()
+		{
+			ECDomainParameters domain = ECDomains.GetDomainParameter (ECDomainNames.secp160r1);
+			Test ("FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF 7FFFFFFF",
+				"FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF 7FFFFFFC",
+				"1C97BEFC 54BD7A8B 65ACF89F 81D4D4AD C565FA45",
+				"4A96B568 8EF57328 46646989 68C38BB9 13CBFC82",
+				"23A62855 3168947D 59DCC912 04235137 7AC5FB32",
+				"01 00000000 00000000 0001F4C8 F927AED3 CA752257",
+				1, domain);
+		}
+
+		[Test]
 		public void Test_secp192r1 ()
 		{
 			ECDomainParameters domain = ECDomains.GetDomainParameter (ECDomainNames.secp192r1);
@@ -60,18 +73,19 @@ namespace openCrypto.Tests
 
 		static void Test (string p, string a, string b, string Gx, string Gy, string n, int h, ECDomainParameters domain)
 		{
+			IFiniteField ff = domain.Group.FiniteField;
 			AreEqual (p, domain.Field, "p");
-			AreEqual (a, domain.A, "a");
-			AreEqual (b, domain.B, "b");
-			AreEqual (Gx, domain.G.X, "Gx");
-			AreEqual (Gy, domain.G.Y, "Gy");
+			AreEqual (a, ff.ToNormal (domain.A), "a");
+			AreEqual (b, ff.ToNormal (domain.B), "b");
+			AreEqual (Gx, ff.ToNormal (domain.G.X), "Gx");
+			AreEqual (Gy, ff.ToNormal (domain.G.Y), "Gy");
 			AreEqual (n, domain.N, "n");
 			Assert.AreEqual (h, domain.H, "h");
 		}
 
 		static void AreEqual (string expected, Number actual, string msg)
 		{
-			expected = expected.Replace (" ", "").ToLower ();
+			expected = expected.Replace (" ", "").ToLower ().TrimStart ('0');
 			Assert.AreEqual (expected, actual.ToString (16), msg);
 		}
 	}

@@ -38,6 +38,7 @@ namespace openCrypto.EllipticCurve
 			_cache = new Dictionary<int, ECDomainParameters> ();
 			_creator = new Dictionary<int, CreateDomainParameterDelegate> ();
 
+			_creator.Add ((int)ECDomainNames.secp160r1, Create_secp160r1);
 			_creator.Add ((int)ECDomainNames.secp192r1, Create_secp192r1);
 			_creator.Add ((int)ECDomainNames.secp256r1, Create_secp256r1);
 		}
@@ -47,7 +48,21 @@ namespace openCrypto.EllipticCurve
 			ECDomainParameters domain;
 			if (_cache.TryGetValue ((int)domainName, out domain))
 				return domain;
-			return _creator[(int)domainName] ();
+			domain = _creator[(int)domainName] ();
+			_cache[(int)domainName] = domain;
+			return domain;
+		}
+
+		static ECDomainParameters Create_secp160r1 ()
+		{
+			Number p = new Number (new uint[] {2147483647, 4294967295, 4294967295, 4294967295, 4294967295});
+			Number a = new Number (new uint[] {2147483644, 4294967295, 4294967295, 4294967295, 4294967295});
+			Number b = new Number (new uint[] {3311794757, 2178208941, 1705834655, 1421703819, 479706876});
+			Number gX = new Number (new uint[] {332135554, 1757645753, 1180985737, 2398450472, 1251390824});
+			Number gY = new Number (new uint[] {2059795250, 69423415, 1507641618, 828937341, 598091861});
+			Number order = new Number (new uint[] {3396674135, 4180127443, 128200, 0, 0, 1});
+			Montgomery mont = new Montgomery (p);
+			return Create (a, b, gX, gY, order, 1, mont);
 		}
 
 		static ECDomainParameters Create_secp192r1 ()
