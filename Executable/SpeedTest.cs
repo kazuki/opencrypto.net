@@ -24,11 +24,41 @@
 using System;
 using Stopwatch = System.Diagnostics.Stopwatch;
 using System.Security.Cryptography;
+using ECDSAManaged = openCrypto.ECDSA.ECDSA;
+using ECDSAParameters = openCrypto.ECDSA.ECDSAParameters;
+using Number = openCrypto.FiniteField.Number;
 
 namespace openCrypto.Executable
 {
 	static class SpeedTest
 	{
+		static RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider ();
+
+		public static double[] Run (ECDSAManaged ecdsa, ECDSAParameters param, int loop)
+		{
+			Stopwatch sw = new Stopwatch ();
+			byte[] data = new byte[(param.Domain.Field.BitCount () >> 3) + ((param.Domain.Field.BitCount () & 7) == 0 ? 0 : 1)];
+			double[] result = new double[2];
+			_rng.GetBytes (data);
+			Number hash = new Number (data);
+			Number[] sign = ecdsa.Sign (hash);
+			sw.Reset (); sw.Start ();
+			for (int i = 0; i < loop; i ++)
+				sign = ecdsa.Sign (hash);
+			sw.Stop ();
+			result[0] = sw.Elapsed.TotalMilliseconds / (double)loop;
+
+			bool signCheck = ecdsa.Verify (sign, hash);
+			sw.Reset (); sw.Start ();
+			for (int i = 0; i < loop; i++)
+				signCheck = ecdsa.Verify (sign, hash);
+			sw.Stop ();
+			result[1] = sw.Elapsed.TotalMilliseconds / (double)loop;
+			if (!signCheck)
+				result[1] = -result[1];
+			return result;
+		}
+
 		public static double[] Run (SymmetricAlgorithmPlus algo, CipherModePlus mode, int keySize, int blockSize, int dataSize, int threads)
 		{
 			double[] result;

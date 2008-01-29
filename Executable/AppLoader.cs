@@ -23,6 +23,10 @@
 
 using System;
 using System.Security.Cryptography;
+using openCrypto.FiniteField;
+using ECDSAManaged = openCrypto.ECDSA.ECDSA;
+using ECDSAParameters = openCrypto.ECDSA.ECDSAParameters;
+using openCrypto.EllipticCurve;
 
 namespace openCrypto.Executable
 {
@@ -33,6 +37,20 @@ namespace openCrypto.Executable
 			double[] result = SpeedTest.Run (algo, mode, keySize, blockSize, dataSize);
 			for (int i = 0; i < 10; i++) {
 				double[] temp = SpeedTest.Run (algo, mode, keySize, blockSize, dataSize);
+				result[0] = Math.Max (result[0], temp[0]);
+				result[1] = Math.Max (result[1], temp[1]);
+			}
+			return result;
+		}
+
+		static double[] Run (ECDomainNames domain)
+		{
+			ECDSAParameters ecdsaParams = ECDSAParameters.CreateNew (ECDomains.GetDomainParameter (domain));
+			ECDSAManaged ecdsa = new ECDSAManaged (ecdsaParams);
+			int loopA = 5, loopB = 100;
+			double[] result = SpeedTest.Run (ecdsa, ecdsaParams, loopA);
+			for (int i = 0; i < loopB; i++) {
+				double[] temp = SpeedTest.Run (ecdsa, ecdsaParams, loopA);
 				result[0] = Math.Max (result[0], temp[0]);
 				result[1] = Math.Max (result[1], temp[1]);
 			}
@@ -50,6 +68,12 @@ namespace openCrypto.Executable
 
 			result = Run (new RijndaelManaged (), mode, keySize, blockSize, dataSize);
 			Console.WriteLine ("Rijndael Encrypt: {0}Mbps, Decrypt: {1}Mbps", result[0], result[1]);
+
+			for (int i = (int)ECDomainNames.secp160r1; i <= (int)ECDomainNames.secp521r1; i ++) {
+				ECDomainNames domain = (ECDomainNames)i;
+				result = Run (domain);
+				Console.WriteLine ("{0}: Sign: {1}ms, Verify: {2}ms", domain, result[0], result[1]);
+			}
 		}
 	}
 }
