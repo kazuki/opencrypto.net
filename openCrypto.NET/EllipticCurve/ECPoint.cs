@@ -357,6 +357,8 @@ namespace openCrypto.EllipticCurve
 
 		public ECPoint Export ()
 		{
+			if (IsInifinity ())
+				return _field.GetInfinityPoint (_group);
 			return _field.ExportECPoint (_x, _y, _z, _group);
 		}
 

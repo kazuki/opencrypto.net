@@ -126,7 +126,7 @@ namespace openCrypto.Tests
 		static void Test (string p, string a, string b, string Gx, string Gy, string n, int h, ECDomainParameters domain)
 		{
 			IFiniteField ff = domain.Group.FiniteField;
-			AreEqual (p, domain.Field, "p");
+			AreEqual (p, domain.P, "p");
 			AreEqual (a, ff.ToNormal (domain.A), "a");
 			AreEqual (b, ff.ToNormal (domain.B), "b");
 			AreEqual (Gx, ff.ToNormal (domain.G.X), "Gx");

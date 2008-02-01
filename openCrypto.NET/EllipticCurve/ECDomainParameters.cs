@@ -31,7 +31,7 @@ namespace openCrypto.EllipticCurve
 		ECGroup _group;
 		ECPoint _G;
 		Number _order;
-		IFiniteField _field;
+		IFiniteField _fieldN;
 		uint _h;
 		uint _bits;
 
@@ -42,9 +42,10 @@ namespace openCrypto.EllipticCurve
 			_order = order;
 			_h = h;
 			_bits = bits;
-			_field = fieldN;
+			_fieldN = fieldN;
 		}
 
+		#region Properties
 		public uint Bits {
 			get { return _bits; }
 		}
@@ -69,12 +70,12 @@ namespace openCrypto.EllipticCurve
 		}
 
 		/// <summary>The order of the field.</summary>
-		public Number Field {
-			get { return _group.Q; }
+		public Number P {
+			get { return _group.P; }
 		}
 
 		public IFiniteField FieldN {
-			get { return _field; }
+			get { return _fieldN; }
 		}
 
 		/// <summary>The order of base point.</summary>
@@ -86,5 +87,60 @@ namespace openCrypto.EllipticCurve
 		public uint H {
 			get { return _h; }
 		}
+		#endregion
+
+		#region Methods
+		/// <summary>
+		/// TODO: 未実装のValidationステップを実装する
+		/// </summary>
+		public bool Validate ()
+		{
+			IFiniteField ff = _group.FiniteField;
+
+			// Step1: Check that p is an odd prime
+			// Step2: Check that a,b,Gx and Gy are integers in the interval [0, p - 1]
+			ECPoint ExportedG = _G.Export ();
+			Number Gx = ff.ToElement (ExportedG.X);
+			Number Gy = ff.ToElement (ExportedG.Y);
+			if (A > P || B > P || Gx > P || Gy > P)
+				return false;
+
+			// Step3: Check that 4*a^3 + 27*b^2 != 0 (mod p)
+			Number Apow3 = ff.Multiply (A, ff.Multiply (A, A));
+			Number Bpow2 = ff.Multiply (B, B);
+			Number ret = ff.Add (ff.Multiply (ff.ToElement (Number.Four), ff.ToElement (Apow3)), ff.Multiply (ff.ToElement (Number.TwentySeven), Bpow2));
+			if (ret.IsZero ())
+				return false;
+
+			// Step4: Gy^2 = Gx^3 + a*Gx + b
+			Number aGx = ff.Multiply (A, Gx);
+			Number Xpow3 = ff.Multiply (Gx, ff.Multiply (Gx, Gx));
+			Number Ypow2 = ff.Multiply (Gy, Gy);
+			ret = ff.Add (Xpow3, ff.Add (aGx, B));
+			if (ret.CompareTo (Ypow2) != 0)
+				return false;
+
+			// Step5: Check that n is prime.
+			// Step6: Check that h <= 4, and that h = (sqrt(p)+1)^2 / n
+
+			// Step7: Check that nG = O
+			ECPoint nG = _G.Multiply (N).Export ();
+			if (!nG.IsInifinity ())
+				return false;
+
+			// Step8: Check that q^B != 1 (mod n) for any 1 <= B <= 20, and that nh != p
+			Number p = Number.One;
+			Classical c = new Classical (N);
+			for (int i = 0; i <= 20; i ++) {
+				p = c.Multiply (p, P);
+				if (p.IsOne ())
+					return false;
+			}
+			if (c.Multiply (N, new Number (new uint[] {H}, 1)).CompareTo (P) == 0)
+				return false;
+
+			return true;
+		}
+		#endregion
 	}
 }

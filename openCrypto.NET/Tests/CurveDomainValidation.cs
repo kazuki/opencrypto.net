@@ -21,38 +21,63 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if TEST
 using System;
+using openCrypto.EllipticCurve;
 using openCrypto.FiniteField;
+using NUnit.Framework;
 
-namespace openCrypto.EllipticCurve
+namespace openCrypto.Tests
 {
-	public class ECGroup
+	[TestFixture]
+	public class CurveDomainValidation
 	{
-		Number _a, _b, _mod;
-		IFiniteField _field;
-
-		public ECGroup (Number a, Number b, Number mod, IFiniteField field)
+		[Test]
+		public void secp160r1 ()
 		{
-			_a = a;
-			_b = b;
-			_mod = mod;
-			_field = field;
+			Validate (ECDomainNames.secp160r1);
 		}
 
-		public Number A {
-			get { return _a; }
+		[Test]
+		public void secp160r2 ()
+		{
+			Validate (ECDomainNames.secp160r2);
 		}
 
-		public Number B {
-			get { return _b; }
+		[Test]
+		public void secp192r1 ()
+		{
+			Validate (ECDomainNames.secp192r1);
 		}
 
-		public Number P {
-			get { return _mod; }
+		[Test]
+		public void secp224r1 ()
+		{
+			Validate (ECDomainNames.secp224r1);
 		}
 
-		public IFiniteField FiniteField {
-			get { return _field; }
+		[Test]
+		public void secp256r1 ()
+		{
+			Validate (ECDomainNames.secp256r1);
+		}
+
+		[Test]
+		public void secp384r1 ()
+		{
+			Validate (ECDomainNames.secp384r1);
+		}
+
+		[Test]
+		public void secp521r1 ()
+		{
+			Validate (ECDomainNames.secp521r1);
+		}
+
+		static void Validate (ECDomainNames name)
+		{
+			Assert.IsTrue (ECDomains.GetDomainParameter (name).Validate (), name.ToString ());
 		}
 	}
 }
+#endif

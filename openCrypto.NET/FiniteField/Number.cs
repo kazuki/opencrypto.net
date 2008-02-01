@@ -32,10 +32,7 @@ namespace openCrypto.FiniteField
 		static string CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyz";
 		public uint[] data;
 		public int length;
-		static readonly Number ZERO = new Number (new uint[] { 0 }, 1);
-		static readonly Number ONE = new Number (new uint[] { 1 }, 1);
-		static readonly Number TWO = new Number (new uint[] { 2 }, 1);
-		static readonly Number THREE = new Number (new uint[] { 3 }, 1);
+		static Number ZERO = null, ONE = null, TWO = null, THREE = null, FOUR = null, TWENTY_SEVEN = null;
 
 		#region Constructors
 		public Number (int capacity)
@@ -97,21 +94,47 @@ namespace openCrypto.FiniteField
 		#endregion
 
 		#region Properties
-		public static Number Zero
-		{
-			get { return ZERO; }
+		public static Number Zero {
+			get {
+				if (ZERO == null)
+					ZERO = new Number (new uint[] {0}, 1);
+				return ZERO;
+			}
 		}
-		public static Number One
-		{
-			get { return ONE; }
+		public static Number One {
+			get {
+				if (ONE == null)
+					ONE = new Number (new uint[] {1}, 1);
+				return ONE;
+			}
 		}
-		public static Number Two
-		{
-			get { return TWO; }
+		public static Number Two {
+			get {
+				if (TWO == null)
+					TWO = new Number (new uint[] {2}, 1);
+				return TWO;
+			}
 		}
-		public static Number Three
-		{
-			get { return THREE; }
+		public static Number Three {
+			get {
+				if (THREE == null)
+					THREE = new Number (new uint[] {3}, 1);
+				return THREE;
+			}
+		}
+		public static Number Four {
+			get {
+				if (FOUR == null)
+					FOUR = new Number (new uint[] {4}, 1);
+				return FOUR;
+			}
+		}
+		public static Number TwentySeven {
+			get {
+				if (TWENTY_SEVEN == null)
+					TWENTY_SEVEN = new Number (new uint[] {27}, 1);
+				return TWENTY_SEVEN;
+			}
 		}
 		#endregion
 
@@ -470,6 +493,26 @@ namespace openCrypto.FiniteField
 		public static unsafe Number operator >> (Number x, int shift)
 		{
 			return new Number (RightShift (x.data, x.length, shift));
+		}
+
+		public static bool operator < (Number x, Number y)
+		{
+			return x.CompareTo (y) < 0;
+		}
+
+		public static bool operator > (Number x, Number y)
+		{
+			return x.CompareTo (y) > 0;
+		}
+
+		public static bool operator <= (Number x, Number y)
+		{
+			return x.CompareTo (y) <= 0;
+		}
+
+		public static bool operator >= (Number x, Number y)
+		{
+			return x.CompareTo (y) >= 0;
 		}
 		#endregion
 
