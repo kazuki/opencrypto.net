@@ -2,11 +2,12 @@ using System;
 
 namespace Demo
 {
-	enum ImplementationType
+	public enum ImplementationType
 	{
 		RijndaelRuntime = 0,
 		RijndaelBouncyCastle = 1,
 		RijndaelOpenCrypto = 2,
-		CamelliaOpenCrypto = 3
+		CamelliaBouncyCastle = 3,
+		CamelliaOpenCrypto = 4
 	}
 }

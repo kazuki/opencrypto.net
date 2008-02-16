@@ -35,7 +35,7 @@ namespace Demo
 
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
-			Application.Run (new SpeedCheckForm ());
+			Application.Run (new Demo2007 ());
 		}
 	}
 }

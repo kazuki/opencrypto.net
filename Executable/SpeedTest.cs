@@ -37,7 +37,7 @@ namespace openCrypto.Executable
 		public static double[] Run (ECDSAManaged ecdsa, ECDSAParameters param, int loop)
 		{
 			Stopwatch sw = new Stopwatch ();
-			byte[] data = new byte[(param.Domain.Field.BitCount () >> 3) + ((param.Domain.Field.BitCount () & 7) == 0 ? 0 : 1)];
+			byte[] data = new byte[(param.Domain.P.BitCount () >> 3) + ((param.Domain.P.BitCount () & 7) == 0 ? 0 : 1)];
 			double[] result = new double[2];
 			_rng.GetBytes (data);
 			Number hash = new Number (data);

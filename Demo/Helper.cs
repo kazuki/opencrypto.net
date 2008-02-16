@@ -12,8 +12,9 @@ namespace Demo
 		{
 			_implTable = new Dictionary<ImplementationType, string> ();
 			_implTable.Add (ImplementationType.RijndaelRuntime, "Rijndael (Runtime)");
-			_implTable.Add (ImplementationType.RijndaelBouncyCastle, "AES (Bouncy Castle)");
+			_implTable.Add (ImplementationType.RijndaelBouncyCastle, "Rijndael (Bouncy Castle)");
 			_implTable.Add (ImplementationType.RijndaelOpenCrypto, "Rijndael (openCrypto)");
+			_implTable.Add (ImplementationType.CamelliaBouncyCastle, "Camellia (Bouncy Castle)");
 			_implTable.Add (ImplementationType.CamelliaOpenCrypto, "Camellia (openCrypto)");
 		}
 
@@ -72,6 +73,8 @@ namespace Demo
 				return new openCrypto.RijndaelManaged ();
 			case ImplementationType.CamelliaOpenCrypto:
 				return new openCrypto.CamelliaManaged ();
+			case ImplementationType.CamelliaBouncyCastle:
+				return new Org.BouncyCastle.Crypto.Engines.CamelliaEngine ();
 			default:
 				return null;
 			}

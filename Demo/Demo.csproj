@@ -30,15 +30,35 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="bccrypto-net-1.1, Version=1.1.2680.38453, Culture=neutral">
+    <Reference Include="BouncyCastle.Crypto, Version=1.3.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\bccrypto-net-1.1.dll</HintPath>
+      <HintPath>.\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Demo2007.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Demo2007.Designer.cs">
+      <DependentUpon>Demo2007.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EncryptionSpeed.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EncryptionSpeed.Designer.cs">
+      <DependentUpon>EncryptionSpeed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EncryptionTime.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EncryptionTime.Designer.cs">
+      <DependentUpon>EncryptionTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helper.cs" />
     <Compile Include="ImplementationType.cs" />
     <Compile Include="KeySchedulingTest.cs" />
@@ -54,6 +74,18 @@
     <Compile Include="SpeedTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Demo2007.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Demo2007.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EncryptionSpeed.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>EncryptionSpeed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EncryptionTime.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>EncryptionTime.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SpeedCheckForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SpeedCheckForm.cs</DependentUpon>
