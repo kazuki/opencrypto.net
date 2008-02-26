@@ -27,7 +27,7 @@ using openCrypto.EllipticCurve;
 
 namespace openCrypto.ECDSA
 {
-	public class ECDSA
+	public class ECDSA : System.Security.Cryptography.AsymmetricAlgorithm
 	{
 		ECDSAParameters _param;
 
@@ -40,7 +40,8 @@ namespace openCrypto.ECDSA
 			get { return _param; }
 		}
 
-		public Number[] Sign (Number e)
+		#region Sign/Verify methods
+		private Number[] Sign (Number e)
 		{
 			Number r, r2, s, k;
 			IFiniteField field = _param.Domain.FieldN;
@@ -73,7 +74,7 @@ namespace openCrypto.ECDSA
 			return new Number[] { r, s };
 		}
 
-		public bool Verify (Number[] sign, Number e)
+		private bool Verify (Number[] sign, Number e)
 		{
 			Number r = sign[0], s = sign[1];
 			IFiniteField field = _param.Domain.FieldN;
@@ -106,5 +107,56 @@ namespace openCrypto.ECDSA
 			// Step.6
 			return r.CompareTo (X.X) == 0;
 		}
+
+		public byte[] SignHash (byte[] hash)
+		{
+			if (hash == null)
+				throw new ArgumentNullException ();
+			Number e = new Number (hash);
+			if (e >= _param.Domain.N)
+				throw new ArgumentOutOfRangeException ();
+			Number[] sig = Sign (e);
+			byte[] raw = new byte[(_param.Domain.Bits >> 2) + ((_param.Domain.Bits & 7) == 0 ? 0 : 2)];
+			sig[0].CopyTo (raw, 0);
+			sig[1].CopyTo (raw, raw.Length >> 1);
+			return raw;
+		}
+
+		public bool VerifyHash (byte[] hash, byte[] sig)
+		{
+			if (sig.Length != (_param.Domain.Bits >> 2) + ((_param.Domain.Bits & 7) == 0 ? 0 : 2))
+				throw new ArgumentException ();
+			int halfLen = sig.Length >> 1;
+			Number a = new Number (sig, 0, halfLen);
+			Number b = new Number (sig, halfLen, halfLen);
+			return Verify (new Number[] {a, b}, new Number (hash));
+		}
+		#endregion
+
+		#region Serialize methods
+		public override void FromXmlString (string xmlString)
+		{
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override string ToXmlString (bool includePrivateParameters)
+		{
+			throw new Exception ("The method or operation is not implemented.");
+		}
+		#endregion
+
+		#region Misc
+		protected override void Dispose (bool disposing)
+		{
+		}
+
+		public override string KeyExchangeAlgorithm {
+			get { return null; }
+		}
+
+		public override string SignatureAlgorithm {
+			get { return "ECDSA"; }
+		}
+		#endregion
 	}
 }

@@ -54,19 +54,24 @@ namespace openCrypto.FiniteField
 		}
 
 		public Number (byte[] data)
-			: this (ToUInt32Array (data))
+			: this (ToUInt32Array (data, 0, data.Length))
 		{
 		}
 
-		static uint[] ToUInt32Array (byte[] data)
+		public Number (byte[] data, int offset, int length)
+			: this (ToUInt32Array (data, offset, length))
 		{
-			int i = 0, q = 0;
-			uint[] tmp = new uint [(data.Length >> 2) + ((data.Length & 3) == 0 ? 0 : 1)];
-			for (; i < data.Length - 3; i += 4)
+		}
+
+		static uint[] ToUInt32Array (byte[] data, int offset, int length)
+		{
+			int i = offset, q = 0, last = offset + length;
+			uint[] tmp = new uint [(length >> 2) + ((length & 3) == 0 ? 0 : 1)];
+			for (; i < last - 3; i += 4)
 				tmp[q ++] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 2]) << 16) | (((uint)data[i + 3]) << 24);
-			if (data.Length == i)
+			if (last == i)
 				return tmp;
-			int diff = data.Length - i;
+			int diff = last - i;
 			if (diff == 1)
 				tmp[q] = data[i];
 			else if (diff == 2)
@@ -695,6 +700,28 @@ namespace openCrypto.FiniteField
 				if (max.CompareTo (ret) > 0)
 					return ret;
 			}
+		}
+
+		public void CopyTo (byte[] array, int offset)
+		{
+			int bitCount = BitCount ();
+			int byteCount = (bitCount >> 3) + ((bitCount & 7) == 0 ? 0 : 1);
+			int len = byteCount >> 2;
+			int diff = byteCount & 3;
+			int i = 0;
+			for (; i < len; i++, offset += 4) {
+				array[offset] = (byte)(data[i]);
+				array[offset + 1] = (byte)(data[i] >> 8);
+				array[offset + 2] = (byte)(data[i] >> 16);
+				array[offset + 3] = (byte)(data[i] >> 24);
+			}
+			if (diff == 0)
+				return;
+			if (diff == 3)
+				array[offset + 2] = (byte)(data[i] >> 16);
+			if (diff >= 2)
+				array[offset + 1] = (byte)(data[i] >> 8);
+			array[offset] = (byte)(data[i]);
 		}
 		#endregion
 

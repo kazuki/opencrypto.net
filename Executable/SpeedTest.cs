@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2006, Kazuki Oikawa
+// Copyright (c) 2006-2008 Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,21 +37,20 @@ namespace openCrypto.Executable
 		public static double[] Run (ECDSAManaged ecdsa, ECDSAParameters param, int loop)
 		{
 			Stopwatch sw = new Stopwatch ();
-			byte[] data = new byte[(param.Domain.P.BitCount () >> 3) + ((param.Domain.P.BitCount () & 7) == 0 ? 0 : 1)];
+			byte[] hash = new byte[(param.Domain.P.BitCount () >> 3)];
 			double[] result = new double[2];
-			_rng.GetBytes (data);
-			Number hash = new Number (data);
-			Number[] sign = ecdsa.Sign (hash);
+			_rng.GetBytes (hash);
+			byte[] sign = ecdsa.SignHash (hash);
 			sw.Reset (); sw.Start ();
 			for (int i = 0; i < loop; i ++)
-				sign = ecdsa.Sign (hash);
+				sign = ecdsa.SignHash (hash);
 			sw.Stop ();
 			result[0] = sw.Elapsed.TotalMilliseconds / (double)loop;
 
-			bool signCheck = ecdsa.Verify (sign, hash);
+			bool signCheck = ecdsa.VerifyHash (hash, sign);
 			sw.Reset (); sw.Start ();
 			for (int i = 0; i < loop; i++)
-				signCheck = ecdsa.Verify (sign, hash);
+				signCheck = ecdsa.VerifyHash (hash, sign);
 			sw.Stop ();
 			result[1] = sw.Elapsed.TotalMilliseconds / (double)loop;
 			if (!signCheck)

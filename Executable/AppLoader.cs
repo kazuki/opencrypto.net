@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2006, Kazuki Oikawa
+// Copyright (c) 2006-2008 Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,12 +47,12 @@ namespace openCrypto.Executable
 		{
 			ECDSAParameters ecdsaParams = ECDSAParameters.CreateNew (ECDomains.GetDomainParameter (domain));
 			ECDSAManaged ecdsa = new ECDSAManaged (ecdsaParams);
-			int loopA = 5, loopB = 100;
+			int loopA = 5, loopB = 5;
 			double[] result = SpeedTest.Run (ecdsa, ecdsaParams, loopA);
 			for (int i = 0; i < loopB; i++) {
 				double[] temp = SpeedTest.Run (ecdsa, ecdsaParams, loopA);
-				result[0] = Math.Max (result[0], temp[0]);
-				result[1] = Math.Max (result[1], temp[1]);
+				result[0] = Math.Min (result[0], temp[0]);
+				result[1] = Math.Min (result[1], temp[1]);
 			}
 			return result;
 		}
