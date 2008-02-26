@@ -22,6 +22,8 @@
 //
 
 using System;
+using System.IO;
+using System.Xml;
 using openCrypto.FiniteField;
 using openCrypto.EllipticCurve;
 
@@ -141,7 +143,58 @@ namespace openCrypto.ECDSA
 
 		public override string ToXmlString (bool includePrivateParameters)
 		{
-			throw new Exception ("The method or operation is not implemented.");
+			if (includePrivateParameters)
+				throw new NotSupportedException ();
+			ECPoint publicKey = _param.Q.Export ();
+
+			using (StringWriter sw = new StringWriter ())
+			using (XmlTextWriter writer = new XmlTextWriter (sw)) {
+				writer.Formatting = Formatting.Indented;
+				writer.Indentation = 2;
+				writer.IndentChar = ' ';
+				writer.WriteStartElement ("ECDSAKeyValue", "http://www.w3.org/2001/04/xmldsig-more#");
+				writer.WriteStartElement ("DomainParameters");
+				if (_param.Domain.URN != null) {
+					writer.WriteStartElement ("NamedCurve");
+					writer.WriteAttributeString ("URN", _param.Domain.URN.ToString ());
+					writer.WriteEndElement ();
+				} else {
+					ECPoint basePoint = _param.Domain.G.Export ();
+					writer.WriteStartElement ("ExplicitParams");
+					writer.WriteElementString ("P", _param.Domain.P.ToString (10));
+					writer.WriteStartElement ("CurveParams");
+					writer.WriteStartElement ("A");
+					writer.WriteAttributeString ("Value", _param.Domain.A.ToString (10));
+					writer.WriteEndElement ();
+					writer.WriteStartElement ("B");
+					writer.WriteAttributeString ("Value", _param.Domain.B.ToString (10));
+					writer.WriteEndElement ();
+					writer.WriteEndElement ();
+					writer.WriteStartElement ("BasePointParams");
+					writer.WriteStartElement ("BasePoint");
+					writer.WriteStartElement ("X");
+					writer.WriteAttributeString ("Value", basePoint.X.ToString (10));
+					writer.WriteEndElement ();
+					writer.WriteStartElement ("Y");
+					writer.WriteAttributeString ("Value", basePoint.Y.ToString (10));
+					writer.WriteEndElement ();
+					writer.WriteEndElement ();
+					writer.WriteElementString ("Order", _param.Domain.N.ToString (10));
+					writer.WriteEndElement ();
+					writer.WriteEndElement ();
+				}
+				writer.WriteEndElement ();
+				writer.WriteStartElement ("PublicKey");
+				writer.WriteStartElement ("X");
+				writer.WriteAttributeString ("Value", publicKey.X.ToString (10));
+				writer.WriteEndElement ();
+				writer.WriteStartElement ("Y");
+				writer.WriteAttributeString ("Value", publicKey.Y.ToString (10));
+				writer.WriteEndElement ();
+				writer.WriteEndElement ();
+				writer.WriteEndElement ();
+				return sw.ToString ();
+			}
 		}
 		#endregion
 

@@ -34,8 +34,14 @@ namespace openCrypto.EllipticCurve
 		IFiniteField _fieldN;
 		uint _h;
 		uint _bits;
+		Uri _uri;
 
 		public ECDomainParameters (ECGroup group, ECPoint G, Number order, uint h, uint bits, IFiniteField fieldN)
+			: this (group, G, order, h, bits, fieldN, null)
+		{
+		}
+
+		public ECDomainParameters (ECGroup group, ECPoint G, Number order, uint h, uint bits, IFiniteField fieldN, Uri uri)
 		{
 			_group = group;
 			_G = G;
@@ -43,6 +49,7 @@ namespace openCrypto.EllipticCurve
 			_h = h;
 			_bits = bits;
 			_fieldN = fieldN;
+			_uri = uri;
 		}
 
 		#region Properties
@@ -86,6 +93,10 @@ namespace openCrypto.EllipticCurve
 		/// <summary>The co-factor</summary>
 		public uint H {
 			get { return _h; }
+		}
+
+		public Uri URN {
+			get { return _uri; }
 		}
 		#endregion
 
