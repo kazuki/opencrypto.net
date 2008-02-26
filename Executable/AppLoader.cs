@@ -25,7 +25,6 @@ using System;
 using System.Security.Cryptography;
 using openCrypto.FiniteField;
 using ECDSAManaged = openCrypto.ECDSA.ECDSA;
-using ECDSAParameters = openCrypto.ECDSA.ECDSAParameters;
 using openCrypto.EllipticCurve;
 
 namespace openCrypto.Executable
@@ -45,12 +44,11 @@ namespace openCrypto.Executable
 
 		static double[] Run (ECDomainNames domain)
 		{
-			ECDSAParameters ecdsaParams = ECDSAParameters.CreateNew (ECDomains.GetDomainParameter (domain));
-			ECDSAManaged ecdsa = new ECDSAManaged (ecdsaParams);
+			ECDSAManaged ecdsa = new ECDSAManaged (domain);
 			int loopA = 5, loopB = 5;
-			double[] result = SpeedTest.Run (ecdsa, ecdsaParams, loopA);
+			double[] result = SpeedTest.Run (ecdsa, loopA);
 			for (int i = 0; i < loopB; i++) {
-				double[] temp = SpeedTest.Run (ecdsa, ecdsaParams, loopA);
+				double[] temp = SpeedTest.Run (ecdsa, loopA);
 				result[0] = Math.Min (result[0], temp[0]);
 				result[1] = Math.Min (result[1], temp[1]);
 			}

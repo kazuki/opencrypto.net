@@ -27,7 +27,7 @@ using openCrypto.EllipticCurve;
 
 namespace openCrypto.ECDSA
 {
-	public class ECDSAParameters
+	internal class ECDSAParameters
 	{
 		Number _d;
 		ECPoint _Q;
@@ -50,6 +50,16 @@ namespace openCrypto.ECDSA
 		public static ECDSAParameters CreateNew (ECDomainParameters domain, Number d)
 		{
 			return new ECDSAParameters (d, domain.G.Multiply (d), domain);
+		}
+
+		internal void CreateNewPrivateKey ()
+		{
+			_d = Number.CreateRandomElement (_domain.N);
+		}
+
+		internal void CreatePublicKeyFromPrivateKey ()
+		{
+			_Q = _domain.G.Multiply (_d);
 		}
 
 		public Number D {

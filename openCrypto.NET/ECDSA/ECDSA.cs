@@ -26,6 +26,7 @@ using System.IO;
 using System.Xml;
 using openCrypto.FiniteField;
 using openCrypto.EllipticCurve;
+using CryptographicException = System.Security.Cryptography.CryptographicException;
 
 namespace openCrypto.ECDSA
 {
@@ -33,12 +34,27 @@ namespace openCrypto.ECDSA
 	{
 		ECDSAParameters _param;
 
-		public ECDSA (ECDSAParameters param)
+		internal ECDSA (ECDSAParameters param)
 		{
 			_param = param;
 		}
 
-		public ECDSAParameters Parameters {
+		internal ECDSA (ECDomainParameters domain)
+		{
+			_param = new ECDSAParameters (null, null, domain);
+		}
+
+		public ECDSA (ECDomainNames domain)
+			: this (ECDomains.GetDomainParameter (domain))
+		{
+		}
+
+		public ECDSA (Uri domain_oid)
+			: this (ECDomains.GetDomainParameter (domain_oid))
+		{
+		}
+
+		internal ECDSAParameters Parameters {
 			get { return _param; }
 		}
 
@@ -114,10 +130,13 @@ namespace openCrypto.ECDSA
 		{
 			if (hash == null)
 				throw new ArgumentNullException ();
-			Number e = new Number (hash);
-			if (e >= _param.Domain.N)
-				throw new ArgumentOutOfRangeException ();
-			Number[] sig = Sign (e);
+			if (hash.Length == 0)
+				throw new ArgumentException ();
+			if (_param.D == null && _param.Q == null)
+				_param.CreateNewPrivateKey ();
+			if (_param.D == null)
+				throw new CryptographicException ();
+			Number[] sig = Sign (new Number (hash));
 			byte[] raw = new byte[(_param.Domain.Bits >> 2) + ((_param.Domain.Bits & 7) == 0 ? 0 : 2)];
 			sig[0].CopyTo (raw, 0);
 			sig[1].CopyTo (raw, raw.Length >> 1);
@@ -128,6 +147,12 @@ namespace openCrypto.ECDSA
 		{
 			if (sig.Length != (_param.Domain.Bits >> 2) + ((_param.Domain.Bits & 7) == 0 ? 0 : 2))
 				throw new ArgumentException ();
+			if (hash.Length == 0)
+				throw new ArgumentException ();
+			if (_param.Q == null && _param.D != null)
+				_param.CreatePublicKeyFromPrivateKey ();
+			if (_param.Q == null)
+				throw new CryptographicException ();
 			int halfLen = sig.Length >> 1;
 			Number a = new Number (sig, 0, halfLen);
 			Number b = new Number (sig, halfLen, halfLen);
@@ -209,6 +234,21 @@ namespace openCrypto.ECDSA
 
 		public override string SignatureAlgorithm {
 			get { return "ECDSA"; }
+		}
+
+		public override int KeySize {
+			get {
+				return (int)_param.Domain.Bits;
+			}
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+
+		public override System.Security.Cryptography.KeySizes[] LegalKeySizes {
+			get {
+				throw new NotSupportedException ();
+			}
 		}
 		#endregion
 	}

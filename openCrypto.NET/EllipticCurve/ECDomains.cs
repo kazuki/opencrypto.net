@@ -91,6 +91,16 @@ namespace openCrypto.EllipticCurve
 			return domain;
 		}
 
+		public static ECDomainParameters GetDomainParameter (Uri oid)
+		{
+			return GetDomainParameter (GetDomainName (oid));
+		}
+
+		public static ECDomainNames GetDomainName (Uri oid)
+		{
+			return (ECDomainNames)_oidMap[oid];
+		}
+
 		static ECDomainParameters Create_secp160r1 ()
 		{
 			Number p = new Number (new uint[] {2147483647, 4294967295, 4294967295, 4294967295, 4294967295});

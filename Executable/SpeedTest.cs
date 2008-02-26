@@ -25,7 +25,6 @@ using System;
 using Stopwatch = System.Diagnostics.Stopwatch;
 using System.Security.Cryptography;
 using ECDSAManaged = openCrypto.ECDSA.ECDSA;
-using ECDSAParameters = openCrypto.ECDSA.ECDSAParameters;
 using Number = openCrypto.FiniteField.Number;
 
 namespace openCrypto.Executable
@@ -34,10 +33,10 @@ namespace openCrypto.Executable
 	{
 		static RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider ();
 
-		public static double[] Run (ECDSAManaged ecdsa, ECDSAParameters param, int loop)
+		public static double[] Run (ECDSAManaged ecdsa, int loop)
 		{
 			Stopwatch sw = new Stopwatch ();
-			byte[] hash = new byte[(param.Domain.P.BitCount () >> 3)];
+			byte[] hash = new byte[(ecdsa.KeySize >> 3)];
 			double[] result = new double[2];
 			_rng.GetBytes (hash);
 			byte[] sign = ecdsa.SignHash (hash);
