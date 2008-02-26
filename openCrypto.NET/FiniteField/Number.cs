@@ -77,7 +77,7 @@ namespace openCrypto.FiniteField
 			else if (diff == 2)
 				tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8);
 			else
-				tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 1]) << 16);
+				tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 2]) << 16);
 			return tmp;
 		}
 
