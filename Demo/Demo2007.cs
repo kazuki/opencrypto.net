@@ -81,18 +81,16 @@ namespace Demo
 			Stopwatch sw = new Stopwatch ();
 			double ocSignTime, ocVerifyTime, bcSignTime, bcVerifyTime;
 			{
-				OC_ECDomainParameters domain = ECDomains.GetDomainParameter (ECDomainNames.secp160r1);
-				ECDSAParameters param = ECDSAParameters.CreateNew (domain);
-				ECDSA ecdsa = new ECDSA (param);
-				Number num = new Number (hash);
+				ECDSA ecdsa = new ECDSA (ECDomainNames.secp192r1);
+				ecdsa.ToXmlString (false);
 				sw.Reset ();
 				sw.Start ();
-				Number[] ecdsaSign = ecdsa.Sign (num);
+				byte[] ecdsaSign = ecdsa.SignHash (hash);
 				sw.Stop ();
 				ocSignTime = sw.Elapsed.TotalSeconds;
 				sw.Reset ();
 				sw.Start ();
-				ecdsa.Verify (ecdsaSign, num);
+				ecdsa.VerifyHash (hash, ecdsaSign);
 				sw.Stop ();
 				ocVerifyTime = sw.Elapsed.TotalSeconds;
 			}
