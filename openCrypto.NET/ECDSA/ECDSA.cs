@@ -170,6 +170,11 @@ namespace openCrypto.ECDSA
 		{
 			if (includePrivateParameters)
 				throw new NotSupportedException ();
+			if (_param.Q == null) {
+				if (_param.D == null)
+					_param.CreateNewPrivateKey ();
+				_param.CreatePublicKeyFromPrivateKey ();
+			}
 			ECPoint publicKey = _param.Q.Export ();
 
 			using (StringWriter sw = new StringWriter ())
