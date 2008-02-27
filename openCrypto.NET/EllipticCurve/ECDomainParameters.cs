@@ -26,7 +26,7 @@ using openCrypto.FiniteField;
 
 namespace openCrypto.EllipticCurve
 {
-	public class ECDomainParameters
+	class ECDomainParameters
 	{
 		ECGroup _group;
 		ECPoint _G;

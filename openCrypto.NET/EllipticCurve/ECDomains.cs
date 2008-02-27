@@ -27,7 +27,7 @@ using openCrypto.FiniteField;
 
 namespace openCrypto.EllipticCurve
 {
-	public static class ECDomains
+	static class ECDomains
 	{
 		delegate ECDomainParameters CreateDomainParameterDelegate ();
 		static Dictionary<int, ECDomainParameters> _cache;

@@ -25,7 +25,7 @@ using System;
 
 namespace openCrypto.FiniteField
 {
-	public class Barrett : Classical
+	class Barrett : Classical
 	{
 		Number constant;
 

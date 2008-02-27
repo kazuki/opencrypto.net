@@ -27,7 +27,7 @@ using System.Text;
 
 namespace openCrypto.FiniteField
 {
-	public class Number : IComparable<Number>, IComparable
+	class Number : IComparable<Number>, IComparable
 	{
 		static string CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyz";
 		public uint[] data;

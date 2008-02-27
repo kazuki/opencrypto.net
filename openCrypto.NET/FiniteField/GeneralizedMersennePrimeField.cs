@@ -25,7 +25,7 @@ using System;
 
 namespace openCrypto.FiniteField
 {
-	public abstract class GeneralizedMersennePrimeField : Classical
+	abstract class GeneralizedMersennePrimeField : Classical
 	{
 		protected GeneralizedMersennePrimeField (Number mod) : base (mod)
 		{

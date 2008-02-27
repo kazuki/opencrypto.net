@@ -26,7 +26,7 @@ using openCrypto.EllipticCurve;
 
 namespace openCrypto.FiniteField
 {
-	public class Classical : IFiniteField
+	class Classical : IFiniteField
 	{
 		protected Number mod;
 

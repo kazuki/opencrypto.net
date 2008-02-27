@@ -8,8 +8,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using openCrypto.ECDSA;
-using OC_ECDomainParameters = openCrypto.EllipticCurve.ECDomainParameters;
-using ECDomains = openCrypto.EllipticCurve.ECDomains;
 using ECDomainNames = openCrypto.EllipticCurve.ECDomainNames;
 using openCrypto.FiniteField;
 using Org.BouncyCastle.Math;
