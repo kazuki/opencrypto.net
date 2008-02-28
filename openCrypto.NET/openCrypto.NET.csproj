@@ -62,8 +62,8 @@
     <Compile Include="FiniteField\GeneralizedMersennePrimeField.cs" />
     <Compile Include="FiniteField\IFiniteField.cs" />
     <Compile Include="FiniteField\Montgomery.cs" />
-    <Compile Include="FiniteField\NIST_P192.cs" />
-    <Compile Include="FiniteField\NIST_P256.cs" />
+    <Compile Include="FiniteField\SECP192r1.cs" />
+    <Compile Include="FiniteField\SECP256r1.cs" />
     <Compile Include="FiniteField\Number.cs" />
     <Compile Include="FiniteField\SECP224r1.cs" />
     <Compile Include="FiniteField\SECP384r1.cs" />

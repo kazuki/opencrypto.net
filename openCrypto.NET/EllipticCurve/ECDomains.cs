@@ -127,7 +127,7 @@ namespace openCrypto.EllipticCurve
 
 		static ECDomainParameters Create_secp192r1 ()
 		{
-			NIST_P192 ff = new NIST_P192 ();
+			SECP192r1 ff = new SECP192r1 ();
 			Number a = new Number (new uint[] {4294967292, 4294967295, 4294967294, 4294967295, 4294967295, 4294967295});
 			Number b = new Number (new uint[] {3242637745, 4273528556, 1914974281, 262662571, 3852239079, 1679885593});
 			Number gX = new Number (new uint[] {2197753874, 4110355197, 1134659584, 2092900587, 2955972854, 411936782});			
@@ -149,7 +149,7 @@ namespace openCrypto.EllipticCurve
 
 		static ECDomainParameters Create_secp256r1 ()
 		{
-			NIST_P256 ff = new NIST_P256 ();
+			SECP256r1 ff = new SECP256r1 ();
 			Number a = new Number (new uint[] {4294967292, 4294967295, 4294967295, 0, 0, 0, 1, 4294967295});
 			Number b = new Number (new uint[] {668098635, 1003371582, 3428036854, 1696401072, 1989707452, 3018571093, 2855965671, 1522939352});
 			Number gX = new Number (new uint[] {3633889942, 4104206661, 770388896, 1996717441, 1671708914, 4173129445, 3777774151, 1796723186});

@@ -26,7 +26,7 @@ using openCrypto.EllipticCurve;
 
 namespace openCrypto.FiniteField
 {
-	class NIST_P256 : GeneralizedMersennePrimeField
+	class SECP256r1 : GeneralizedMersennePrimeField
 	{
 		const uint P1 = 4294967295;
 		const uint P2 = 4294967295;
@@ -39,7 +39,7 @@ namespace openCrypto.FiniteField
 		public static Number PRIME = new Number (new uint[] { P1, P2, P3, P4, P5, P6, P7, P8 });
 		static Number PADDED_ZERO = new Number (new uint[8], 1);
 
-		public NIST_P256 () : base (PRIME)
+		public SECP256r1 () : base (PRIME)
 		{
 		}
 
