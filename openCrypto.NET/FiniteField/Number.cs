@@ -53,6 +53,15 @@ namespace openCrypto.FiniteField
 			Normalize ();
 		}
 
+		public unsafe Number (uint* data, int length)
+		{
+			this.data = new uint [length];
+			this.length = length;
+			for (int i = 0; i < length; i ++)
+				this.data[i] = data[i];
+			Normalize ();
+		}
+
 		public Number (byte[] data)
 			: this (ToUInt32Array (data, 0, data.Length))
 		{
@@ -176,6 +185,26 @@ namespace openCrypto.FiniteField
 			return i;
 		}
 
+		public static unsafe int AddInPlace (uint* x, int xlen, uint* y, int ylen)
+		{
+			ulong sum = 0;
+			int i = 0;
+
+			for (; i < ylen; i++) {
+				x[i] = (uint)(sum += ((ulong)x[i]) + ((ulong)y[i]));
+				sum >>= 32;
+			}
+			for (; sum > 0 && i < xlen; i++) {
+				x[i] = (uint)(sum += ((ulong)x[i]));
+				sum >>= 32;
+			}
+			if (sum == 0)
+				return xlen;
+
+			x[i++] = (uint)sum;
+			return i;
+		}
+
 		public static unsafe int Add (uint* x, int xlen, uint y, uint* z)
 		{
 			ulong sum = 0;
@@ -230,7 +259,16 @@ namespace openCrypto.FiniteField
 				} while (big[i++] == 0 && i < blen);
 			}
 			for (; i < blen && big[i] != 0; i++);
+			if (big[i - 1] == 0)
+				return i - 1;
 			return i;
+		}
+
+		public unsafe void SubtractInPlace (Number small)
+		{
+			fixed (uint* px = data, py = small.data) {
+				length = SubtractInPlace (px, length, py, small.length);
+			}
 		}
 
 		public static unsafe uint DivideInPlace (uint* x, int xlen, uint y)

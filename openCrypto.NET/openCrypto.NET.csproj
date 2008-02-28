@@ -65,7 +65,8 @@
     <Compile Include="FiniteField\NIST_P192.cs" />
     <Compile Include="FiniteField\NIST_P256.cs" />
     <Compile Include="FiniteField\Number.cs" />
-    <Compile Include="FiniteField\SECP521.cs" />
+    <Compile Include="FiniteField\SECP224r1.cs" />
+    <Compile Include="FiniteField\SECP521r1.cs" />
     <Compile Include="Rijndael\Rijndael.cs" />
     <Compile Include="Rijndael\RijndaelTransform32.cs" />
     <Compile Include="Rijndael\RijndaelTransform32Balanced.cs" />

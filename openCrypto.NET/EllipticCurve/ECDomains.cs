@@ -138,14 +138,13 @@ namespace openCrypto.EllipticCurve
 
 		static ECDomainParameters Create_secp224r1 ()
 		{
-			Number p = new Number (new uint[] {1, 0, 0, 4294967295, 4294967295, 4294967295, 4294967295});
+			SECP224r1 ff = new SECP224r1 ();
 			Number a = new Number (new uint[] {4294967294, 4294967295, 4294967295, 4294967294, 4294967295, 4294967295, 4294967295});
 			Number b = new Number (new uint[] {592838580, 655046979, 3619674298, 1346678967, 4114690646, 201634731, 3020229253});
 			Number gX = new Number (new uint[] {291249441, 875725014, 1455558946, 1241760211, 840143033, 1807007615, 3071151293});
 			Number gY = new Number (new uint[] {2231402036, 1154843033, 1510426468, 3443750304, 1277353958, 3052872699, 3174523784});
 			Number order = new Number (new uint[] {1549543997, 333261125, 3770216510, 4294907554, 4294967295, 4294967295, 4294967295});
-			Montgomery mont = new Montgomery (p);
-			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[(int)ECDomainNames.secp224r1]);
+			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[(int)ECDomainNames.secp224r1]);
 		}
 
 		static ECDomainParameters Create_secp256r1 ()
@@ -173,13 +172,13 @@ namespace openCrypto.EllipticCurve
 
 		static ECDomainParameters Create_secp521r1 ()
 		{
-			SECP521r1 mont = new SECP521r1 ();
+			SECP521r1 ff = new SECP521r1 ();
 			Number a = new Number (new uint[] {4294967292, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 511});
 			Number b = new Number (new uint[] {1800421120, 4014284756, 1026307313, 896786312, 1001504519, 374522045, 3967718267, 1444493649, 2398161377, 3098839441, 2578650611, 2732225115, 3062186222, 2459574688, 2384239135, 2503915873, 81});
 			Number gX = new Number (new uint[] {3269836134, 4185816625, 2238333595, 860402625, 2734663902, 4263362855, 4024916264, 2706071159, 1800224186, 4163415904, 88061217, 2623832377, 597013570, 2654915430, 67430861, 2240677559, 198});
 			Number gY = new Number (new uint[] {2681300560, 2294191222, 2725429824, 893153414, 1068304225, 3310401793, 1593058880, 2548986521, 658400812, 397393175, 1469793384, 2566210633, 746396633, 1552572340, 2587607044, 959015544, 280});
 			Number order = new Number (new uint[] {2436391945, 3144660766, 2308720558, 1001769400, 4144604624, 2144076104, 3207566955, 1367771011, 4294967290, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 511});
-			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[(int)ECDomainNames.secp521r1]);
+			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[(int)ECDomainNames.secp521r1]);
 		}
 
 		static ECDomainParameters Create (Number a, Number b, Number gX, Number gY, Number order, uint h, IFiniteField ff, Uri uri)
