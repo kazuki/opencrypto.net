@@ -40,8 +40,7 @@ namespace openCrypto.FiniteField
 		{
 			uint* pz = stackalloc uint[33];
 			uint* high = stackalloc uint[17];
-			uint* low = stackalloc uint[17];
-			uint[] ret = new uint[17];
+			uint* low = pz;
 
 			// pz = x * y
 			for (int i = 0; i < 33; i ++) pz[i] = 0;
@@ -51,25 +50,41 @@ namespace openCrypto.FiniteField
 
 			// low = pz & (2^521 - 1)
 			// high = pz >> 521
-			for (int i = 0; i < 16; i ++) low[i] = pz[i];
-			low[16] = pz[16] & 0x1FF;
 			for (int i = 0; i < 16; i ++) high[i] = (pz[i + 16] >> 9) | (pz[i + 17] << 23);
 			high[16] = pz[32] >> 9;
+			low[16] &= 0x1FF;
+			low[17] = low[18] = 0;
 
-			fixed (uint* p = ret, pPrime = PRIME.data) {
+			fixed (uint* pPrime = PRIME.data) {
 				// ret = low + high
-				Number.Add (low, 17, high, 17, p);
+				Number.AddInPlace (low, 17, high, 17);
 
 				// compute length of ret
 				int retLen = 17;
-				while (retLen > 0 && p[retLen - 1] == 0) retLen --;
+				while (retLen > 0 && low[retLen - 1] == 0) retLen--;
 
 				// ret -= PRIME if ret is greater than PRIME
-				while (Number.Compare (ret, retLen, PRIME.data, PRIME.length) > 0)
-					retLen = Number.SubtractInPlace (p, retLen, pPrime, PRIME.length);
+				while (retLen == 17 && CompareToPrime (low) > 0)
+					retLen = Number.SubtractInPlace (low, 17, pPrime, 17);
 
-				return new Number (ret, retLen);
+				return new Number (low, retLen);
 			}
+		}
+
+		static unsafe int CompareToPrime (uint* x)
+		{
+			if (x[16] != P17) {
+				if (x[16] < P17)
+					return -1;
+				return 1;
+			}
+			int idx = 15;
+			while (idx != 0 && x[idx] == P1_16) idx--;
+			if (x[idx] < P1_16)
+				return -1;
+			else if (x[idx] > P1_16)
+				return 1;
+			return 0;
 		}
 	}
 }
