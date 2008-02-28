@@ -47,6 +47,10 @@ namespace openCrypto.EllipticCurve
 			_oidReverseMap = new Dictionary<int, Uri> ();
 
 			ECDomainNames[] names = new ECDomainNames[] {
+				ECDomainNames.secp112r1,
+				ECDomainNames.secp112r2,
+				ECDomainNames.secp128r1,
+				ECDomainNames.secp128r2,
 				ECDomainNames.secp160r1,
 				ECDomainNames.secp160r2,
 				ECDomainNames.secp192r1,
@@ -56,6 +60,10 @@ namespace openCrypto.EllipticCurve
 				ECDomainNames.secp521r1
 			};
 			CreateDomainParameterDelegate[] procs = new CreateDomainParameterDelegate[] {
+				Create_secp112r1,
+				Create_secp112r2,
+				Create_secp128r1,
+				Create_secp128r2,
 				Create_secp160r1,
 				Create_secp160r2,
 				Create_secp192r1,
@@ -65,6 +73,10 @@ namespace openCrypto.EllipticCurve
 				Create_secp521r1
 			};
 			Uri[] oids = new Uri[] {
+				new Uri (OID_CERTICOM_EC + "6"),
+				new Uri (OID_CERTICOM_EC + "7"),
+				new Uri (OID_CERTICOM_EC + "28"),
+				new Uri (OID_CERTICOM_EC + "29"),
 				new Uri (OID_CERTICOM_EC + "8"),
 				new Uri (OID_CERTICOM_EC + "30"),
 				new Uri (OID_ANSI_X9_64_PRIME_CURVE + "1"),
@@ -99,6 +111,54 @@ namespace openCrypto.EllipticCurve
 		public static ECDomainNames GetDomainName (Uri oid)
 		{
 			return (ECDomainNames)_oidMap[oid];
+		}
+
+		static ECDomainParameters Create_secp112r1 ()
+		{
+			Number p = new Number (new uint[] {3199017099, 1583775862, 717185763, 56188});
+			Number a = new Number (new uint[] {3199017096, 1583775862, 717185763, 56188});
+			Number b = new Number (new uint[] {292563746, 384753289, 4172940345, 26014});
+			Number gX = new Number (new uint[] {4190302360, 1592224597, 1916377434, 2376});
+			Number gY = new Number (new uint[] {267875584, 3231858190, 3853485860, 43164});
+			Number order = new Number (new uint[] {2892325317, 1584802015, 717185763, 56188});
+			Montgomery mont = new Montgomery (p);
+			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[(int)ECDomainNames.secp112r1]);
+		}
+
+		static ECDomainParameters Create_secp112r2 ()
+		{
+			Number p = new Number (new uint[] {3199017099, 1583775862, 717185763, 56188});
+			Number a = new Number (new uint[] {1544482860, 2315954934, 3259762163, 24871});
+			Number b = new Number (new uint[] {1283839753, 3983867075, 4051787189, 20958});
+			Number gX = new Number (new uint[] {3499263555, 3034670237, 179693714, 19363});
+			Number gY = new Number (new uint[] {1855286935, 927457011, 1190496302, 44493});
+			Number order = new Number (new uint[] {86036555, 3612966049, 179296440, 14047});
+			Montgomery mont = new Montgomery (p);
+			return Create (a, b, gX, gY, order, 4, mont, _oidReverseMap[(int)ECDomainNames.secp112r2]);
+		}
+
+		static ECDomainParameters Create_secp128r1 ()
+		{
+			Number p = new Number (new uint[] {4294967295, 4294967295, 4294967295, 4294967293});
+			Number a = new Number (new uint[] {4294967292, 4294967295, 4294967295, 4294967293});
+			Number b = new Number (new uint[] {753819347, 3626277180, 276427837, 3900012993});
+			Number gX = new Number (new uint[] {2771147654, 203972732, 2341051181, 371193682});
+			Number gY = new Number (new uint[] {3723328131, 3224216210, 1538255635, 3478833209});
+			Number order = new Number (new uint[] {2419630357, 1973619995, 0, 4294967294});
+			Montgomery mont = new Montgomery (p);
+			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[(int)ECDomainNames.secp128r1]);
+		}
+
+		static ECDomainParameters Create_secp128r2 ()
+		{
+			Number p = new Number (new uint[] {4294967295, 4294967295, 4294967295, 4294967293});
+			Number a = new Number (new uint[] {3220811489, 3210333339, 3518217214, 3590527384});
+			Number b = new Number (new uint[] {3144518237, 3693897048, 2161125657, 1592720547});
+			Number gX = new Number (new uint[] {3454779712, 3875222183, 1582770563, 2070586840});
+			Number gY = new Number (new uint[] {1606634308, 1896283776, 2303539950, 666276202});
+			Number order = new Number (new uint[] {101954979, 3187680370, 2147483647, 1073741823});
+			Montgomery mont = new Montgomery (p);
+			return Create (a, b, gX, gY, order, 4, mont, _oidReverseMap[(int)ECDomainNames.secp128r2]);
 		}
 
 		static ECDomainParameters Create_secp160r1 ()

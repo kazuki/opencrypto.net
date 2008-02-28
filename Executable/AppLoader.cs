@@ -67,7 +67,7 @@ namespace openCrypto.Executable
 			result = Run (new RijndaelManaged (), mode, keySize, blockSize, dataSize);
 			Console.WriteLine ("Rijndael Encrypt: {0}Mbps, Decrypt: {1}Mbps", result[0], result[1]);
 
-			for (int i = (int)ECDomainNames.secp160r1; i <= (int)ECDomainNames.secp521r1; i ++) {
+			for (int i = (int)ECDomainNames.secp112r1; i <= (int)ECDomainNames.secp521r1; i ++) {
 				ECDomainNames domain = (ECDomainNames)i;
 				result = Run (domain);
 				Console.WriteLine ("{0}: Sign: {1}ms, Verify: {2}ms", domain, result[0], result[1]);
