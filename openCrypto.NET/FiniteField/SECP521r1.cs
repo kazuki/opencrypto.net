@@ -44,7 +44,7 @@ namespace openCrypto.FiniteField
 			uint[] ret = new uint[17];
 
 			// pz = x * y
-			for (int i = x.length + y.length; i < 33; i ++) pz[i] = 0;
+			for (int i = 0; i < 33; i ++) pz[i] = 0;
 			fixed (uint* px = x.data, py = y.data) {
 				Number.Multiply (px, x.length, py, y.length, pz);
 			}

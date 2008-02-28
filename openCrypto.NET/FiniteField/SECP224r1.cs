@@ -45,7 +45,7 @@ namespace openCrypto.FiniteField
 			ulong t;
 
 			// z = x * y
-			for (int i = x.length + y.length; i < 14; i++) z[i] = 0;
+			for (int i = 0; i < 14; i++) z[i] = 0;
 			fixed (uint* px = x.data, py = y.data) {
 				Number.Multiply (px, x.length, py, y.length, z);
 			}
