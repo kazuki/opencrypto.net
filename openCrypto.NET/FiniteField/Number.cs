@@ -216,6 +216,23 @@ namespace openCrypto.FiniteField
 			return i;
 		}
 
+		public static unsafe int SubtractInPlace (uint* big, int blen, uint* small, int slen)
+		{
+			int i = 0;
+			uint carry = 0;
+			for (; i < slen; i++) {
+				uint tmp = small[i] + carry;
+				carry = (tmp < carry | (big[i] -= tmp) > ~tmp ? 1U : 0U);
+			}
+			if (carry == 1U) {
+				do {
+					big[i] --;
+				} while (big[i++] == 0 && i < blen);
+			}
+			for (; i < blen && big[i] != 0; i++);
+			return i;
+		}
+
 		public static unsafe uint DivideInPlace (uint* x, int xlen, uint y)
 		{
 			int i = xlen - 1;
