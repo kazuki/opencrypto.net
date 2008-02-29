@@ -79,7 +79,7 @@ namespace Demo
 			Stopwatch sw = new Stopwatch ();
 			double ocSignTime, ocVerifyTime, bcSignTime, bcVerifyTime;
 			{
-				ECDSA ecdsa = new ECDSA (ECDomainNames.secp192r1);
+				ECDSAManaged ecdsa = new ECDSAManaged (ECDomainNames.secp192r1);
 				ecdsa.ToXmlString (false);
 				sw.Reset ();
 				sw.Start ();

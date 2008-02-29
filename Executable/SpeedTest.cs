@@ -24,7 +24,7 @@
 using System;
 using Stopwatch = System.Diagnostics.Stopwatch;
 using System.Security.Cryptography;
-using ECDSAManaged = openCrypto.ECDSA.ECDSA;
+using ECDSAManaged = openCrypto.ECDSA.ECDSAManaged;
 
 namespace openCrypto.Executable
 {

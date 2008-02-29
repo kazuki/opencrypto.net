@@ -30,7 +30,7 @@ using CryptographicException = System.Security.Cryptography.CryptographicExcepti
 
 namespace openCrypto.ECDSA
 {
-	public class ECDSA : System.Security.Cryptography.AsymmetricAlgorithm
+	public class ECDSAManaged : System.Security.Cryptography.AsymmetricAlgorithm
 	{
 		/// <summary>Private key</summary>
 		Number _d;
@@ -42,18 +42,18 @@ namespace openCrypto.ECDSA
 		ECDomainParameters _domain;
 		int _orderBits;
 
-		internal ECDSA (ECDomainParameters domain)
+		internal ECDSAManaged (ECDomainParameters domain)
 		{
 			_domain = domain;
 			_orderBits = _domain.N.BitCount ();
 		}
 
-		public ECDSA (ECDomainNames domain)
+		public ECDSAManaged (ECDomainNames domain)
 			: this (ECDomains.GetDomainParameter (domain))
 		{
 		}
 
-		public ECDSA (Uri domain_oid)
+		public ECDSAManaged (Uri domain_oid)
 			: this (ECDomains.GetDomainParameter (domain_oid))
 		{
 		}

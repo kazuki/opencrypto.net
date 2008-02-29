@@ -24,7 +24,7 @@
 using System;
 using System.Security.Cryptography;
 using openCrypto.FiniteField;
-using ECDSAManaged = openCrypto.ECDSA.ECDSA;
+using ECDSAManaged = openCrypto.ECDSA.ECDSAManaged;
 using openCrypto.EllipticCurve;
 
 namespace openCrypto.Executable
