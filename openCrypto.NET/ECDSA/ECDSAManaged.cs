@@ -231,6 +231,12 @@ namespace openCrypto.ECDSA
 		}
 		#endregion
 
+		#region Parameter
+		public ECDSAParameters Parameters {
+			get { return _params; }
+		}
+		#endregion
+
 		#region Misc
 		protected override void Dispose (bool disposing)
 		{

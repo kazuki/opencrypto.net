@@ -56,6 +56,7 @@
     <Compile Include="EllipticCurve\ECDomains.cs" />
     <Compile Include="EllipticCurve\ECDomainParameters.cs" />
     <Compile Include="EllipticCurve\ECGroup.cs" />
+    <Compile Include="EllipticCurve\ECKeyPair.cs" />
     <Compile Include="EllipticCurve\ECPoint.cs" />
     <Compile Include="FiniteField\Barrett.cs" />
     <Compile Include="FiniteField\Classical.cs" />
