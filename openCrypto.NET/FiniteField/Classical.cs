@@ -64,7 +64,7 @@ namespace openCrypto.FiniteField
 			if (ret < 0) {
 				fixed (uint* px = x.data, py = y.data, pz = z, pm = mod.data) {
 					zlen = Number.Add (px, x.length, pm, mod.length, pz);
-					zlen = Number.Subtract (pz, zlen, py, y.length, pz);
+					zlen = Number.SubtractInPlace (pz, zlen, py, y.length);
 					return new Number (z, zlen);
 				}
 			} else {

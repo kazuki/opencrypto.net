@@ -236,7 +236,7 @@ namespace openCrypto.FiniteField
 			if (carry == 1U) {
 				do {
 					result[i] = big[i] - 1;
-				} while (big[i++] == 0 && i < blen);
+				} while (result[i++] == 0xFFFFFFFF && i < blen);
 			}
 			for (; i < blen; i++)
 				result[i] = big[i];
@@ -256,12 +256,11 @@ namespace openCrypto.FiniteField
 			if (carry == 1U) {
 				do {
 					big[i] --;
-				} while (big[i++] == 0 && i < blen);
+				} while (big[i++] == 0xFFFFFFFF && i < blen);
 			}
-			for (; i < blen && big[i] != 0; i++);
-			if (big[i - 1] == 0)
-				return i - 1;
-			return i;
+			if (big[blen - 1] == 0)
+				return blen - 1;
+			return blen;
 		}
 
 		public unsafe void SubtractInPlace (Number small)
