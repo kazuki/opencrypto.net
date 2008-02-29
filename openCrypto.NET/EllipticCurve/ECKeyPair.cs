@@ -94,7 +94,7 @@ namespace openCrypto.EllipticCurve
 				return tmp;
 			}
 			set {
-				if ((value.Length & 1) == 0 || value.Length != (_domain.Bits >> 2) + ((_domain.Bits & 7) == 0 ? 0 : 2))
+				if ((value.Length & 1) == 1 || value.Length != (_domain.Bits >> 2) + ((_domain.Bits & 7) == 0 ? 0 : 2))
 					throw new ArgumentException ();
 				IFiniteField ff = _domain.Group.FiniteField;
 				Number x = ff.ToElement (new Number (value, 0, value.Length >> 1));
