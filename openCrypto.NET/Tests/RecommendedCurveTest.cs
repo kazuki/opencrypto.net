@@ -33,6 +33,58 @@ namespace openCrypto.Tests
 	public class RecommendedCurveTest
 	{
 		[Test]
+		public void Test_secp112r1 ()
+		{
+			ECDomainParameters domain = ECDomains.GetDomainParameter (ECDomainNames.secp112r1);
+			Test ("DB7C 2ABF62E3 5E668076 BEAD208B",
+				"DB7C 2ABF62E3 5E668076 BEAD2088",
+				"659E F8BA0439 16EEDE89 11702B22",
+				"09487239 995A5EE7 6B55F9C2 F098",
+				"A89C E5AF8724 C0A23E0E 0FF77500",
+				"DB7C 2ABF62E3 5E7628DF AC6561C5",
+				1, domain);
+		}
+
+		[Test]
+		public void Test_secp112r2 ()
+		{
+			ECDomainParameters domain = ECDomains.GetDomainParameter (ECDomainNames.secp112r2);
+			Test ("DB7C 2ABF62E3 5E668076 BEAD208B",
+				"6127 C24C05F3 8A0AAAF6 5C0EF02C",
+				"51DE F1815DB5 ED74FCC3 4C85D709",
+				"4BA30AB5 E892B4E1 649DD092 8643",
+				"ADCD 46F5882E 3747DEF3 6E956E97",
+				"36DF 0AAFD8B8 D7597CA1 0520D04B",
+				4, domain);
+		}
+
+		[Test]
+		public void Test_secp128r1 ()
+		{
+			ECDomainParameters domain = ECDomains.GetDomainParameter (ECDomainNames.secp128r1);
+			Test ("FFFFFFFD FFFFFFFF FFFFFFFF FFFFFFFF",
+				"FFFFFFFD FFFFFFFF FFFFFFFF FFFFFFFC",
+				"E87579C1 1079F43D D824993C 2CEE5ED3",
+				"161FF752 8B899B2D 0C28607C A52C5B86",
+				"CF5AC839 5BAFEB13 C02DA292 DDED7A83",
+				"FFFFFFFE 00000000 75A30D1B 9038A115",
+				1, domain);
+		}
+
+		[Test]
+		public void Test_secp128r2 ()
+		{
+			ECDomainParameters domain = ECDomains.GetDomainParameter (ECDomainNames.secp128r2);
+			Test ("FFFFFFFD FFFFFFFF FFFFFFFF FFFFFFFF",
+				"D6031998 D1B3BBFE BF59CC9B BFF9AEE1",
+				"5EEEFCA3 80D02919 DC2C6558 BB6D8A5D",
+				"7B6AA5D8 5E572983 E6FB32A7 CDEBC140",
+				"27B6916A 894D3AEE 7106FE80 5FC34B44",
+				"3FFFFFFF 7FFFFFFF BE002472 0613B5A3",
+				4, domain);
+		}
+
+		[Test]
 		public void Test_secp160r1 ()
 		{
 			ECDomainParameters domain = ECDomains.GetDomainParameter (ECDomainNames.secp160r1);

@@ -33,6 +33,30 @@ namespace openCrypto.Tests
 	public class CurveDomainValidation
 	{
 		[Test]
+		public void secp112r1 ()
+		{
+			Validate (ECDomainNames.secp112r1);
+		}
+
+		[Test]
+		public void secp112r2 ()
+		{
+			Validate (ECDomainNames.secp112r2);
+		}
+
+		[Test]
+		public void secp128r1 ()
+		{
+			Validate (ECDomainNames.secp128r1);
+		}
+
+		[Test]
+		public void secp128r2 ()
+		{
+			Validate (ECDomainNames.secp128r2);
+		}
+
+		[Test]
 		public void secp160r1 ()
 		{
 			Validate (ECDomainNames.secp160r1);

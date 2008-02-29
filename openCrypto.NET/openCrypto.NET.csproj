@@ -88,6 +88,7 @@
     <Compile Include="Tests\ConfluentWaitHandleTest.cs" />
     <Compile Include="Tests\CurveDomainValidation.cs" />
     <Compile Include="Tests\DummyAlgorithm.cs" />
+    <Compile Include="Tests\ECDSATest.cs" />
     <Compile Include="Tests\NumberTest.cs" />
     <Compile Include="Tests\PaddingModeTest.cs" />
     <Compile Include="Tests\ParallelTest.cs" />
