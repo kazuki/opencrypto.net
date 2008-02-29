@@ -32,16 +32,20 @@ namespace openCrypto.ECDSA
 {
 	public class ECDSA : System.Security.Cryptography.AsymmetricAlgorithm
 	{
-		ECDSAParameters _param;
+		/// <summary>Private key</summary>
+		Number _d;
 
-		internal ECDSA (ECDSAParameters param)
-		{
-			_param = param;
-		}
+		/// <summary>Public key</summary>
+		ECPoint _Q;
+
+		/// <summary>Elliptic Curve Domain Parameters</summary>
+		ECDomainParameters _domain;
+		int _orderBits;
 
 		internal ECDSA (ECDomainParameters domain)
 		{
-			_param = new ECDSAParameters (null, null, domain);
+			_domain = domain;
+			_orderBits = _domain.N.BitCount ();
 		}
 
 		public ECDSA (ECDomainNames domain)
@@ -54,25 +58,21 @@ namespace openCrypto.ECDSA
 		{
 		}
 
-		internal ECDSAParameters Parameters {
-			get { return _param; }
-		}
-
 		#region Sign/Verify methods
 		private Number[] Sign (Number e)
 		{
 			Number r, r2, s, k;
-			IFiniteField field = _param.Domain.FieldN;
+			IFiniteField field = _domain.FieldN;
 			do {
 				do {
 					// Step.1
-					k = Number.CreateRandomElement (_param.Domain.N);
+					k = Number.CreateRandomElement (_domain.N);
 
 					// Step.2
-					ECPoint tmp = _param.Domain.G.Multiply (k).Export ();
+					ECPoint tmp = _domain.G.Multiply (k).Export ();
 
 					// Step.3
-					r = tmp.X;
+					r = tmp.X % _domain.N;
 					if (!r.IsZero ())
 						break;
 				} while (true);
@@ -83,7 +83,7 @@ namespace openCrypto.ECDSA
 				// Step.6
 				r2 = field.ToElement (r);
 				e = field.ToElement (e);
-				s = field.Multiply (k, field.Add (e, field.Multiply (r2, _param.D)));
+				s = field.Multiply (k, field.Add (e, field.Multiply (r2, field.ToElement (_d))));
 				if (!s.IsZero ()) {
 					s = field.ToNormal (s);
 					break;
@@ -95,7 +95,10 @@ namespace openCrypto.ECDSA
 		private bool Verify (Number[] sign, Number e)
 		{
 			Number r = sign[0], s = sign[1];
-			IFiniteField field = _param.Domain.FieldN;
+			IFiniteField field = _domain.FieldN;
+
+			if (r >= _domain.N || s >= _domain.N)
+				return false;
 
 			// Step.1
 			e = field.ToElement (e);
@@ -110,12 +113,12 @@ namespace openCrypto.ECDSA
 			Number u2 = field.ToNormal (field.Multiply (r2, w));
 
 			// Step.4
-			//ECPoint X = _param.Domain.G.Multiply (u1).Add (_param.Q.Multiply (u2));
+			//ECPoint X = _domain.G.Multiply (u1).Add (_Q.Multiply (u2));
 			ECPoint X;
 			if (u1.IsZero ())
-				X = _param.Domain.FieldN.GetInfinityPoint (_param.Domain.Group) .Add (_param.Q.Multiply (u2));
+				X = _domain.FieldN.GetInfinityPoint (_domain.Group) .Add (_Q.Multiply (u2));
 			else
-				X = ECPoint.MultiplyAndAdd (_param.Domain.G, u1, _param.Q, u2);
+				X = ECPoint.MultiplyAndAdd (_domain.G, u1, _Q, u2);
 
 			// Step.5
 			if (X.IsInifinity ())
@@ -123,7 +126,8 @@ namespace openCrypto.ECDSA
 			X = X.Export ();
 
 			// Step.6
-			return r.CompareTo (X.X) == 0;
+			Number v = X.X % _domain.N;
+			return r.CompareTo (v) == 0;
 		}
 
 		public byte[] SignHash (byte[] hash)
@@ -132,12 +136,12 @@ namespace openCrypto.ECDSA
 				throw new ArgumentNullException ();
 			if (hash.Length == 0)
 				throw new ArgumentException ();
-			if (_param.D == null && _param.Q == null)
-				_param.CreateNewPrivateKey ();
-			if (_param.D == null)
+			if (_d == null && _Q == null)
+				CreateNewPrivateKey ();
+			if (_d == null)
 				throw new CryptographicException ();
-			Number[] sig = Sign (new Number (hash));
-			byte[] raw = new byte[(_param.Domain.Bits >> 2) + ((_param.Domain.Bits & 7) == 0 ? 0 : 2)];
+			Number[] sig = Sign (HashToNumber (hash));
+			byte[] raw = new byte[(_domain.Bits >> 2) + ((_domain.Bits & 7) == 0 ? 0 : 2)];
 			sig[0].CopyTo (raw, 0);
 			sig[1].CopyTo (raw, raw.Length >> 1);
 			return raw;
@@ -145,18 +149,24 @@ namespace openCrypto.ECDSA
 
 		public bool VerifyHash (byte[] hash, byte[] sig)
 		{
-			if (sig.Length != (_param.Domain.Bits >> 2) + ((_param.Domain.Bits & 7) == 0 ? 0 : 2))
+			if (sig.Length != (_domain.Bits >> 2) + ((_domain.Bits & 7) == 0 ? 0 : 2))
 				throw new ArgumentException ();
 			if (hash.Length == 0)
 				throw new ArgumentException ();
-			if (_param.Q == null && _param.D != null)
-				_param.CreatePublicKeyFromPrivateKey ();
-			if (_param.Q == null)
+			if (_Q == null && _d != null)
+				CreatePublicKeyFromPrivateKey ();
+			if (_Q == null)
 				throw new CryptographicException ();
 			int halfLen = sig.Length >> 1;
 			Number a = new Number (sig, 0, halfLen);
 			Number b = new Number (sig, halfLen, halfLen);
-			return Verify (new Number[] {a, b}, new Number (hash));
+			return Verify (new Number[] {a, b}, HashToNumber (hash));
+		}
+
+		Number HashToNumber (byte[] hash)
+		{
+			int len = Math.Min (hash.Length, _orderBits >> 3);
+			return new Number (hash, 0, len);
 		}
 		#endregion
 
@@ -170,12 +180,12 @@ namespace openCrypto.ECDSA
 		{
 			if (includePrivateParameters)
 				throw new NotSupportedException ();
-			if (_param.Q == null) {
-				if (_param.D == null)
-					_param.CreateNewPrivateKey ();
-				_param.CreatePublicKeyFromPrivateKey ();
+			if (_Q == null) {
+				if (_d == null)
+					CreateNewPrivateKey ();
+				CreatePublicKeyFromPrivateKey ();
 			}
-			ECPoint publicKey = _param.Q.Export ();
+			ECPoint publicKey = _Q.Export ();
 
 			using (StringWriter sw = new StringWriter ())
 			using (XmlTextWriter writer = new XmlTextWriter (sw)) {
@@ -184,20 +194,20 @@ namespace openCrypto.ECDSA
 				writer.IndentChar = ' ';
 				writer.WriteStartElement ("ECDSAKeyValue", "http://www.w3.org/2001/04/xmldsig-more#");
 				writer.WriteStartElement ("DomainParameters");
-				if (_param.Domain.URN != null) {
+				if (_domain.URN != null) {
 					writer.WriteStartElement ("NamedCurve");
-					writer.WriteAttributeString ("URN", _param.Domain.URN.ToString ());
+					writer.WriteAttributeString ("URN", _domain.URN.ToString ());
 					writer.WriteEndElement ();
 				} else {
-					ECPoint basePoint = _param.Domain.G.Export ();
+					ECPoint basePoint = _domain.G.Export ();
 					writer.WriteStartElement ("ExplicitParams");
-					writer.WriteElementString ("P", _param.Domain.P.ToString (10));
+					writer.WriteElementString ("P", _domain.P.ToString (10));
 					writer.WriteStartElement ("CurveParams");
 					writer.WriteStartElement ("A");
-					writer.WriteAttributeString ("Value", _param.Domain.A.ToString (10));
+					writer.WriteAttributeString ("Value", _domain.A.ToString (10));
 					writer.WriteEndElement ();
 					writer.WriteStartElement ("B");
-					writer.WriteAttributeString ("Value", _param.Domain.B.ToString (10));
+					writer.WriteAttributeString ("Value", _domain.B.ToString (10));
 					writer.WriteEndElement ();
 					writer.WriteEndElement ();
 					writer.WriteStartElement ("BasePointParams");
@@ -209,7 +219,7 @@ namespace openCrypto.ECDSA
 					writer.WriteAttributeString ("Value", basePoint.Y.ToString (10));
 					writer.WriteEndElement ();
 					writer.WriteEndElement ();
-					writer.WriteElementString ("Order", _param.Domain.N.ToString (10));
+					writer.WriteElementString ("Order", _domain.N.ToString (10));
 					writer.WriteEndElement ();
 					writer.WriteEndElement ();
 				}
@@ -229,6 +239,16 @@ namespace openCrypto.ECDSA
 		#endregion
 
 		#region Misc
+		void CreateNewPrivateKey ()
+		{
+			_d = Number.CreateRandomElement (_domain.N);
+		}
+
+		void CreatePublicKeyFromPrivateKey ()
+		{
+			_Q = _domain.G.Multiply (_d);
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 		}
@@ -243,7 +263,7 @@ namespace openCrypto.ECDSA
 
 		public override int KeySize {
 			get {
-				return (int)_param.Domain.Bits;
+				return (int)_domain.Bits;
 			}
 			set {
 				throw new NotSupportedException ();
