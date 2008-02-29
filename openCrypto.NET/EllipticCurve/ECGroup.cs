@@ -30,6 +30,7 @@ namespace openCrypto.EllipticCurve
 	{
 		Number _a, _b, _mod;
 		IFiniteField _field;
+		bool _a_is_minus3;
 
 		public ECGroup (Number a, Number b, Number mod, IFiniteField field)
 		{
@@ -37,6 +38,7 @@ namespace openCrypto.EllipticCurve
 			_b = b;
 			_mod = mod;
 			_field = field;
+			_a_is_minus3 = (mod.CompareTo (a + Number.Three) == 0);
 		}
 
 		public Number A {
@@ -53,6 +55,10 @@ namespace openCrypto.EllipticCurve
 
 		public IFiniteField FiniteField {
 			get { return _field; }
+		}
+
+		public bool IsA_Minus3 {
+			get { return _a_is_minus3; }
 		}
 	}
 }

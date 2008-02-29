@@ -31,7 +31,7 @@ namespace openCrypto.EllipticCurve
 		ECGroup _group;
 		IFiniteField _field;
 		Number _x, _y, _z;
-		Number _x2 = null, _z2 = null, _z3 = null, _y2 = null, _y4 = null;
+		Number _x2 = null, _z2 = null, _z3 = null, _z4 = null, _y2 = null, _y4 = null;
 		ECPoint[] _multiplyHelperPoints = null;
 		ECPoint _inv = null;
 
@@ -76,8 +76,15 @@ namespace openCrypto.EllipticCurve
 			if (_y2 == null) _y2 = _field.Multiply (_y, _y);
 			if (_y4 == null) _y4 = _field.Multiply (_y2, _y2);
 
-			Number l1 = _field.Multiply (_field.Subtract (_x, _z2), _field.Add (_x, _z2));
-			l1 = _field.Add (_field.Add (l1, l1), l1);
+			Number l1;
+			if (_group.IsA_Minus3) {
+				l1 = _field.Multiply (_field.Subtract (_x, _z2), _field.Add (_x, _z2));
+				l1 = _field.Add (_field.Add (l1, l1), l1);
+			} else {
+				if (_z4 == null)
+					_z4 = _field.Multiply (_z2, _z2);
+				l1 = _field.Add (_field.Add (_field.Add (_x2, _x2), _x2), _field.Multiply (_group.A, _z4));
+			}
 
 			Number Z = _field.Multiply (_y, _z);
 			Z = _field.Add (Z, Z);
