@@ -75,6 +75,25 @@ namespace openCrypto.Executable
 			return sw.Elapsed.TotalMilliseconds / (double)loop;
 		}
 
+		public static double Run (ECMQV ecmqv, int loop)
+		{
+			Stopwatch sw = new Stopwatch ();
+			int keyDataLen = 20;
+			byte[] otherPublicKey1 = ecmqv.Parameters.KeyPair1.PublicKey;
+			byte[] otherPublicKey2 = ecmqv.Parameters.KeyPair2.PublicKey;
+
+			// re-generate key
+			ecmqv.Parameters.KeyPair1.PrivateKey = null;
+			ecmqv.Parameters.KeyPair2.PrivateKey = null;
+
+			ecmqv.PerformKeyAgreement (otherPublicKey1, otherPublicKey2, keyDataLen);
+			sw.Reset (); sw.Start ();
+			for (int i = 0; i < loop; i++)
+				ecmqv.PerformKeyAgreement (otherPublicKey1, otherPublicKey2, keyDataLen);
+			sw.Stop ();
+			return sw.Elapsed.TotalMilliseconds / (double)loop;
+		}
+
 		public static double[] Run (SymmetricAlgorithmPlus algo, CipherModePlus mode, int keySize, int blockSize, int dataSize, int threads)
 		{
 			double[] result;

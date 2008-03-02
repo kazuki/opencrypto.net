@@ -569,6 +569,11 @@ namespace openCrypto.FiniteField
 			return new Number (RightShift (x.data, x.length, shift));
 		}
 
+		public static Number operator & (Number x, Number y)
+		{
+			return x.And (y);
+		}
+
 		public static bool operator < (Number x, Number y)
 		{
 			return x.CompareTo (y) < 0;
@@ -731,6 +736,14 @@ namespace openCrypto.FiniteField
 			length = data.Length;
 			Normalize ();
 			return;
+		}
+
+		public Number And (Number mask)
+		{
+			uint[] tmp = new uint[Math.Min (length, mask.length)];
+			for (int i = 0; i < tmp.Length; i ++)
+				tmp[i] = data[i] & mask.data[i];
+			return new Number (tmp);
 		}
 
 		#endregion

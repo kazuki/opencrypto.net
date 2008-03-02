@@ -77,6 +77,17 @@ namespace openCrypto.Executable
 			return result;
 		}
 
+		static double Run (ECMQV ecdh)
+		{
+			int loopA = 5, loopB = 5;
+			double result = SpeedTest.Run (ecdh, loopA);
+			for (int i = 0; i < loopB; i++) {
+				double temp = SpeedTest.Run (ecdh, loopA);
+				result = Math.Min (result, temp);
+			}
+			return result;
+		}
+
 		static void Main ()
 		{
 			CipherMode mode = CipherMode.ECB;
@@ -127,6 +138,14 @@ namespace openCrypto.Executable
 			for (int i = (int)ECDomainNames.secp112r1; i <= (int)ECDomainNames.secp521r1; i++) {
 				ECDomainNames domain = (ECDomainNames)i;
 				double ret = Run (new ECDiffieHellman (domain));
+				Console.WriteLine ("{0}: {1}ms", domain, ret);
+			}
+			Console.WriteLine ();
+
+			Console.WriteLine ("ECMQV:");
+			for (int i = (int)ECDomainNames.secp112r1; i <= (int)ECDomainNames.secp521r1; i++) {
+				ECDomainNames domain = (ECDomainNames)i;
+				double ret = Run (new ECMQV (domain));
 				Console.WriteLine ("{0}: {1}ms", domain, ret);
 			}
 		}
