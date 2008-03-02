@@ -148,8 +148,11 @@ namespace openCrypto.Tests
 			int repeat = 10;
 			for (int i = 0; i < repeat; i ++) {
 				ECDSAManaged ecdsa = new ECDSAManaged (domainName);
+				byte[] pubKey = ecdsa.Parameters.PublicKey;
 				byte[] hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
 				byte[] sign = ecdsa.SignHash (hash);
+				ecdsa = new ECDSAManaged (domainName);
+				ecdsa.Parameters.PublicKey = pubKey;
 				Assert.IsTrue (ecdsa.VerifyHash (hash, sign), "Success Test " + domainName.ToString ());
 				sign[0]++;
 				Assert.IsFalse (ecdsa.VerifyHash (hash, sign), "Failure Test " + domainName.ToString ());

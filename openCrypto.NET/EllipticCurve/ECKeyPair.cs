@@ -87,21 +87,17 @@ namespace openCrypto.EllipticCurve
 						CreateNewPrivateKey ();
 					CreatePublicKeyFromPrivateKey ();
 				}
-				byte[] tmp = new byte[(_domain.Bits >> 2) + ((_domain.Bits & 7) == 0 ? 0 : 2)];
-				ECPoint p = _Q.Export ();
-				p.X.CopyToBigEndian (tmp, 0, tmp.Length >> 1);
-				p.Y.CopyToBigEndian (tmp, tmp.Length >> 1, tmp.Length >> 1);
-				return tmp;
+				return _Q.ToByteArray (false);
 			}
 			set {
-				if ((value.Length & 1) == 1 || value.Length != (_domain.Bits >> 2) + ((_domain.Bits & 7) == 0 ? 0 : 2))
-					throw new ArgumentException ();
-				IFiniteField ff = _domain.Group.FiniteField;
-				Number x = ff.ToElement (new Number (value, 0, value.Length >> 1, false));
-				Number y = ff.ToElement (new Number (value, value.Length >> 1, value.Length >> 1, false));
-				_Q = new ECPoint (_domain.Group, x, y, ff.ToElement (Number.One));
+				_Q = new ECPoint (_domain.Group, value);
 				_d = null;
 			}
+		}
+
+		public byte[] ExportPublicKey (bool usePointCompression)
+		{
+			return _Q.ToByteArray (usePointCompression);
 		}
 	}
 }
