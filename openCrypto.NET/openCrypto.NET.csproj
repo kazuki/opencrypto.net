@@ -58,6 +58,9 @@
     <Compile Include="EllipticCurve\ECGroup.cs" />
     <Compile Include="EllipticCurve\ECKeyPair.cs" />
     <Compile Include="EllipticCurve\ECPoint.cs" />
+    <Compile Include="EllipticCurve\KeyAgreement\ECDiffieHellman.cs" />
+    <Compile Include="EllipticCurve\KeyAgreement\ECDiffieHellmanParameters.cs" />
+    <Compile Include="EllipticCurve\KeyAgreement\ECKeyAgreement.cs" />
     <Compile Include="FiniteField\Barrett.cs" />
     <Compile Include="FiniteField\Classical.cs" />
     <Compile Include="FiniteField\GeneralizedMersennePrimeField.cs" />
@@ -69,6 +72,8 @@
     <Compile Include="FiniteField\SECP224r1.cs" />
     <Compile Include="FiniteField\SECP384r1.cs" />
     <Compile Include="FiniteField\SECP521r1.cs" />
+    <Compile Include="KeyDerivationFunctions\ANSI_X963_KDF.cs" />
+    <Compile Include="KeyDerivationFunctions\KeyDerivationFunction.cs" />
     <Compile Include="Rijndael\Rijndael.cs" />
     <Compile Include="Rijndael\RijndaelTransform32.cs" />
     <Compile Include="Rijndael\RijndaelTransform32Balanced.cs" />
@@ -88,6 +93,7 @@
     <Compile Include="Tests\ConfluentWaitHandleTest.cs" />
     <Compile Include="Tests\CurveDomainValidation.cs" />
     <Compile Include="Tests\DummyAlgorithm.cs" />
+    <Compile Include="Tests\ECDHTest.cs" />
     <Compile Include="Tests\ECDSATest.cs" />
     <Compile Include="Tests\ECPointTest.cs" />
     <Compile Include="Tests\FiniteFieldTest.cs" />

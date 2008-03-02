@@ -815,6 +815,16 @@ namespace openCrypto.FiniteField
 				array[offset - 1] = (byte)(data[i] >> 8);
 			array[offset] = (byte)(data[i]);
 		}
+
+		public byte[] ToByteArray (int byteLen, bool isLittleEndian)
+		{
+			byte[] bytes = new byte [byteLen];
+			if (isLittleEndian)
+				CopyTo (bytes, 0);
+			else
+				CopyToBigEndian (bytes, 0, byteLen);
+			return bytes;
+		}
 		#endregion
 
 		#region Parse
