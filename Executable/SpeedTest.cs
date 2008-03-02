@@ -25,6 +25,8 @@ using System;
 using Stopwatch = System.Diagnostics.Stopwatch;
 using System.Security.Cryptography;
 using ECDSAManaged = openCrypto.ECDSA.ECDSAManaged;
+using openCrypto.EllipticCurve;
+using openCrypto.EllipticCurve.KeyAgreement;
 
 namespace openCrypto.Executable
 {
@@ -54,6 +56,23 @@ namespace openCrypto.Executable
 			if (!signCheck)
 				result[1] = -result[1];
 			return result;
+		}
+
+		public static double Run (ECDiffieHellman ecdh, int loop)
+		{
+			Stopwatch sw = new Stopwatch ();
+			int keyDataLen = 20;
+			byte[] otherPublicKey = ecdh.Parameters.PublicKey;
+
+			// re-generate key
+			ecdh.Parameters.PrivateKey = null;
+
+			ecdh.PerformKeyAgreement (otherPublicKey, keyDataLen);
+			sw.Reset (); sw.Start ();
+			for (int i = 0; i < loop; i++)
+				ecdh.PerformKeyAgreement (otherPublicKey, keyDataLen);
+			sw.Stop ();
+			return sw.Elapsed.TotalMilliseconds / (double)loop;
 		}
 
 		public static double[] Run (SymmetricAlgorithmPlus algo, CipherModePlus mode, int keySize, int blockSize, int dataSize, int threads)

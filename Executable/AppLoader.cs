@@ -26,6 +26,7 @@ using System.Security.Cryptography;
 using openCrypto.FiniteField;
 using ECDSAManaged = openCrypto.ECDSA.ECDSAManaged;
 using openCrypto.EllipticCurve;
+using openCrypto.EllipticCurve.KeyAgreement;
 
 namespace openCrypto.Executable
 {
@@ -53,15 +54,25 @@ namespace openCrypto.Executable
 			return result;
 		}
 
-		static double[] Run (ECDomainNames domain)
+		static double[] Run (ECDSAManaged ecdsa)
 		{
-			ECDSAManaged ecdsa = new ECDSAManaged (domain);
 			int loopA = 5, loopB = 5;
 			double[] result = SpeedTest.Run (ecdsa, loopA);
 			for (int i = 0; i < loopB; i++) {
 				double[] temp = SpeedTest.Run (ecdsa, loopA);
 				result[0] = Math.Min (result[0], temp[0]);
 				result[1] = Math.Min (result[1], temp[1]);
+			}
+			return result;
+		}
+
+		static double Run (ECDiffieHellman ecdh)
+		{
+			int loopA = 5, loopB = 5;
+			double result = SpeedTest.Run (ecdh, loopA);
+			for (int i = 0; i < loopB; i++) {
+				double temp = SpeedTest.Run (ecdh, loopA);
+				result = Math.Min (result, temp);
 			}
 			return result;
 		}
@@ -107,8 +118,16 @@ namespace openCrypto.Executable
 			Console.WriteLine ("ECDSA:");
 			for (int i = (int)ECDomainNames.secp112r1; i <= (int)ECDomainNames.secp521r1; i++) {
 				ECDomainNames domain = (ECDomainNames)i;
-				result = Run (domain);
+				result = Run (new ECDSAManaged (domain));
 				Console.WriteLine ("{0}: Sign: {1}ms, Verify: {2}ms", domain, result[0], result[1]);
+			}
+			Console.WriteLine ();
+
+			Console.WriteLine ("ECDH:");
+			for (int i = (int)ECDomainNames.secp112r1; i <= (int)ECDomainNames.secp521r1; i++) {
+				ECDomainNames domain = (ECDomainNames)i;
+				double ret = Run (new ECDiffieHellman (domain));
+				Console.WriteLine ("{0}: {1}ms", domain, ret);
 			}
 		}
 	}

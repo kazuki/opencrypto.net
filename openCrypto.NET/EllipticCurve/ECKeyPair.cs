@@ -72,11 +72,16 @@ namespace openCrypto.EllipticCurve
 				return tmp;
 			}
 			set {
-				Number tmp = new Number (value, false);
-				if (tmp >= _domain.N)
-					throw new ArgumentException ();
-				_Q = null;
-				_d = tmp;
+				if (value == null) {
+					_d = null;
+					_Q = null;
+				} else {
+					Number tmp = new Number (value, false);
+					if (tmp >= _domain.N)
+						throw new ArgumentException ();
+					_Q = null;
+					_d = tmp;
+				}
 			}
 		}
 
