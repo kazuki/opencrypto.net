@@ -62,31 +62,46 @@ namespace openCrypto.FiniteField
 			Normalize ();
 		}
 
-		public Number (byte[] data)
-			: this (ToUInt32Array (data, 0, data.Length))
+		public Number (byte[] data, bool isLittleEndian)
+			: this (ToUInt32Array (data, 0, data.Length, isLittleEndian))
 		{
 		}
 
-		public Number (byte[] data, int offset, int length)
-			: this (ToUInt32Array (data, offset, length))
+		public Number (byte[] data, int offset, int length, bool isLittleEndian)
+			: this (ToUInt32Array (data, offset, length, isLittleEndian))
 		{
 		}
 
-		static uint[] ToUInt32Array (byte[] data, int offset, int length)
+		static uint[] ToUInt32Array (byte[] data, int offset, int length, bool isLittleEndian)
 		{
-			int i = offset, q = 0, last = offset + length;
 			uint[] tmp = new uint [(length >> 2) + ((length & 3) == 0 ? 0 : 1)];
-			for (; i < last - 3; i += 4)
-				tmp[q ++] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 2]) << 16) | (((uint)data[i + 3]) << 24);
-			if (last == i)
-				return tmp;
-			int diff = last - i;
-			if (diff == 1)
-				tmp[q] = data[i];
-			else if (diff == 2)
-				tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8);
-			else
-				tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 2]) << 16);
+			if (isLittleEndian) {
+				int i = offset, q = 0, last = offset + length;
+				for (; i < last - 3; i += 4)
+					tmp[q ++] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 2]) << 16) | (((uint)data[i + 3]) << 24);
+				if (last == i)
+					return tmp;
+				int diff = last - i;
+				if (diff == 1)
+					tmp[q] = data[i];
+				else if (diff == 2)
+					tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8);
+				else
+					tmp[q] = ((uint)data[i]) | (((uint)data[i + 1]) << 8) | (((uint)data[i + 2]) << 16);
+			} else {
+				int i = offset + length - 1, q = 0;
+				for (; i >= 3 + offset; i -= 4)
+					tmp[q++] = ((uint)data[i]) | (((uint)data[i - 1]) << 8) | (((uint)data[i - 2]) << 16) | (((uint)data[i - 3]) << 24);
+				int diff = i - offset;
+				if (diff < 0)
+					return tmp;
+				if (diff == 0)
+					tmp[q] = data[i];
+				else if (diff == 1)
+					tmp[q] = ((uint)data[i]) | (((uint)data[i - 1]) << 8);
+				else
+					tmp[q] = ((uint)data[i]) | (((uint)data[i - 1]) << 8) | (((uint)data[i - 2]) << 16);
+			}
 			return tmp;
 		}
 
@@ -750,7 +765,7 @@ namespace openCrypto.FiniteField
 			byte[] raw = new byte [bits >> 3];
 			while (true) {
 				RNG.Instance.GetBytes (raw);
-				Number ret = new Number (raw);
+				Number ret = new Number (raw, true);
 				if (max.CompareTo (ret) > 0)
 					return ret;
 			}
@@ -775,6 +790,29 @@ namespace openCrypto.FiniteField
 				array[offset + 2] = (byte)(data[i] >> 16);
 			if (diff >= 2)
 				array[offset + 1] = (byte)(data[i] >> 8);
+			array[offset] = (byte)(data[i]);
+		}
+
+		public void CopyToBigEndian (byte[] array, int offset, int maxLenBytes)
+		{
+			int bitCount = BitCount ();
+			int byteCount = (bitCount >> 3) + ((bitCount & 7) == 0 ? 0 : 1);
+			int len = byteCount >> 2;
+			int diff = byteCount & 3;
+			int i = 0;
+			offset += byteCount - 1 + (maxLenBytes - byteCount);
+			for (; i < len; i++, offset -= 4) {
+				array[offset] = (byte)(data[i]);
+				array[offset - 1] = (byte)(data[i] >> 8);
+				array[offset - 2] = (byte)(data[i] >> 16);
+				array[offset - 3] = (byte)(data[i] >> 24);
+			}
+			if (diff == 0)
+				return;
+			if (diff == 3)
+				array[offset - 2] = (byte)(data[i] >> 16);
+			if (diff >= 2)
+				array[offset - 1] = (byte)(data[i] >> 8);
 			array[offset] = (byte)(data[i]);
 		}
 		#endregion

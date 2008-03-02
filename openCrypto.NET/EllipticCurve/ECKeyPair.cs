@@ -68,11 +68,11 @@ namespace openCrypto.EllipticCurve
 				if (_d == null)
 					CreateNewPrivateKey ();
 				byte[] tmp = new byte[(_domain.Bits >> 3) + ((_domain.Bits & 7) == 0 ? 0 : 1)];
-				_d.CopyTo (tmp, 0);
+				_d.CopyToBigEndian (tmp, 0, tmp.Length);
 				return tmp;
 			}
 			set {
-				Number tmp = new Number (value);
+				Number tmp = new Number (value, false);
 				if (tmp >= _domain.N)
 					throw new ArgumentException ();
 				_Q = null;
@@ -89,16 +89,16 @@ namespace openCrypto.EllipticCurve
 				}
 				byte[] tmp = new byte[(_domain.Bits >> 2) + ((_domain.Bits & 7) == 0 ? 0 : 2)];
 				ECPoint p = _Q.Export ();
-				p.X.CopyTo (tmp, 0);
-				p.Y.CopyTo (tmp, tmp.Length >> 1);
+				p.X.CopyToBigEndian (tmp, 0, tmp.Length >> 1);
+				p.Y.CopyToBigEndian (tmp, tmp.Length >> 1, tmp.Length >> 1);
 				return tmp;
 			}
 			set {
 				if ((value.Length & 1) == 1 || value.Length != (_domain.Bits >> 2) + ((_domain.Bits & 7) == 0 ? 0 : 2))
 					throw new ArgumentException ();
 				IFiniteField ff = _domain.Group.FiniteField;
-				Number x = ff.ToElement (new Number (value, 0, value.Length >> 1));
-				Number y = ff.ToElement (new Number (value, value.Length >> 1, value.Length >> 1));
+				Number x = ff.ToElement (new Number (value, 0, value.Length >> 1, false));
+				Number y = ff.ToElement (new Number (value, value.Length >> 1, value.Length >> 1, false));
 				_Q = new ECPoint (_domain.Group, x, y, ff.ToElement (Number.One));
 				_d = null;
 			}

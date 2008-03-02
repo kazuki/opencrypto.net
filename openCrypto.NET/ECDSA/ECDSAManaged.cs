@@ -134,9 +134,10 @@ namespace openCrypto.ECDSA
 			if (_params.D == null)
 				throw new CryptographicException ();
 			Number[] sig = Sign (HashToNumber (hash));
-			byte[] raw = new byte[(_params.Domain.Bits >> 2) + ((_params.Domain.Bits & 7) == 0 ? 0 : 2)];
-			sig[0].CopyTo (raw, 0);
-			sig[1].CopyTo (raw, raw.Length >> 1);
+			int keyBytes = (int)((_params.Domain.Bits >> 3) + ((_params.Domain.Bits & 7) == 0 ? 0U : 1U));
+			byte[] raw = new byte[keyBytes << 1];
+			sig[0].CopyToBigEndian (raw, 0, keyBytes);
+			sig[1].CopyToBigEndian (raw, raw.Length >> 1, keyBytes);
 			return raw;
 		}
 
@@ -151,15 +152,15 @@ namespace openCrypto.ECDSA
 			if (_params.Q == null)
 				throw new CryptographicException ();
 			int halfLen = sig.Length >> 1;
-			Number a = new Number (sig, 0, halfLen);
-			Number b = new Number (sig, halfLen, halfLen);
+			Number a = new Number (sig, 0, halfLen, false);
+			Number b = new Number (sig, halfLen, halfLen, false);
 			return Verify (new Number[] {a, b}, HashToNumber (hash));
 		}
 
 		Number HashToNumber (byte[] hash)
 		{
 			int len = Math.Min (hash.Length, _orderBits >> 3);
-			return new Number (hash, 0, len);
+			return new Number (hash, 0, len, false);
 		}
 		#endregion
 
