@@ -37,6 +37,12 @@ namespace openCrypto.FiniteField
 		/// <summary>ˆø”‚É—^‚¦‚ç‚ê‚½“ñ‚Â‚ÌŒ³‚ÌæZ‚ğs‚¢Œ‹‰Ê‚ğ•Ô‚·</summary>
 		Number Multiply (Number x, Number y);
 
+		/// <summary>x^y‚ğŒvZ‚µŒ‹‰Ê‚ğ•Ô‚·</summary>
+		Number Pow (Number x, Number y);
+
+		/// <summary>•½•ûª‚ğŒvZ‚µŒ‹‰Ê‚ğ•Ô‚·</summary>
+		Number Sqrt (Number x);
+
 		/// <summary>ˆø”‚É—^‚¦‚ç‚ê‚½Œ³‚Ì‹tŒ³‚ğ•Ô‚·</summary>
 		Number Invert (Number x);
 

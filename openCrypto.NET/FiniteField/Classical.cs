@@ -80,6 +80,36 @@ namespace openCrypto.FiniteField
 			return (x * y) % mod;
 		}
 
+		public virtual Number Pow (Number x, Number y)
+		{
+			if (y.IsZero ())
+				return ToElement (Number.One);
+			if (y.IsOne ())
+				return x;
+
+			Number a = x;
+			Number b = ToElement (Number.One);
+			if (y.GetBit (0) == 1)
+				b = a;
+			for (int i = 1; i < y.BitCount (); i ++) {
+				a = Multiply (a, a);
+				if (y.GetBit (i) == 1)
+					b = Multiply (a, b);
+			}
+			return b;
+		}
+
+		public virtual Number Sqrt (Number x)
+		{
+			if ((mod % (uint)4) == 3) {
+				Number tmp = Pow (x, (mod >> 2) + 1);
+				if (x.CompareTo (Multiply (tmp, tmp)) == 0)
+					return tmp;
+				throw new ArithmeticException ();
+			}
+			throw new NotImplementedException ();
+		}
+
 		public virtual Number Invert (Number x)
 		{
 			Number a = mod;

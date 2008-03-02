@@ -46,6 +46,46 @@ namespace openCrypto.EllipticCurve
 			_z = z;
 		}
 
+		/// <summary>バイト配列より点を作成する (SEC1, 2.3.4)</summary>
+		public ECPoint (ECGroup group, byte[] data)
+		{
+			_group = group;
+			_field = group.FiniteField;
+			switch (data[0]) {
+				case 0: { // 無限遠点
+					ECPoint tmp = _field.GetInfinityPoint (_group);
+					_x = tmp._x;
+					_y = tmp._y;
+					_z = tmp._z;
+					return;
+				}
+				case 2:
+				case 3: { // 点圧縮済みデータ
+					int keyBits = group.P.BitCount ();
+					int keyBytes = (keyBits >> 3) + ((keyBits & 7) == 0 ? 0 : 1);
+					if (data.Length != keyBytes + 1)
+						throw new ArgumentException ();
+					Number x = _field.ToElement (new Number (data, 1, keyBytes, false));
+					Number y2 = _field.Add (_field.Multiply (_field.Add (_field.Multiply (x, x), _group.A), x), _group.B); // (x^2 + a)*x + b
+					Number y = _field.Sqrt (y2);
+					if (_field.ToNormal (y).GetBit (0) != data[0] - 2)
+						y = _field.Modulus - y;
+					_x = x;
+					_y = y;
+					_z = _field.ToElement (Number.One);
+					return;
+				}
+				case 4: { // 非圧縮データ
+					int keyBits = group.P.BitCount ();
+					int keyBytes = (keyBits >> 3) + ((keyBits & 7) == 0 ? 0 : 1);
+					_x = _field.ToElement (new Number (data, 1, keyBytes, false));
+					_y = _field.ToElement (new Number (data, 1 + keyBytes, keyBytes, false));
+					_z = _field.ToElement (Number.One);
+					return;
+				}
+			}
+		}
+
 		public ECGroup Group {
 			get { return _group; }
 		}
@@ -367,6 +407,29 @@ namespace openCrypto.EllipticCurve
 			if (IsInifinity ())
 				return _field.GetInfinityPoint (_group);
 			return _field.ExportECPoint (_x, _y, _z, _group);
+		}
+
+		/// <summary>点をバイト配列に変換して返します (SEC1 2.3.3)</summary>
+		public byte[] ToByteArray (bool usePointCompression)
+		{
+			if (IsInifinity ())
+				return new byte[1];
+
+			int keybits = _group.P.BitCount ();
+			int keybytes = (keybits >> 3) + ((keybits & 7) == 0 ? 0 : 1);
+			ECPoint p = Export ();
+			if (usePointCompression) {
+				byte[] tmp = new byte [keybytes + 1];
+				tmp[0] = (byte)((p.Y.data[0] & 1) == 0 ? 2 : 3);
+				p.X.CopyToBigEndian (tmp, 1, keybytes);
+				return tmp;
+			} else {
+				byte[] tmp = new byte [(keybytes << 1) + 1];
+				tmp[0] = 4;
+				p.X.CopyToBigEndian (tmp, 1, keybytes);
+				p.Y.CopyToBigEndian (tmp, 1 + keybytes, keybytes);
+				return tmp;
+			}
 		}
 
 		public ECPoint Invert ()
