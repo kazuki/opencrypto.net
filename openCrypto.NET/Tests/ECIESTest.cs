@@ -81,6 +81,102 @@ namespace openCrypto.Tests
 				Assert.AreEqual (plainText, decrypted);
 			}
 		}
+
+		[Test]
+		public void Test_Random_with_SharedInfo1 ()
+		{
+			ECDomainNames domainName = ECDomainNames.secp256r1;
+			for (int i = 0; i < 5; i++) {
+				ECIES ecies1 = new ECIES (domainName);
+				ECIES ecies2 = new ECIES (domainName);
+				byte[] sharedInfo = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
+				byte[] plainText = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + RNG.GetRNGBytes (1)[0] + 1);
+
+				// setup shared info 1
+				ecies1.SharedInfo1 = sharedInfo;
+				ecies2.SharedInfo1 = sharedInfo;
+
+				// ecies2 exports public key.
+				byte[] publicKey = ecies2.Parameters.ExportPublicKey (true);
+
+				// ecies1 imports public key.
+				ecies1.Parameters.PublicKey = publicKey;
+
+				// ecies1 encrypt plainText.
+				byte[] cipherText = ecies1.Encrypt (plainText);
+
+				// ecies2 decrypt cipherText.
+				byte[] decrypted = ecies2.Decrypt (cipherText);
+
+				// Check !
+				Assert.AreEqual (plainText, decrypted);
+			}
+		}
+
+		[Test]
+		public void Test_Random_with_SharedInfo2 ()
+		{
+			ECDomainNames domainName = ECDomainNames.secp192r1;
+			for (int i = 0; i < 5; i++) {
+				ECIES ecies1 = new ECIES (domainName);
+				ECIES ecies2 = new ECIES (domainName);
+				byte[] sharedInfo = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
+				byte[] plainText = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + RNG.GetRNGBytes (1)[0] + 1);
+
+				// setup shared info 1
+				ecies1.SharedInfo2 = sharedInfo;
+				ecies2.SharedInfo2 = sharedInfo;
+
+				// ecies2 exports public key.
+				byte[] publicKey = ecies2.Parameters.ExportPublicKey (true);
+
+				// ecies1 imports public key.
+				ecies1.Parameters.PublicKey = publicKey;
+
+				// ecies1 encrypt plainText.
+				byte[] cipherText = ecies1.Encrypt (plainText);
+
+				// ecies2 decrypt cipherText.
+				byte[] decrypted = ecies2.Decrypt (cipherText);
+
+				// Check !
+				Assert.AreEqual (plainText, decrypted);
+			}
+		}
+
+		[Test]
+		public void Test_Random_with_Both_SharedInfo ()
+		{
+			ECDomainNames domainName = ECDomainNames.secp128r1;
+			for (int i = 0; i < 5; i++) {
+				ECIES ecies1 = new ECIES (domainName);
+				ECIES ecies2 = new ECIES (domainName);
+				byte[] sharedInfo1 = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
+				byte[] sharedInfo2 = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
+				byte[] plainText = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + RNG.GetRNGBytes (1)[0] + 1);
+
+				// setup shared info 1
+				ecies1.SharedInfo1 = sharedInfo1;
+				ecies2.SharedInfo1 = sharedInfo1;
+				ecies1.SharedInfo2 = sharedInfo2;
+				ecies2.SharedInfo2 = sharedInfo2;
+
+				// ecies2 exports public key.
+				byte[] publicKey = ecies2.Parameters.ExportPublicKey (true);
+
+				// ecies1 imports public key.
+				ecies1.Parameters.PublicKey = publicKey;
+
+				// ecies1 encrypt plainText.
+				byte[] cipherText = ecies1.Encrypt (plainText);
+
+				// ecies2 decrypt cipherText.
+				byte[] decrypted = ecies2.Decrypt (cipherText);
+
+				// Check !
+				Assert.AreEqual (plainText, decrypted);
+			}
+		}
 	}
 }
 #endif

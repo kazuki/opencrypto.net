@@ -49,6 +49,25 @@ namespace openCrypto.Tests
 		}
 
 		[Test]
+		public void Test_Random_with_SharedInfo ()
+		{
+			ECDomainNames name = ECDomainNames.secp256r1;
+			for (int i = 0; i < 10; i++) {
+				ECMQV ecmqv1 = new ECMQV (name);
+				ECMQV ecmqv2 = new ECMQV (name);
+				int keyDataLen = 20;
+
+				byte[] sharedInfo = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
+				ecmqv1.SharedInfo = sharedInfo;
+				ecmqv2.SharedInfo = sharedInfo;
+
+				byte[] key1 = ecmqv1.PerformKeyAgreement (ecmqv2.Parameters.KeyPair1.PublicKey, ecmqv2.Parameters.KeyPair2.PublicKey, keyDataLen);
+				byte[] key2 = ecmqv2.PerformKeyAgreement (ecmqv1.Parameters.KeyPair1.PublicKey, ecmqv1.Parameters.KeyPair2.PublicKey, keyDataLen);
+				Assert.AreEqual (key1, key2);
+			}
+		}
+
+		[Test]
 		public void Test_MQV ()
 		{
 			ECDomainNames name = ECDomainNames.secp160r1;

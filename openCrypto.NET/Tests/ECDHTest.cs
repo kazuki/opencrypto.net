@@ -58,6 +58,34 @@ namespace openCrypto.Tests
 		}
 
 		[Test]
+		public void Test_Random_with_SharedInfo ()
+		{
+			for (int i = 0; i < 10; i++) {
+				ECDiffieHellman ecdh1 = new ECDiffieHellman (ECDomainNames.secp256r1);
+				ECDiffieHellman ecdh2 = new ECDiffieHellman (ECDomainNames.secp256r1);
+				byte[] sharedInfo = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
+
+				ecdh1.SharedInfo = sharedInfo;
+				ecdh2.SharedInfo = sharedInfo;
+
+				byte[] key1 = ecdh1.PerformKeyAgreement (ecdh2.Parameters.PublicKey, 20);
+				byte[] key2 = ecdh2.PerformKeyAgreement (ecdh1.Parameters.PublicKey, 20);
+				Assert.AreEqual (key1, key2, "#1");
+
+				key1 = ecdh1.PerformKeyAgreement (ecdh2.Parameters.PublicKey, 128);
+				key2 = ecdh2.PerformKeyAgreement (ecdh1.Parameters.PublicKey, 128);
+				Assert.AreEqual (key1, key2, "#2");
+
+				byte[] shareInfo = RNG.GetRNGBytes (16);
+				ecdh1.SharedInfo = shareInfo;
+				ecdh2.SharedInfo = shareInfo;
+				key1 = ecdh1.PerformKeyAgreement (ecdh2.Parameters.PublicKey, 256);
+				key2 = ecdh2.PerformKeyAgreement (ecdh1.Parameters.PublicKey, 256);
+				Assert.AreEqual (key1, key2, "#3");
+			}
+		}
+
+		[Test]
 		public void Test_GEC2 ()
 		{
 			ECDiffieHellman U = new ECDiffieHellman (ECDomainNames.secp160r1);
