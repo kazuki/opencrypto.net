@@ -51,8 +51,14 @@ namespace openCrypto.EllipticCurve.Signature
 		}
 
 		#region Sign/Verify methods
-		//private Number[] Sign (Number e)
 		public byte[] SignHash (byte[] hash)
+#if TEST
+		{
+			return SignHash (hash, null);
+		}
+
+		internal byte[] SignHash (byte[] hash, byte[] randomK)
+#endif
 		{
 			if (hash == null)
 				throw new ArgumentNullException ();
@@ -72,7 +78,13 @@ namespace openCrypto.EllipticCurve.Signature
 			do {
 				do {
 					// Step.1
+#if TEST
+					k = randomK == null
+						? k = Number.CreateRandomElement (_params.Domain.N)
+						: new Number (randomK, false);
+#else
 					k = Number.CreateRandomElement (_params.Domain.N);
+#endif
 
 					// Step.2
 					ECPoint tmp = _params.Domain.G.Multiply (k).Export ();
