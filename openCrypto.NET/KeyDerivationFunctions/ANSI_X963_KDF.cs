@@ -72,10 +72,10 @@ namespace openCrypto.KeyDerivationFunctions
 					K[q + k] = hash[k];
 
 				// Increment counter;
-				if (++counter[0] == 0)
-					if (++counter[1] == 0)
-						if (++counter[2] == 0)
-							counter[3] ++;
+				if (++counter[3] == 0)
+					if (++counter[2] == 0)
+						if (++counter[1] == 0)
+							counter[0] ++;
 			}
 
 			// Step.6

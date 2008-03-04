@@ -87,12 +87,7 @@ namespace openCrypto.EllipticCurve
 
 		public byte[] PublicKey {
 			get {
-				if (_Q == null) {
-					if (_d == null)
-						CreateNewPrivateKey ();
-					CreatePublicKeyFromPrivateKey ();
-				}
-				return _Q.ToByteArray (false);
+				return ExportPublicKey (false);
 			}
 			set {
 				_Q = new ECPoint (_domain.Group, value);
@@ -102,6 +97,11 @@ namespace openCrypto.EllipticCurve
 
 		public byte[] ExportPublicKey (bool usePointCompression)
 		{
+			if (_Q == null) {
+				if (_d == null)
+					CreateNewPrivateKey ();
+				CreatePublicKeyFromPrivateKey ();
+			}
 			return _Q.ToByteArray (usePointCompression);
 		}
 	}
