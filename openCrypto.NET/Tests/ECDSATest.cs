@@ -24,8 +24,8 @@
 #if TEST
 
 using NUnit.Framework;
-using openCrypto.ECDSA;
 using openCrypto.EllipticCurve;
+using openCrypto.EllipticCurve.Signature;
 
 namespace openCrypto.Tests
 {

@@ -23,9 +23,8 @@
 
 using System;
 using openCrypto.FiniteField;
-using openCrypto.EllipticCurve;
 
-namespace openCrypto.ECDSA
+namespace openCrypto.EllipticCurve.Signature
 {
 	public class ECDSAParameters : ECKeyPair
 	{

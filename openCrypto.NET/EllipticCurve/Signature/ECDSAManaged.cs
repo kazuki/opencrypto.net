@@ -25,10 +25,9 @@ using System;
 using System.IO;
 using System.Xml;
 using openCrypto.FiniteField;
-using openCrypto.EllipticCurve;
 using CryptographicException = System.Security.Cryptography.CryptographicException;
 
-namespace openCrypto.ECDSA
+namespace openCrypto.EllipticCurve.Signature
 {
 	public class ECDSAManaged : System.Security.Cryptography.AsymmetricAlgorithm
 	{

@@ -24,7 +24,7 @@
 using System;
 using System.Security.Cryptography;
 using openCrypto.FiniteField;
-using ECDSAManaged = openCrypto.ECDSA.ECDSAManaged;
+using ECDSAManaged = openCrypto.EllipticCurve.Signature.ECDSAManaged;
 using openCrypto.EllipticCurve;
 using openCrypto.EllipticCurve.KeyAgreement;
 

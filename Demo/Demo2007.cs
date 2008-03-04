@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using System.Security.Cryptography;
-using openCrypto.ECDSA;
+using openCrypto.EllipticCurve.Signature;
 using ECDomainNames = openCrypto.EllipticCurve.ECDomainNames;
 using openCrypto.FiniteField;
 using Org.BouncyCastle.Math;
