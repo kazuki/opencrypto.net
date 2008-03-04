@@ -58,6 +58,8 @@
     <Compile Include="EllipticCurve\ECGroup.cs" />
     <Compile Include="EllipticCurve\ECKeyPair.cs" />
     <Compile Include="EllipticCurve\ECPoint.cs" />
+    <Compile Include="EllipticCurve\Encryption\ECIES.cs" />
+    <Compile Include="EllipticCurve\Encryption\ECIESParameters.cs" />
     <Compile Include="EllipticCurve\KeyAgreement\ECDiffieHellman.cs" />
     <Compile Include="EllipticCurve\KeyAgreement\ECDiffieHellmanParameters.cs" />
     <Compile Include="EllipticCurve\KeyAgreement\ECKeyAgreement.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Tests\DummyAlgorithm.cs" />
     <Compile Include="Tests\ECDHTest.cs" />
     <Compile Include="Tests\ECDSATest.cs" />
+    <Compile Include="Tests\ECIESTest.cs" />
     <Compile Include="Tests\ECMQVTest.cs" />
     <Compile Include="Tests\ECPointTest.cs" />
     <Compile Include="Tests\FiniteFieldTest.cs" />
