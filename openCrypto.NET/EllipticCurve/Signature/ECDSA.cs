@@ -51,10 +51,24 @@ namespace openCrypto.EllipticCurve.Signature
 		}
 
 		#region Sign/Verify methods
-		private Number[] Sign (Number e)
+		//private Number[] Sign (Number e)
+		public byte[] SignHash (byte[] hash)
 		{
-			Number r, r2, s, k;
+			if (hash == null)
+				throw new ArgumentNullException ();
+			if (hash.Length == 0)
+				throw new ArgumentException ();
+			if (_params.D == null && _params.Q == null)
+				_params.CreateNewPrivateKey ();
+			if (_params.D == null)
+				throw new CryptographicException ();
+
+			Number r, s, k;
 			IFiniteField field = _params.Domain.FieldN;
+			int keyBytes = (int)((_params.Domain.Bits >> 3) + ((_params.Domain.Bits & 7) == 0 ? 0U : 1U));
+			byte[] raw = new byte[keyBytes << 1];
+			Number e = HashToNumber (hash);
+
 			do {
 				do {
 					// Step.1
@@ -65,28 +79,44 @@ namespace openCrypto.EllipticCurve.Signature
 
 					// Step.3
 					r = tmp.X % _params.Domain.N;
-					if (!r.IsZero ())
+					if (!r.IsZero ()) {
+						r.CopyToBigEndian (raw, 0, keyBytes);
 						break;
+					}
 				} while (true);
 
 				// Step.4
 				k = field.Invert (field.ToElement (k));
 
 				// Step.6
-				r2 = field.ToElement (r);
+				r = field.ToElement (r);
 				e = field.ToElement (e);
-				s = field.Multiply (k, field.Add (e, field.Multiply (r2, field.ToElement (_params.D))));
+				s = field.Multiply (k, field.Add (e, field.Multiply (r, field.ToElement (_params.D))));
 				if (!s.IsZero ()) {
 					s = field.ToNormal (s);
+					s.CopyToBigEndian (raw, raw.Length >> 1, keyBytes);
 					break;
 				}
 			} while (true);
-			return new Number[] { r, s };
+
+			return raw;
 		}
 
-		private bool Verify (Number[] sign, Number e)
+		public bool VerifyHash (byte[] hash, byte[] sig)
 		{
-			Number r = sign[0], s = sign[1];
+			if (sig.Length != (_params.Domain.Bits >> 2) + ((_params.Domain.Bits & 7) == 0 ? 0 : 2))
+				throw new ArgumentException ();
+			if (hash.Length == 0)
+				throw new ArgumentException ();
+			if (_params.Q == null && _params.D != null)
+				_params.CreatePublicKeyFromPrivateKey ();
+			if (_params.Q == null)
+				throw new CryptographicException ();
+
+			int halfLen = sig.Length >> 1;
+			Number r = new Number (sig, 0, halfLen, false);
+			Number s = new Number (sig, halfLen, halfLen, false);
+			Number e = HashToNumber (hash);
 			IFiniteField field = _params.Domain.FieldN;
 
 			if (r >= _params.Domain.N || s >= _params.Domain.N)
@@ -120,40 +150,6 @@ namespace openCrypto.EllipticCurve.Signature
 			// Step.6
 			Number v = X.X % _params.Domain.N;
 			return r.CompareTo (v) == 0;
-		}
-
-		public byte[] SignHash (byte[] hash)
-		{
-			if (hash == null)
-				throw new ArgumentNullException ();
-			if (hash.Length == 0)
-				throw new ArgumentException ();
-			if (_params.D == null && _params.Q == null)
-				_params.CreateNewPrivateKey ();
-			if (_params.D == null)
-				throw new CryptographicException ();
-			Number[] sig = Sign (HashToNumber (hash));
-			int keyBytes = (int)((_params.Domain.Bits >> 3) + ((_params.Domain.Bits & 7) == 0 ? 0U : 1U));
-			byte[] raw = new byte[keyBytes << 1];
-			sig[0].CopyToBigEndian (raw, 0, keyBytes);
-			sig[1].CopyToBigEndian (raw, raw.Length >> 1, keyBytes);
-			return raw;
-		}
-
-		public bool VerifyHash (byte[] hash, byte[] sig)
-		{
-			if (sig.Length != (_params.Domain.Bits >> 2) + ((_params.Domain.Bits & 7) == 0 ? 0 : 2))
-				throw new ArgumentException ();
-			if (hash.Length == 0)
-				throw new ArgumentException ();
-			if (_params.Q == null && _params.D != null)
-				_params.CreatePublicKeyFromPrivateKey ();
-			if (_params.Q == null)
-				throw new CryptographicException ();
-			int halfLen = sig.Length >> 1;
-			Number a = new Number (sig, 0, halfLen, false);
-			Number b = new Number (sig, halfLen, halfLen, false);
-			return Verify (new Number[] {a, b}, HashToNumber (hash));
 		}
 
 		Number HashToNumber (byte[] hash)
