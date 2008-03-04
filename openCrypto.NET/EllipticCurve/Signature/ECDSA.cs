@@ -29,23 +29,23 @@ using CryptographicException = System.Security.Cryptography.CryptographicExcepti
 
 namespace openCrypto.EllipticCurve.Signature
 {
-	public class ECDSAManaged : System.Security.Cryptography.AsymmetricAlgorithm
+	public class ECDSA : System.Security.Cryptography.AsymmetricAlgorithm
 	{
 		ECDSAParameters _params;
 		int _orderBits;
 
-		internal ECDSAManaged (ECDomainParameters domain)
+		internal ECDSA (ECDomainParameters domain)
 		{
 			_params = new ECDSAParameters (null, null, domain);
 			_orderBits = _params.Domain.N.BitCount ();
 		}
 
-		public ECDSAManaged (ECDomainNames domain)
+		public ECDSA (ECDomainNames domain)
 			: this (ECDomains.GetDomainParameter (domain))
 		{
 		}
 
-		public ECDSAManaged (Uri domain_oid)
+		public ECDSA (Uri domain_oid)
 			: this (ECDomains.GetDomainParameter (domain_oid))
 		{
 		}

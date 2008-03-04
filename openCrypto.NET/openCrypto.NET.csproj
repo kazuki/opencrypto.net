@@ -63,7 +63,7 @@
     <Compile Include="EllipticCurve\KeyAgreement\ECKeyAgreement.cs" />
     <Compile Include="EllipticCurve\KeyAgreement\ECMQV.cs" />
     <Compile Include="EllipticCurve\KeyAgreement\ECMQVParameters.cs" />
-    <Compile Include="EllipticCurve\Signature\ECDSAManaged.cs" />
+    <Compile Include="EllipticCurve\Signature\ECDSA.cs" />
     <Compile Include="EllipticCurve\Signature\ECDSAParameters.cs" />
     <Compile Include="FiniteField\Barrett.cs" />
     <Compile Include="FiniteField\Classical.cs" />

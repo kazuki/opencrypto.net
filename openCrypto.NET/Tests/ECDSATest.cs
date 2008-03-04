@@ -35,12 +35,12 @@ namespace openCrypto.Tests
 		[Test]
 		public void PublicKeyTest ()
 		{
-			ECDSAManaged ecdsa = new ECDSAManaged (ECDomainNames.secp192r1);
+			ECDSA ecdsa = new ECDSA (ECDomainNames.secp192r1);
 			byte[] hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
 			byte[] sign = ecdsa.SignHash (hash);
 			byte[] publicKey = ecdsa.Parameters.PublicKey;
 
-			ecdsa = new ECDSAManaged (ECDomainNames.secp192r1);
+			ecdsa = new ECDSA (ECDomainNames.secp192r1);
 			ecdsa.Parameters.PublicKey = publicKey;
 			Assert.IsTrue (ecdsa.VerifyHash (hash, sign), "Success Test");
 
@@ -51,25 +51,25 @@ namespace openCrypto.Tests
 		[Test]
 		public void PrivateKeyTest ()
 		{
-			ECDSAManaged ecdsa = new ECDSAManaged (ECDomainNames.secp192r1);
+			ECDSA ecdsa = new ECDSA (ECDomainNames.secp192r1);
 			byte[] hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
 			byte[] sign = ecdsa.SignHash (hash);
 			byte[] publicKey = ecdsa.Parameters.PublicKey;
 			byte[] privateKey = ecdsa.Parameters.PrivateKey;
 
-			ecdsa = new ECDSAManaged (ECDomainNames.secp192r1);
+			ecdsa = new ECDSA (ECDomainNames.secp192r1);
 			ecdsa.Parameters.PublicKey = publicKey;
 			Assert.IsTrue (ecdsa.VerifyHash (hash, sign), "Success Test #1");
 
 			sign[0]++;
 			Assert.IsFalse (ecdsa.VerifyHash (hash, sign), "Failure Test #1");
 
-			ecdsa = new ECDSAManaged (ECDomainNames.secp192r1);
+			ecdsa = new ECDSA (ECDomainNames.secp192r1);
 			ecdsa.Parameters.PrivateKey = privateKey;
 			hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
 			sign = ecdsa.SignHash (hash);
 
-			ecdsa = new ECDSAManaged (ECDomainNames.secp192r1);
+			ecdsa = new ECDSA (ECDomainNames.secp192r1);
 			ecdsa.Parameters.PublicKey = publicKey;
 			Assert.IsTrue (ecdsa.VerifyHash (hash, sign), "Success Test #2");
 
@@ -147,11 +147,11 @@ namespace openCrypto.Tests
 		{
 			int repeat = 10;
 			for (int i = 0; i < repeat; i ++) {
-				ECDSAManaged ecdsa = new ECDSAManaged (domainName);
+				ECDSA ecdsa = new ECDSA (domainName);
 				byte[] pubKey = ecdsa.Parameters.PublicKey;
 				byte[] hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
 				byte[] sign = ecdsa.SignHash (hash);
-				ecdsa = new ECDSAManaged (domainName);
+				ecdsa = new ECDSA (domainName);
 				ecdsa.Parameters.PublicKey = pubKey;
 				Assert.IsTrue (ecdsa.VerifyHash (hash, sign), "Success Test " + domainName.ToString ());
 				sign[0]++;
