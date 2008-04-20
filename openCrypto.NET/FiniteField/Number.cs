@@ -273,8 +273,8 @@ namespace openCrypto.FiniteField
 					big[i] --;
 				} while (big[i++] == 0xFFFFFFFF && i < blen);
 			}
-			if (big[blen - 1] == 0)
-				return blen - 1;
+			while (blen > 1 && big[blen - 1] == 0)
+				blen --;
 			return blen;
 		}
 

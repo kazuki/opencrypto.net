@@ -67,6 +67,15 @@ namespace openCrypto.Tests
 				}
 			}
 		}
+
+		[Test]
+		public void Test_SECP192r1 ()
+		{
+			SECP192r1 secp = new SECP192r1 ();
+			Number max1 = secp.ToElement (SECP192r1.PRIME - Number.One);
+			Number max2 = secp.ToElement (SECP192r1.PRIME - new Number (new uint[] { 0, 0, 1, 0, 0, 0 }));
+			Number hoge = secp.Multiply (max1, max2);
+		}
 	}
 }
 
