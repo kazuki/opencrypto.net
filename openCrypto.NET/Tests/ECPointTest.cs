@@ -70,10 +70,17 @@ namespace openCrypto.Tests
 			PointCompressTest (ECDomainNames.secp160r1, repeats);
 			PointCompressTest (ECDomainNames.secp160r2, repeats);
 			PointCompressTest (ECDomainNames.secp192r1, repeats);
-			//PointCompressTest (ECDomainNames.secp224r1, repeats); //法が4n-1では無い
 			PointCompressTest (ECDomainNames.secp256r1, repeats);
 			PointCompressTest (ECDomainNames.secp384r1, repeats);
 			PointCompressTest (ECDomainNames.secp521r1, repeats);
+		}
+
+		[Test]
+		public void PointCompressTestB ()
+		{
+			//法が4n-1では無い
+			int repeats = 10;
+			PointCompressTest (ECDomainNames.secp224r1, repeats);
 		}
 
 		void PointCompressTest (ECDomainNames name, int repeats)
