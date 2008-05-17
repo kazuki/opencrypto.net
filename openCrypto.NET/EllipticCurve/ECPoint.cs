@@ -182,11 +182,12 @@ namespace openCrypto.EllipticCurve
 		{
 			if (_multiplyHelperPoints != null)
 				return _multiplyHelperPoints;
-			ECPoint[] P = _multiplyHelperPoints = new ECPoint [1 << (MultiplyWindowSize - 1)];
+			ECPoint[] P = new ECPoint [1 << (MultiplyWindowSize - 1)];
 			P[1] = this;
 			P[2] = this.Double ();
 			for (int i = 3; i < P.Length; i += 2)
 				P[i] = P[i - 2].Add (P[2]);
+			_multiplyHelperPoints = P;
 			return P;
 		}
 
