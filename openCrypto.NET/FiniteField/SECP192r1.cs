@@ -99,13 +99,8 @@ namespace openCrypto.FiniteField
 			return new Number (pz);
 		}
 
-		public override Number Multiply (Number x, Number y)
-		{
-			return Multiply_with_Modulo (x, y);
-			//return Multiply_Safe (x, y);
-		}
-
-		public unsafe Number Multiply_with_Modulo (Number x, Number y)
+#if true
+		public override unsafe Number Multiply (Number x, Number y)
 		{
 #if false
 			uint* px = stackalloc uint[6];
@@ -231,8 +226,8 @@ namespace openCrypto.FiniteField
 			}
 			return ret;
 		}
-
-		public Number Multiply_Safe (Number x, Number y)
+#else
+		public override Number Multiply (Number x, Number y)
 		{
 			if (x.data.Length < 6 || y.data.Length < 6) throw new ArgumentException ();
 
@@ -299,23 +294,6 @@ namespace openCrypto.FiniteField
 			return new Number (r);
 		}
 
-		int CompareTo (uint x1, uint x2, uint x3, uint x4, uint x5, uint x6)
-		{
-			int cmp;
-			if ((cmp = P6.CompareTo (x6)) != 0) return cmp;
-			if ((cmp = P5.CompareTo (x5)) != 0) return cmp;
-			if ((cmp = P4.CompareTo (x4)) != 0) return cmp;
-			if ((cmp = P3.CompareTo (x3)) != 0) return cmp;
-			if ((cmp = P2.CompareTo (x2)) != 0) return cmp;
-			if ((cmp = P1.CompareTo (x1)) != 0) return cmp;
-			return 0;
-		}
-
-		public override Number Invert (Number x)
-		{
-			return ToElement (base.Invert (x));
-		}
-
 		void Reduction (uint[] x)
 		{
 			ulong
@@ -349,6 +327,24 @@ namespace openCrypto.FiniteField
 			x[3] = x4;
 			x[4] = x5;
 			x[5] = x6;
+		}
+#endif
+
+		int CompareTo (uint x1, uint x2, uint x3, uint x4, uint x5, uint x6)
+		{
+			int cmp;
+			if ((cmp = P6.CompareTo (x6)) != 0) return cmp;
+			if ((cmp = P5.CompareTo (x5)) != 0) return cmp;
+			if ((cmp = P4.CompareTo (x4)) != 0) return cmp;
+			if ((cmp = P3.CompareTo (x3)) != 0) return cmp;
+			if ((cmp = P2.CompareTo (x2)) != 0) return cmp;
+			if ((cmp = P1.CompareTo (x1)) != 0) return cmp;
+			return 0;
+		}
+
+		public override Number Invert (Number x)
+		{
+			return ToElement (base.Invert (x));
 		}
 
 		public override Number ToElement (Number x)
