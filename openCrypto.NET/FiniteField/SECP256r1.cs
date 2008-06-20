@@ -109,6 +109,221 @@ namespace openCrypto.FiniteField
 			return new Number (pz);
 		}
 
+#if true
+		public override Number Multiply (Number x, Number y)
+		{
+			if (x.data.Length < 8 || y.data.Length < 8) throw new ArgumentException ();
+			uint[] px = x.data, py = y.data;
+			ulong r0, r1, r2, r3, r4, r5, r6, r7;
+			uint tmp32;
+			ulong tmp, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
+			ulong d1, d2, d3, d4, d5;
+			ulong triple1, triple2;
+			const ulong mask = 0xFFFFFFFF;
+			const ulong carry = 0x100000000UL;
+			const ulong negative = ulong.MaxValue - (((ulong)uint.MaxValue) * 16) * 8;
+
+			tmp = ((ulong)px[0]) * ((ulong)py[0]); r0 = tmp & mask; r1 = tmp >> 32;
+			tmp = ((ulong)px[1]) * ((ulong)py[0]); r1 += tmp & mask; r2 = tmp >> 32;
+			tmp = ((ulong)px[2]) * ((ulong)py[0]); r2 += tmp & mask; r3 = tmp >> 32;
+			tmp = ((ulong)px[3]) * ((ulong)py[0]); r3 += tmp & mask; r4 = tmp >> 32;
+			tmp = ((ulong)px[4]) * ((ulong)py[0]); r4 += tmp & mask; r5 = tmp >> 32;
+			tmp = ((ulong)px[5]) * ((ulong)py[0]); r5 += tmp & mask; r6 = tmp >> 32;
+			tmp = ((ulong)px[6]) * ((ulong)py[0]); r6 += tmp & mask; r7 = tmp >> 32;
+			tmp = ((ulong)px[7]) * ((ulong)py[0]); r7 += tmp & mask; tmp32 = (uint)(tmp >> 32);
+			r7 += tmp32;
+			r6 -= tmp32;
+			r3 -= tmp32;
+			r0 += tmp32;
+
+			tmp = ((ulong)px[0]) * ((ulong)py[1]); r1 += tmp & mask; r2 += tmp >> 32;
+			tmp = ((ulong)px[1]) * ((ulong)py[1]); r2 += tmp & mask; r3 += tmp >> 32;
+			tmp = ((ulong)px[2]) * ((ulong)py[1]); r3 += tmp & mask; r4 += tmp >> 32;
+			tmp = ((ulong)px[3]) * ((ulong)py[1]); r4 += tmp & mask; r5 += tmp >> 32;
+			tmp = ((ulong)px[4]) * ((ulong)py[1]); r5 += tmp & mask; r6 += tmp >> 32;
+			tmp = ((ulong)px[5]) * ((ulong)py[1]); r6 += tmp & mask; r7 += tmp >> 32;
+			tmp = ((ulong)px[6]) * ((ulong)py[1]); r7 += tmp & mask; tmp1 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[7]) * ((ulong)py[1]); tmp1 += (uint)tmp; tmp32 = (uint)(tmp >> 32);
+			r7 += tmp1;
+			r6 -= tmp1 + tmp32;
+			r4 -= tmp32;
+			r3 -= tmp1 + tmp32;
+			r1 += tmp32;
+			r0 += tmp1 + tmp32;
+
+			tmp = ((ulong)px[0]) * ((ulong)py[2]); r2 += tmp & mask; r3 += tmp >> 32;
+			tmp = ((ulong)px[1]) * ((ulong)py[2]); r3 += tmp & mask; r4 += tmp >> 32;
+			tmp = ((ulong)px[2]) * ((ulong)py[2]); r4 += tmp & mask; r5 += tmp >> 32;
+			tmp = ((ulong)px[3]) * ((ulong)py[2]); r5 += tmp & mask; r6 += tmp >> 32;
+			tmp = ((ulong)px[4]) * ((ulong)py[2]); r6 += tmp & mask; r7 += tmp >> 32;
+			tmp = ((ulong)px[5]) * ((ulong)py[2]); r7 += tmp & mask; tmp1 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[6]) * ((ulong)py[2]); tmp1 += (uint)tmp; tmp2 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[7]) * ((ulong)py[2]); tmp2 += (uint)tmp; tmp32 = (uint)(tmp >> 32);
+			r7 += tmp1 - tmp32;
+			r6 -= tmp1 + tmp2;
+			r5 -= tmp32;
+			r4 -= tmp2 + tmp32;
+			r3 -= tmp1 + tmp2;
+			r2 += tmp32;
+			r1 += tmp2 + tmp32;
+			r0 += tmp1 + tmp2;
+
+			tmp = ((ulong)px[0]) * ((ulong)py[3]); r3 += tmp & mask; r4 += tmp >> 32;
+			tmp = ((ulong)px[1]) * ((ulong)py[3]); r4 += tmp & mask; r5 += tmp >> 32;
+			tmp = ((ulong)px[2]) * ((ulong)py[3]); r5 += tmp & mask; r6 += tmp >> 32;
+			tmp = ((ulong)px[3]) * ((ulong)py[3]); r6 += tmp & mask; r7 += tmp >> 32;
+			tmp = ((ulong)px[4]) * ((ulong)py[3]); r7 += tmp & mask; tmp1 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[5]) * ((ulong)py[3]); tmp1 += (uint)tmp; tmp2 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[6]) * ((ulong)py[3]); tmp2 += (uint)tmp; tmp3 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[7]) * ((ulong)py[3]); tmp3 += (uint)tmp; tmp32 = (uint)(tmp >> 32);
+			d1 = ((ulong)tmp32) << 1;
+			r7 += tmp1 - tmp3 - tmp32;
+			r6 -= tmp1 + tmp2;
+			r5 -= tmp3 + tmp32;
+			r4 -= tmp2 + tmp3;
+			r3 -= tmp1 + tmp2 - d1;
+			r2 += tmp3 + tmp32;
+			r1 += tmp2 + tmp3;
+			r0 += tmp1 + tmp2 - tmp32;
+
+			tmp = ((ulong)px[0]) * ((ulong)py[4]); r4 += tmp & mask; r5 += tmp >> 32;
+			tmp = ((ulong)px[1]) * ((ulong)py[4]); r5 += tmp & mask; r6 += tmp >> 32;
+			tmp = ((ulong)px[2]) * ((ulong)py[4]); r6 += tmp & mask; r7 += tmp >> 32;
+			tmp = ((ulong)px[3]) * ((ulong)py[4]); r7 += tmp & mask; tmp1 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[4]) * ((ulong)py[4]); tmp1 += (uint)tmp; tmp2 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[5]) * ((ulong)py[4]); tmp2 += (uint)tmp; tmp3 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[6]) * ((ulong)py[4]); tmp3 += (uint)tmp; tmp4 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[7]) * ((ulong)py[4]); tmp4 += (uint)tmp; tmp32 = (uint)(tmp >> 32);
+			d1 = tmp4 << 1;
+			d2 = ((ulong)tmp32) << 1;
+			r7 += tmp1 - tmp3 - tmp4 - tmp32;
+			r6 -= tmp1 + tmp2;
+			r5 -= tmp3 + tmp4;
+			r4 -= tmp2 + tmp3 - d2;
+			r3 -= tmp1 + tmp2 - d1 - d2;
+			r2 += tmp3 + tmp4;
+			r1 += tmp2 + tmp3 - tmp32;
+			r0 += tmp1 + tmp2 - tmp4 - tmp32;
+
+			tmp = ((ulong)px[0]) * ((ulong)py[5]); r5 += tmp & mask; r6 += tmp >> 32;
+			tmp = ((ulong)px[1]) * ((ulong)py[5]); r6 += tmp & mask; r7 += tmp >> 32;
+			tmp = ((ulong)px[2]) * ((ulong)py[5]); r7 += tmp & mask; tmp1 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[3]) * ((ulong)py[5]); tmp1 += (uint)tmp; tmp2 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[4]) * ((ulong)py[5]); tmp2 += (uint)tmp; tmp3 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[5]) * ((ulong)py[5]); tmp3 += (uint)tmp; tmp4 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[6]) * ((ulong)py[5]); tmp4 += (uint)tmp; tmp5 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[7]) * ((ulong)py[5]); tmp5 += (uint)tmp; tmp32 = (uint)(tmp >> 32);
+			d1 = tmp4 << 1;
+			d2 = tmp5 << 1;
+			d3 = ((ulong)tmp32) << 1;
+			r7 += tmp1 - tmp3 - tmp4 - tmp5 - tmp32;
+			r6 -= tmp1 + tmp2 - tmp32;
+			r5 -= tmp3 + tmp4 - d3;
+			r4 -= tmp2 + tmp3 - d2 - d3;
+			r3 -= tmp1 + tmp2 - d1 - d2 - tmp32;
+			r2 += tmp3 + tmp4 - tmp32;
+			r1 += tmp2 + tmp3 - tmp5 - tmp32;
+			r0 += tmp1 + tmp2 - tmp4 - tmp5 - tmp32;
+
+			tmp = ((ulong)px[0]) * ((ulong)py[6]); r6 += tmp & mask; r7 += tmp >> 32;
+			tmp = ((ulong)px[1]) * ((ulong)py[6]); r7 += tmp & mask; tmp1 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[2]) * ((ulong)py[6]); tmp1 += (uint)tmp; tmp2 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[3]) * ((ulong)py[6]); tmp2 += (uint)tmp; tmp3 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[4]) * ((ulong)py[6]); tmp3 += (uint)tmp; tmp4 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[5]) * ((ulong)py[6]); tmp4 += (uint)tmp; tmp5 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[6]) * ((ulong)py[6]); tmp5 += (uint)tmp; tmp6 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[7]) * ((ulong)py[6]); tmp6 += (uint)tmp; tmp32 = (uint)(tmp >> 32);
+			d1 = tmp4 << 1;
+			d2 = tmp5 << 1;
+			d3 = tmp6 << 1;
+			d4 = ((ulong)tmp32) << 1;
+			triple1 = d4 + tmp32;
+			r7 += tmp1 - tmp3 - tmp4 - tmp5 - tmp6;
+			r6 -= tmp1 + tmp2 - tmp6 - triple1;
+			r5 -= tmp3 + tmp4 - d3 - d4;
+			r4 -= tmp2 + tmp3 - d2 - d3 - tmp32;
+			r3 -= tmp1 + tmp2 - d1 - d2 - tmp6;
+			r2 += tmp3 + tmp4 - tmp6 - tmp32;
+			r1 += tmp2 + tmp3 - tmp5 - tmp6 - tmp32;
+			r0 += tmp1 + tmp2 - tmp4 - tmp5 - tmp6 - tmp32;
+
+			tmp = ((ulong)px[0]) * ((ulong)py[7]); r7 += tmp & mask; tmp1 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[1]) * ((ulong)py[7]); tmp1 += (uint)tmp; tmp2 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[2]) * ((ulong)py[7]); tmp2 += (uint)tmp; tmp3 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[3]) * ((ulong)py[7]); tmp3 += (uint)tmp; tmp4 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[4]) * ((ulong)py[7]); tmp4 += (uint)tmp; tmp5 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[5]) * ((ulong)py[7]); tmp5 += (uint)tmp; tmp6 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[6]) * ((ulong)py[7]); tmp6 += (uint)tmp; tmp7 = (uint)(tmp >> 32);
+			tmp = ((ulong)px[7]) * ((ulong)py[7]); tmp7 += (uint)tmp; tmp32 = (uint)(tmp >> 32);
+			d1 = tmp4 << 1;
+			d2 = tmp5 << 1;
+			d3 = tmp6 << 1;
+			d4 = tmp7 << 1;
+			d5 = ((ulong)tmp32) << 1;
+			triple1 = d4 + tmp7;
+			triple2 = d5 + tmp32;
+			r7 += tmp1 - tmp3 - tmp4 - tmp5 - tmp6 + triple2;
+			r6 -= tmp1 + tmp2 - tmp6 - triple1 - d5;
+			r5 -= tmp3 + tmp4 - d3 - d4 - tmp32;
+			r4 -= tmp2 + tmp3 - d2 - d3 - tmp7;
+			r3 -= tmp1 + tmp2 - d1 - d2 - tmp6 + tmp32;
+			r2 += tmp3 + tmp4 - tmp6 - tmp7 - tmp32;
+			r1 += tmp2 + tmp3 - tmp5 - tmp6 - tmp7 - tmp32;
+			r0 += tmp1 + tmp2 - tmp4 - tmp5 - tmp6 - tmp7;
+
+			// check negative-value
+			while (r0 >= negative) { r1--; r0 += carry; }
+			while (r1 >= negative) { r2--; r1 += carry; }
+			while (r2 >= negative) { r3--; r2 += carry; }
+			while (r3 >= negative) { r4--; r3 += carry; }
+			while (r4 >= negative) { r5--; r4 += carry; }
+			while (r5 >= negative) { r6--; r5 += carry; }
+			while (r6 >= negative) { r7--; r6 += carry; }
+			while (r7 >= negative) {
+				r0 += P1;
+				r1 += P2;
+				r2 += P3;
+				r3 += P4;
+				r4 += P5;
+				r5 += P6;
+				r6 += P7;
+				r7 += P8;
+			}
+
+			// check carry
+			while (r0 > mask || r1 > mask || r2 > mask || r3 > mask || r4 > mask || r5 > mask || r6 > mask || r7 > mask) {
+				if (r7 > mask) {
+					tmp32 = (uint)(r7 >> 32);
+					r0 += tmp32;
+					r3 -= tmp32;
+					r6 -= tmp32;
+					r7 = tmp32 + (ulong)((uint)r7);
+
+					// check negative-value
+					while (r3 >= negative) { r4--; r3 += carry; }
+					while (r4 >= negative) { r5--; r4 += carry; }
+					while (r5 >= negative) { r6--; r5 += carry; }
+					while (r6 >= negative) { r7--; r6 += carry; }
+				}
+				tmp32 = (uint)(r0 >> 32); r0 = (uint)r0; r1 += tmp32;
+				tmp32 = (uint)(r1 >> 32); r1 = (uint)r1; r2 += tmp32;
+				tmp32 = (uint)(r2 >> 32); r2 = (uint)r2; r3 += tmp32;
+				tmp32 = (uint)(r3 >> 32); r3 = (uint)r3; r4 += tmp32;
+				tmp32 = (uint)(r4 >> 32); r4 = (uint)r4; r5 += tmp32;
+				tmp32 = (uint)(r5 >> 32); r5 = (uint)r5; r6 += tmp32;
+				tmp32 = (uint)(r6 >> 32); r6 = (uint)r6; r7 += tmp32;
+			}
+
+			Number ret = new Number (new uint[] {
+				(uint)r0, (uint)r1, (uint)r2,
+				(uint)r3, (uint)r4, (uint)r5,
+				(uint)r6, (uint)r7
+			});
+			while (ret.CompareTo (PRIME) >= 0)
+				ret.SubtractInPlace (PRIME);
+			return ret;
+		}
+#else
 		public override Number Multiply (Number x, Number y)
 		{
 			if (x.data.Length < 8 || y.data.Length < 8) throw new ArgumentException ();
@@ -206,25 +421,6 @@ namespace openCrypto.FiniteField
 			Reduction (r);
 			r[8] = r[9] = r[10] = r[11] = r[12] = r[13] = r[14] = r[15] = 0;
 			return new Number (r);
-		}
-
-		int CompareTo (uint x1, uint x2, uint x3, uint x4, uint x5, uint x6, uint x7, uint x8)
-		{
-			int cmp;
-			if ((cmp = P8.CompareTo (x8)) != 0) return cmp;
-			if ((cmp = P7.CompareTo (x7)) != 0) return cmp;
-			if ((cmp = P6.CompareTo (x6)) != 0) return cmp;
-			if ((cmp = P5.CompareTo (x5)) != 0) return cmp;
-			if ((cmp = P4.CompareTo (x4)) != 0) return cmp;
-			if ((cmp = P3.CompareTo (x3)) != 0) return cmp;
-			if ((cmp = P2.CompareTo (x2)) != 0) return cmp;
-			if ((cmp = P1.CompareTo (x1)) != 0) return cmp;
-			return 0;
-		}
-
-		public override Number Invert (Number x)
-		{
-			return ToElement (base.Invert (x));
 		}
 
 		void Reduction (uint[] x)
@@ -331,6 +527,26 @@ namespace openCrypto.FiniteField
 				}
 				goto EndCompare;
 			}
+		}
+#endif
+
+		int CompareTo (uint x1, uint x2, uint x3, uint x4, uint x5, uint x6, uint x7, uint x8)
+		{
+			int cmp;
+			if ((cmp = P8.CompareTo (x8)) != 0) return cmp;
+			if ((cmp = P7.CompareTo (x7)) != 0) return cmp;
+			if ((cmp = P6.CompareTo (x6)) != 0) return cmp;
+			if ((cmp = P5.CompareTo (x5)) != 0) return cmp;
+			if ((cmp = P4.CompareTo (x4)) != 0) return cmp;
+			if ((cmp = P3.CompareTo (x3)) != 0) return cmp;
+			if ((cmp = P2.CompareTo (x2)) != 0) return cmp;
+			if ((cmp = P1.CompareTo (x1)) != 0) return cmp;
+			return 0;
+		}
+
+		public override Number Invert (Number x)
+		{
+			return ToElement (base.Invert (x));
 		}
 
 		public override Number ToElement (Number x)
