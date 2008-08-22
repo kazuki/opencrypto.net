@@ -22,6 +22,7 @@
 //
 
 using System;
+using System.Reflection;
 using System.Security.Cryptography;
 using openCrypto.FiniteField;
 using ECDSAManaged = openCrypto.EllipticCurve.Signature.ECDSA;
@@ -93,6 +94,10 @@ namespace openCrypto.Executable
 			CipherMode mode = CipherMode.ECB;
 			int dataSize = 1024 * 1024;
 			double[] result;
+
+			Assembly asm = Assembly.GetAssembly (typeof (openCrypto.CamelliaManaged));
+			Console.WriteLine (asm.FullName.Replace (",", Environment.NewLine + " "));
+			Console.WriteLine ();
 
 			Console.WriteLine ("Symmetric-Key Algorithm:");
 			result = Run (new CamelliaManaged (), mode, 128, 128, dataSize);
