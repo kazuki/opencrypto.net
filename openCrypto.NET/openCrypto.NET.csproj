@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{59AD989B-7DD7-400B-B2D5-EFBD0004A749}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -41,9 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.4.6.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -92,37 +90,12 @@
     <Compile Include="Camellia\CamelliaTransformLE.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rijndael\RijndaelManaged.cs" />
-    <Compile Include="Tests\BlockCipherModeTest.cs" />
-    <Compile Include="Tests\CamelliaTest.cs" />
-    <Compile Include="Tests\ConfluentWaitHandleTest.cs" />
-    <Compile Include="Tests\CurveDomainValidation.cs" />
-    <Compile Include="Tests\DummyAlgorithm.cs" />
-    <Compile Include="Tests\ECDHTest.cs" />
-    <Compile Include="Tests\ECDSATest.cs" />
-    <Compile Include="Tests\ECIESTest.cs" />
-    <Compile Include="Tests\ECMQVTest.cs" />
-    <Compile Include="Tests\ECPointTest.cs" />
-    <Compile Include="Tests\FiniteFieldTest.cs" />
-    <Compile Include="Tests\NumberTest.cs" />
-    <Compile Include="Tests\PaddingModeTest.cs" />
-    <Compile Include="Tests\ParallelTest.cs" />
-    <Compile Include="Tests\RecommendedCurveTest.cs" />
-    <Compile Include="Tests\RijndaelTest.cs" />
-    <Compile Include="Tests\SymmetricAlgorithmPlusTest.cs" />
-    <Compile Include="Tests\SymmetricAlgorithmTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.ja" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE.MIT.X11" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Tests\ecb_e_m.txt" />
-    <EmbeddedResource Include="Tests\ecb_tbl.txt" />
-    <EmbeddedResource Include="Tests\ecb_vk.txt" />
-    <EmbeddedResource Include="Tests\ecb_vt.txt" />
-    <EmbeddedResource Include="Tests\t_camellia.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

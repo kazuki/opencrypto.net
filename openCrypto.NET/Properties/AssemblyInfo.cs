@@ -14,3 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: Guid ("dbf9d83b-26ff-487b-b1de-86b01ba345ff")]
 [assembly: AssemblyVersion ("1.0.0.0")]
 [assembly: AssemblyFileVersion ("1.0.0.0")]
+
+#if TEST
+[assembly: InternalsVisibleTo("UnitTests")]
+#endif

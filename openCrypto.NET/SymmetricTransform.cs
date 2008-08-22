@@ -33,7 +33,7 @@ namespace openCrypto
 	/// <remarks>
 	/// <ja>各種ブロック暗号モードを実装しているので、派生クラスではECBモードのみを実装</ja>
 	/// </remarks>
-	abstract class SymmetricTransform : ICryptoTransform
+	internal abstract class SymmetricTransform : ICryptoTransform
 	{
 		private SymmetricAlgorithmPlus _algo;
 		protected CipherModePlus _mode;
