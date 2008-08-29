@@ -83,6 +83,8 @@ namespace openCrypto.EllipticCurve
 					_z = _field.ToElement (Number.One);
 					return;
 				}
+				default:
+					throw new ArgumentException ();
 			}
 		}
 
