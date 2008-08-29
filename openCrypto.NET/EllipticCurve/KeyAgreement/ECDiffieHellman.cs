@@ -64,6 +64,7 @@ namespace openCrypto.EllipticCurve.KeyAgreement
 			sharedSecretField.CopyToBigEndian (sharedSecretValue, 0, sharedSecretValue.Length);
 
 			// KDF
+			if (_kdf == null) return sharedSecretValue;
 			_kdf.SharedInfo = _sharedInfo;
 			return _kdf.Calculate (sharedSecretValue, keyDataLength);
 		}
@@ -84,6 +85,11 @@ namespace openCrypto.EllipticCurve.KeyAgreement
 		#region Misc
 		public ECDiffieHellmanParameters Parameters {
 			get { return _params; }
+		}
+
+		public KeyDerivationFunction KDF {
+			get { return _kdf; }
+			set { _kdf = value;}
 		}
 
 		protected override void Dispose (bool disposing)
