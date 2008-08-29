@@ -29,7 +29,7 @@ namespace openCrypto
 	/// <summary>
 	/// <ja>内部的に利用される補助メソッド群</ja>
 	/// </summary>
-	static class RNG
+	public static class RNG
 	{
 		static RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider ();
 
@@ -37,13 +37,13 @@ namespace openCrypto
 			get { return _rng; }
 		}
 
-#if TEST
+//#if TEST
 		public static byte[] GetRNGBytes (int size)
 		{
 			byte[] buf = new byte [size];
 			_rng.GetBytes (buf);
 			return buf;
 		}
-#endif
+//#endif
 	}
 }
