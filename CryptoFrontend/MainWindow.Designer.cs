@@ -44,7 +44,6 @@
 			this.label3 = new System.Windows.Forms.Label ();
 			this.label1 = new System.Windows.Forms.Label ();
 			this.label4 = new System.Windows.Forms.Label ();
-			this.txtGeneratedKeyPass = new System.Windows.Forms.TextBox ();
 			this.tabPage4 = new System.Windows.Forms.TabPage ();
 			this.label5 = new System.Windows.Forms.Label ();
 			this.tabPage5 = new System.Windows.Forms.TabPage ();
@@ -64,6 +63,9 @@
 			this.label9 = new System.Windows.Forms.Label ();
 			this.label10 = new System.Windows.Forms.Label ();
 			this.txtEncryptionPlain = new System.Windows.Forms.TextBox ();
+			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel ();
+			this.txtGeneratedKeyPass = new System.Windows.Forms.TextBox ();
+			this.cbPassEncryptType = new System.Windows.Forms.ComboBox ();
 			this.tabControl1.SuspendLayout ();
 			this.tabPage1.SuspendLayout ();
 			this.tabPage2.SuspendLayout ();
@@ -76,6 +78,7 @@
 			this.tabPage6.SuspendLayout ();
 			this.tableLayoutPanel2.SuspendLayout ();
 			this.flowLayoutPanel1.SuspendLayout ();
+			this.tableLayoutPanel4.SuspendLayout ();
 			this.SuspendLayout ();
 			// 
 			// tabControl1
@@ -157,7 +160,7 @@
 			this.tableLayoutPanel1.Controls.Add (this.label3, 0, 3);
 			this.tableLayoutPanel1.Controls.Add (this.label1, 0, 2);
 			this.tableLayoutPanel1.Controls.Add (this.label4, 0, 1);
-			this.tableLayoutPanel1.Controls.Add (this.txtGeneratedKeyPass, 1, 1);
+			this.tableLayoutPanel1.Controls.Add (this.tableLayoutPanel4, 1, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point (0, 0);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding (0);
@@ -258,11 +261,11 @@
 			this.txtGeneratedPublicKey.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 							| System.Windows.Forms.AnchorStyles.Left)
 							| System.Windows.Forms.AnchorStyles.Right)));
-			this.txtGeneratedPublicKey.Location = new System.Drawing.Point (78, 163);
+			this.txtGeneratedPublicKey.Location = new System.Drawing.Point (78, 165);
 			this.txtGeneratedPublicKey.Multiline = true;
 			this.txtGeneratedPublicKey.Name = "txtGeneratedPublicKey";
 			this.txtGeneratedPublicKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.txtGeneratedPublicKey.Size = new System.Drawing.Size (265, 94);
+			this.txtGeneratedPublicKey.Size = new System.Drawing.Size (265, 92);
 			this.txtGeneratedPublicKey.TabIndex = 7;
 			// 
 			// txtGeneratedKey
@@ -270,17 +273,17 @@
 			this.txtGeneratedKey.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 							| System.Windows.Forms.AnchorStyles.Left)
 							| System.Windows.Forms.AnchorStyles.Right)));
-			this.txtGeneratedKey.Location = new System.Drawing.Point (78, 64);
+			this.txtGeneratedKey.Location = new System.Drawing.Point (78, 67);
 			this.txtGeneratedKey.Multiline = true;
 			this.txtGeneratedKey.Name = "txtGeneratedKey";
 			this.txtGeneratedKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.txtGeneratedKey.Size = new System.Drawing.Size (265, 93);
+			this.txtGeneratedKey.Size = new System.Drawing.Size (265, 92);
 			this.txtGeneratedKey.TabIndex = 2;
 			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point (3, 165);
+			this.label3.Location = new System.Drawing.Point (3, 167);
 			this.label3.Margin = new System.Windows.Forms.Padding (3, 5, 3, 0);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size (49, 13);
@@ -290,7 +293,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point (3, 66);
+			this.label1.Location = new System.Drawing.Point (3, 69);
 			this.label1.Margin = new System.Windows.Forms.Padding (3, 5, 3, 0);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size (49, 13);
@@ -301,19 +304,11 @@
 			// 
 			this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point (3, 41);
+			this.label4.Location = new System.Drawing.Point (3, 43);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size (69, 13);
 			this.label4.TabIndex = 5;
 			this.label4.Text = "パスフレーズ：";
-			// 
-			// txtGeneratedKeyPass
-			// 
-			this.txtGeneratedKeyPass.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.txtGeneratedKeyPass.Location = new System.Drawing.Point (78, 38);
-			this.txtGeneratedKeyPass.Name = "txtGeneratedKeyPass";
-			this.txtGeneratedKeyPass.Size = new System.Drawing.Size (265, 20);
-			this.txtGeneratedKeyPass.TabIndex = 8;
 			// 
 			// tabPage4
 			// 
@@ -543,6 +538,42 @@
 			this.txtEncryptionPlain.Size = new System.Drawing.Size (265, 55);
 			this.txtEncryptionPlain.TabIndex = 11;
 			// 
+			// tableLayoutPanel4
+			// 
+			this.tableLayoutPanel4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel4.ColumnCount = 2;
+			this.tableLayoutPanel4.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel4.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle ());
+			this.tableLayoutPanel4.Controls.Add (this.txtGeneratedKeyPass, 0, 0);
+			this.tableLayoutPanel4.Controls.Add (this.cbPassEncryptType, 1, 0);
+			this.tableLayoutPanel4.Location = new System.Drawing.Point (75, 35);
+			this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding (0);
+			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+			this.tableLayoutPanel4.RowCount = 1;
+			this.tableLayoutPanel4.RowStyles.Add (new System.Windows.Forms.RowStyle ());
+			this.tableLayoutPanel4.Size = new System.Drawing.Size (271, 29);
+			this.tableLayoutPanel4.TabIndex = 8;
+			// 
+			// txtGeneratedKeyPass
+			// 
+			this.txtGeneratedKeyPass.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtGeneratedKeyPass.Location = new System.Drawing.Point (3, 4);
+			this.txtGeneratedKeyPass.Name = "txtGeneratedKeyPass";
+			this.txtGeneratedKeyPass.Size = new System.Drawing.Size (152, 20);
+			this.txtGeneratedKeyPass.TabIndex = 9;
+			// 
+			// cbPassEncryptType
+			// 
+			this.cbPassEncryptType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbPassEncryptType.FormattingEnabled = true;
+			this.cbPassEncryptType.Items.AddRange (new object[] {
+            "Camellia 256bit",
+            "Rijndael 256bit"});
+			this.cbPassEncryptType.Location = new System.Drawing.Point (161, 3);
+			this.cbPassEncryptType.Name = "cbPassEncryptType";
+			this.cbPassEncryptType.Size = new System.Drawing.Size (107, 21);
+			this.cbPassEncryptType.TabIndex = 10;
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF (6F, 13F);
@@ -567,6 +598,8 @@
 			this.tableLayoutPanel2.PerformLayout ();
 			this.flowLayoutPanel1.ResumeLayout (false);
 			this.flowLayoutPanel1.PerformLayout ();
+			this.tableLayoutPanel4.ResumeLayout (false);
+			this.tableLayoutPanel4.PerformLayout ();
 			this.ResumeLayout (false);
 
 		}
@@ -591,7 +624,6 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox txtGeneratedPublicKey;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.TextBox txtGeneratedKeyPass;
 		private System.Windows.Forms.Button btnPublicKeyGenerate;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label6;
@@ -610,6 +642,9 @@
 		private System.Windows.Forms.TextBox txtEncryptionCipher;
 		private System.Windows.Forms.TextBox txtEncryptionPlain;
 		private System.Windows.Forms.Label label11;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+		private System.Windows.Forms.TextBox txtGeneratedKeyPass;
+		private System.Windows.Forms.ComboBox cbPassEncryptType;
 	}
 }
 

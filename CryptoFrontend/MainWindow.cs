@@ -26,6 +26,7 @@ namespace CryptoFrontend
 			txtGeneratedKeyPass.Font = txtGeneratedKey.Font;
 			txtEncryptionKey.Font = txtGeneratedKey.Font;
 			tabControl1.SelectedTab = tabPage2;
+			cbPassEncryptType.SelectedIndex = 0;
 		}
 
 		#region PublicKey - KeyGeneration Tab
@@ -39,9 +40,24 @@ namespace CryptoFrontend
 				byte[] pass = ComputeHash (new SHA256Managed (), Encoding.UTF8.GetBytes (txtGeneratedKeyPass.Text), true);
 				byte[] iv = ComputeHash (new SHA1Managed (), Encoding.UTF8.GetBytes (txtGeneratedKeyPass.Text), true);
 				Array.Resize<byte> (ref iv, 128 >> 3);
-				byte[] encrypted = Encrypt (new CamelliaManaged (), CipherMode.CBC, pass, iv, privateKeyBytes);
+				string encType = null;
+				SymmetricAlgorithm algo = null;
+				switch (cbPassEncryptType.SelectedIndex) {
+					case 0:
+						encType = "camellia256";
+						algo = new CamelliaManaged ();
+						break;
+					case 1:
+						encType = "rijndael256";
+						algo = new openCrypto.RijndaelManaged ();
+						break;
+					default:
+						MessageBox.Show ("暗号化の種類を認識できません");
+						return;
+				}
+				byte[] encrypted = Encrypt (algo, CipherMode.CBC, pass, iv, privateKeyBytes);
 				string privateKey = Convert.ToBase64String (encrypted);
-				txtGeneratedKey.Text = "camellia256=" + domainName + "=" + privateKey;
+				txtGeneratedKey.Text = encType + "=" + domainName + "=" + privateKey;
 			} else {
 				string privateKey = Convert.ToBase64String (privateKeyBytes);
 				txtGeneratedKey.Text = domainName + "=" + privateKey;
@@ -137,12 +153,24 @@ namespace CryptoFrontend
 					byte[] pass = ComputeHash (new SHA256Managed (), Encoding.UTF8.GetBytes (str_passwd), true);
 					byte[] iv = ComputeHash (new SHA1Managed (), Encoding.UTF8.GetBytes (str_passwd), true);
 					Array.Resize<byte> (ref iv, 128 >> 3);
+					string encType = str_key.Substring (0, str_key.IndexOf ('='));
 					str_key = str_key.Substring (str_key.IndexOf ('=') + 1);
 					str_domain = str_key.Substring (0, str_key.IndexOf ('='));
 					str_key = str_key.Substring (str_key.IndexOf ('=') + 1);
 					byte[] encrypted = Convert.FromBase64String (str_key);
 					try {
-						key = Decrypt (new CamelliaManaged (), CipherMode.CBC, pass, iv, encrypted);
+						SymmetricAlgorithm algo = null;
+						switch (encType) {
+							case "camellia256":
+								algo = new CamelliaManaged ();
+								break;
+							case "rijndael256":
+								algo = new openCrypto.RijndaelManaged ();
+								break;
+							default:
+								throw new CryptographicException ("秘密鍵の暗号化タイプを認識できません");
+						}
+						key = Decrypt (algo, CipherMode.CBC, pass, iv, encrypted);
 					} catch {
 						throw new CryptographicException ("パスフレーズが違います");
 					}
