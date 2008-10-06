@@ -44,6 +44,9 @@
 			this.label3 = new System.Windows.Forms.Label ();
 			this.label1 = new System.Windows.Forms.Label ();
 			this.label4 = new System.Windows.Forms.Label ();
+			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel ();
+			this.txtGeneratedKeyPass = new System.Windows.Forms.TextBox ();
+			this.cbPassEncryptType = new System.Windows.Forms.ComboBox ();
 			this.tabPage4 = new System.Windows.Forms.TabPage ();
 			this.label5 = new System.Windows.Forms.Label ();
 			this.tabPage5 = new System.Windows.Forms.TabPage ();
@@ -63,9 +66,8 @@
 			this.label9 = new System.Windows.Forms.Label ();
 			this.label10 = new System.Windows.Forms.Label ();
 			this.txtEncryptionPlain = new System.Windows.Forms.TextBox ();
-			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel ();
-			this.txtGeneratedKeyPass = new System.Windows.Forms.TextBox ();
-			this.cbPassEncryptType = new System.Windows.Forms.ComboBox ();
+			this.label12 = new System.Windows.Forms.Label ();
+			this.cbEncryptionSymmetricAlgo = new System.Windows.Forms.ComboBox ();
 			this.tabControl1.SuspendLayout ();
 			this.tabPage1.SuspendLayout ();
 			this.tabPage2.SuspendLayout ();
@@ -73,12 +75,12 @@
 			this.tabPage3.SuspendLayout ();
 			this.tableLayoutPanel1.SuspendLayout ();
 			this.tableLayoutPanel3.SuspendLayout ();
+			this.tableLayoutPanel4.SuspendLayout ();
 			this.tabPage4.SuspendLayout ();
 			this.tabPage5.SuspendLayout ();
 			this.tabPage6.SuspendLayout ();
 			this.tableLayoutPanel2.SuspendLayout ();
 			this.flowLayoutPanel1.SuspendLayout ();
-			this.tableLayoutPanel4.SuspendLayout ();
 			this.SuspendLayout ();
 			// 
 			// tabControl1
@@ -89,7 +91,7 @@
 			this.tabControl1.Location = new System.Drawing.Point (0, 0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size (368, 318);
+			this.tabControl1.Size = new System.Drawing.Size (444, 416);
 			this.tabControl1.TabIndex = 0;
 			// 
 			// tabPage1
@@ -120,7 +122,7 @@
 			this.tabPage2.Location = new System.Drawing.Point (4, 22);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding (3);
-			this.tabPage2.Size = new System.Drawing.Size (360, 292);
+			this.tabPage2.Size = new System.Drawing.Size (436, 390);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "公開鍵暗号";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -135,7 +137,7 @@
 			this.tabControl2.Location = new System.Drawing.Point (3, 3);
 			this.tabControl2.Name = "tabControl2";
 			this.tabControl2.SelectedIndex = 0;
-			this.tabControl2.Size = new System.Drawing.Size (354, 286);
+			this.tabControl2.Size = new System.Drawing.Size (430, 384);
 			this.tabControl2.TabIndex = 0;
 			// 
 			// tabPage3
@@ -203,8 +205,8 @@
 			this.cbKeyType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbKeyType.FormattingEnabled = true;
 			this.cbKeyType.Items.AddRange (new object[] {
-            "secp112r1",
-            "secp112r2",
+            "secp112r1 (RSA512bit相当)",
+            "secp112r2 (RSA512bit相当)",
             "secp128r1",
             "secp128r2",
             "secp160r1 (RSA1024bit相当)",
@@ -212,8 +214,8 @@
             "secp192r1",
             "secp224r1 (RSA2048bit相当)",
             "secp256r1 (RSA3072bit相当)",
-            "secp384r1",
-            "secp521r1"});
+            "secp384r1 (RSA7680bit相当)",
+            "secp521r1 (RSA15360bit相当)"});
 			this.cbKeyType.Location = new System.Drawing.Point (244, 7);
 			this.cbKeyType.Name = "cbKeyType";
 			this.cbKeyType.Size = new System.Drawing.Size (99, 21);
@@ -310,6 +312,42 @@
 			this.label4.TabIndex = 5;
 			this.label4.Text = "パスフレーズ：";
 			// 
+			// tableLayoutPanel4
+			// 
+			this.tableLayoutPanel4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel4.ColumnCount = 2;
+			this.tableLayoutPanel4.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel4.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle ());
+			this.tableLayoutPanel4.Controls.Add (this.txtGeneratedKeyPass, 0, 0);
+			this.tableLayoutPanel4.Controls.Add (this.cbPassEncryptType, 1, 0);
+			this.tableLayoutPanel4.Location = new System.Drawing.Point (75, 35);
+			this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding (0);
+			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+			this.tableLayoutPanel4.RowCount = 1;
+			this.tableLayoutPanel4.RowStyles.Add (new System.Windows.Forms.RowStyle ());
+			this.tableLayoutPanel4.Size = new System.Drawing.Size (271, 29);
+			this.tableLayoutPanel4.TabIndex = 8;
+			// 
+			// txtGeneratedKeyPass
+			// 
+			this.txtGeneratedKeyPass.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtGeneratedKeyPass.Location = new System.Drawing.Point (3, 4);
+			this.txtGeneratedKeyPass.Name = "txtGeneratedKeyPass";
+			this.txtGeneratedKeyPass.Size = new System.Drawing.Size (152, 20);
+			this.txtGeneratedKeyPass.TabIndex = 9;
+			// 
+			// cbPassEncryptType
+			// 
+			this.cbPassEncryptType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbPassEncryptType.FormattingEnabled = true;
+			this.cbPassEncryptType.Items.AddRange (new object[] {
+            "Camellia 256bit",
+            "Rijndael 256bit"});
+			this.cbPassEncryptType.Location = new System.Drawing.Point (161, 3);
+			this.cbPassEncryptType.Name = "cbPassEncryptType";
+			this.cbPassEncryptType.Size = new System.Drawing.Size (107, 21);
+			this.cbPassEncryptType.TabIndex = 10;
+			// 
 			// tabPage4
 			// 
 			this.tabPage4.Controls.Add (this.label5);
@@ -357,7 +395,7 @@
 			this.tabPage6.Controls.Add (this.tableLayoutPanel2);
 			this.tabPage6.Location = new System.Drawing.Point (4, 22);
 			this.tabPage6.Name = "tabPage6";
-			this.tabPage6.Size = new System.Drawing.Size (346, 260);
+			this.tabPage6.Size = new System.Drawing.Size (422, 358);
 			this.tabPage6.TabIndex = 3;
 			this.tabPage6.Text = "暗号化・復号";
 			this.tabPage6.UseVisualStyleBackColor = true;
@@ -367,26 +405,29 @@
 			this.tableLayoutPanel2.ColumnCount = 2;
 			this.tableLayoutPanel2.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle ());
 			this.tableLayoutPanel2.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.Controls.Add (this.txtEncryptionCipher, 1, 3);
+			this.tableLayoutPanel2.Controls.Add (this.txtEncryptionCipher, 1, 4);
 			this.tableLayoutPanel2.Controls.Add (this.txtEncryptionPass, 1, 1);
 			this.tableLayoutPanel2.Controls.Add (this.label8, 0, 1);
 			this.tableLayoutPanel2.Controls.Add (this.label7, 0, 0);
 			this.tableLayoutPanel2.Controls.Add (this.txtEncryptionKey, 1, 0);
-			this.tableLayoutPanel2.Controls.Add (this.flowLayoutPanel1, 0, 2);
-			this.tableLayoutPanel2.Controls.Add (this.label9, 0, 3);
-			this.tableLayoutPanel2.Controls.Add (this.label10, 0, 4);
-			this.tableLayoutPanel2.Controls.Add (this.txtEncryptionPlain, 1, 4);
+			this.tableLayoutPanel2.Controls.Add (this.flowLayoutPanel1, 0, 3);
+			this.tableLayoutPanel2.Controls.Add (this.label9, 0, 4);
+			this.tableLayoutPanel2.Controls.Add (this.label10, 0, 5);
+			this.tableLayoutPanel2.Controls.Add (this.txtEncryptionPlain, 1, 5);
+			this.tableLayoutPanel2.Controls.Add (this.label12, 0, 2);
+			this.tableLayoutPanel2.Controls.Add (this.cbEncryptionSymmetricAlgo, 1, 2);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point (0, 0);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding (0);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-			this.tableLayoutPanel2.RowCount = 5;
+			this.tableLayoutPanel2.RowCount = 6;
+			this.tableLayoutPanel2.RowStyles.Add (new System.Windows.Forms.RowStyle ());
 			this.tableLayoutPanel2.RowStyles.Add (new System.Windows.Forms.RowStyle ());
 			this.tableLayoutPanel2.RowStyles.Add (new System.Windows.Forms.RowStyle ());
 			this.tableLayoutPanel2.RowStyles.Add (new System.Windows.Forms.RowStyle ());
 			this.tableLayoutPanel2.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel2.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size (346, 260);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size (422, 358);
 			this.tableLayoutPanel2.TabIndex = 0;
 			// 
 			// txtEncryptionCipher
@@ -394,11 +435,11 @@
 			this.txtEncryptionCipher.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 							| System.Windows.Forms.AnchorStyles.Left)
 							| System.Windows.Forms.AnchorStyles.Right)));
-			this.txtEncryptionCipher.Location = new System.Drawing.Point (78, 142);
+			this.txtEncryptionCipher.Location = new System.Drawing.Point (78, 169);
 			this.txtEncryptionCipher.Multiline = true;
 			this.txtEncryptionCipher.Name = "txtEncryptionCipher";
 			this.txtEncryptionCipher.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.txtEncryptionCipher.Size = new System.Drawing.Size (265, 54);
+			this.txtEncryptionCipher.Size = new System.Drawing.Size (341, 90);
 			this.txtEncryptionCipher.TabIndex = 11;
 			// 
 			// txtEncryptionPass
@@ -406,7 +447,7 @@
 			this.txtEncryptionPass.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.txtEncryptionPass.Location = new System.Drawing.Point (78, 75);
 			this.txtEncryptionPass.Name = "txtEncryptionPass";
-			this.txtEncryptionPass.Size = new System.Drawing.Size (265, 20);
+			this.txtEncryptionPass.Size = new System.Drawing.Size (341, 20);
 			this.txtEncryptionPass.TabIndex = 9;
 			// 
 			// label8
@@ -437,7 +478,7 @@
 			this.txtEncryptionKey.Multiline = true;
 			this.txtEncryptionKey.Name = "txtEncryptionKey";
 			this.txtEncryptionKey.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.txtEncryptionKey.Size = new System.Drawing.Size (265, 66);
+			this.txtEncryptionKey.Size = new System.Drawing.Size (341, 66);
 			this.txtEncryptionKey.TabIndex = 1;
 			// 
 			// flowLayoutPanel1
@@ -449,7 +490,7 @@
 			this.flowLayoutPanel1.Controls.Add (this.btnDecryption);
 			this.flowLayoutPanel1.Controls.Add (this.btnFileEncryption);
 			this.flowLayoutPanel1.Controls.Add (this.button1);
-			this.flowLayoutPanel1.Location = new System.Drawing.Point (12, 101);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point (50, 128);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size (322, 35);
 			this.flowLayoutPanel1.TabIndex = 10;
@@ -509,7 +550,7 @@
 			// label9
 			// 
 			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point (3, 144);
+			this.label9.Location = new System.Drawing.Point (3, 171);
 			this.label9.Margin = new System.Windows.Forms.Padding (3, 5, 3, 0);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size (49, 13);
@@ -519,7 +560,7 @@
 			// label10
 			// 
 			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point (3, 204);
+			this.label10.Location = new System.Drawing.Point (3, 267);
 			this.label10.Margin = new System.Windows.Forms.Padding (3, 5, 3, 0);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size (37, 13);
@@ -531,57 +572,47 @@
 			this.txtEncryptionPlain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 							| System.Windows.Forms.AnchorStyles.Left)
 							| System.Windows.Forms.AnchorStyles.Right)));
-			this.txtEncryptionPlain.Location = new System.Drawing.Point (78, 202);
+			this.txtEncryptionPlain.Location = new System.Drawing.Point (78, 265);
 			this.txtEncryptionPlain.Multiline = true;
 			this.txtEncryptionPlain.Name = "txtEncryptionPlain";
 			this.txtEncryptionPlain.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.txtEncryptionPlain.Size = new System.Drawing.Size (265, 55);
+			this.txtEncryptionPlain.Size = new System.Drawing.Size (341, 90);
 			this.txtEncryptionPlain.TabIndex = 11;
 			// 
-			// tableLayoutPanel4
+			// label12
 			// 
-			this.tableLayoutPanel4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel4.ColumnCount = 2;
-			this.tableLayoutPanel4.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel4.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle ());
-			this.tableLayoutPanel4.Controls.Add (this.txtGeneratedKeyPass, 0, 0);
-			this.tableLayoutPanel4.Controls.Add (this.cbPassEncryptType, 1, 0);
-			this.tableLayoutPanel4.Location = new System.Drawing.Point (75, 35);
-			this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding (0);
-			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-			this.tableLayoutPanel4.RowCount = 1;
-			this.tableLayoutPanel4.RowStyles.Add (new System.Windows.Forms.RowStyle ());
-			this.tableLayoutPanel4.Size = new System.Drawing.Size (271, 29);
-			this.tableLayoutPanel4.TabIndex = 8;
+			this.label12.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.label12.AutoSize = true;
+			this.label12.Location = new System.Drawing.Point (3, 98);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size (68, 26);
+			this.label12.TabIndex = 6;
+			this.label12.Text = "暗号化\r\nアルゴリズム：";
 			// 
-			// txtGeneratedKeyPass
+			// cbEncryptionSymmetricAlgo
 			// 
-			this.txtGeneratedKeyPass.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.txtGeneratedKeyPass.Location = new System.Drawing.Point (3, 4);
-			this.txtGeneratedKeyPass.Name = "txtGeneratedKeyPass";
-			this.txtGeneratedKeyPass.Size = new System.Drawing.Size (152, 20);
-			this.txtGeneratedKeyPass.TabIndex = 9;
-			// 
-			// cbPassEncryptType
-			// 
-			this.cbPassEncryptType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbPassEncryptType.FormattingEnabled = true;
-			this.cbPassEncryptType.Items.AddRange (new object[] {
+			this.cbEncryptionSymmetricAlgo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.cbEncryptionSymmetricAlgo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbEncryptionSymmetricAlgo.FormattingEnabled = true;
+			this.cbEncryptionSymmetricAlgo.Items.AddRange (new object[] {
+            "XOR",
+            "Camellia 128bit",
             "Camellia 256bit",
+            "Rijndael 128bit",
             "Rijndael 256bit"});
-			this.cbPassEncryptType.Location = new System.Drawing.Point (161, 3);
-			this.cbPassEncryptType.Name = "cbPassEncryptType";
-			this.cbPassEncryptType.Size = new System.Drawing.Size (107, 21);
-			this.cbPassEncryptType.TabIndex = 10;
+			this.cbEncryptionSymmetricAlgo.Location = new System.Drawing.Point (78, 101);
+			this.cbEncryptionSymmetricAlgo.Name = "cbEncryptionSymmetricAlgo";
+			this.cbEncryptionSymmetricAlgo.Size = new System.Drawing.Size (341, 21);
+			this.cbEncryptionSymmetricAlgo.TabIndex = 12;
 			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF (6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size (368, 318);
+			this.ClientSize = new System.Drawing.Size (444, 416);
 			this.Controls.Add (this.tabControl1);
 			this.Name = "MainWindow";
-			this.Text = "CryptoFrontend 0.1 Alpha.1";
+			this.Text = "CryptoFrontend 0.1 Alpha.2";
 			this.tabControl1.ResumeLayout (false);
 			this.tabPage1.ResumeLayout (false);
 			this.tabPage2.ResumeLayout (false);
@@ -591,6 +622,8 @@
 			this.tableLayoutPanel1.PerformLayout ();
 			this.tableLayoutPanel3.ResumeLayout (false);
 			this.tableLayoutPanel3.PerformLayout ();
+			this.tableLayoutPanel4.ResumeLayout (false);
+			this.tableLayoutPanel4.PerformLayout ();
 			this.tabPage4.ResumeLayout (false);
 			this.tabPage5.ResumeLayout (false);
 			this.tabPage6.ResumeLayout (false);
@@ -598,8 +631,6 @@
 			this.tableLayoutPanel2.PerformLayout ();
 			this.flowLayoutPanel1.ResumeLayout (false);
 			this.flowLayoutPanel1.PerformLayout ();
-			this.tableLayoutPanel4.ResumeLayout (false);
-			this.tableLayoutPanel4.PerformLayout ();
 			this.ResumeLayout (false);
 
 		}
@@ -645,6 +676,8 @@
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
 		private System.Windows.Forms.TextBox txtGeneratedKeyPass;
 		private System.Windows.Forms.ComboBox cbPassEncryptType;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.ComboBox cbEncryptionSymmetricAlgo;
 	}
 }
 

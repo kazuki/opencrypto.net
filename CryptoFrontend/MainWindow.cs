@@ -20,13 +20,13 @@ namespace CryptoFrontend
 		{
 			InitializeComponent ();
 			cbKeyType.SelectedIndex = 8;
-			this.MinimumSize = this.Size;
 			txtGeneratedKey.Font = new Font (FontFamily.GenericMonospace, (int)(Font.Size + 1.5), Font.Unit);
 			txtGeneratedPublicKey.Font = txtGeneratedKey.Font;
 			txtGeneratedKeyPass.Font = txtGeneratedKey.Font;
 			txtEncryptionKey.Font = txtGeneratedKey.Font;
 			tabControl1.SelectedTab = tabPage2;
 			cbPassEncryptType.SelectedIndex = 0;
+			cbEncryptionSymmetricAlgo.SelectedIndex = 2;
 		}
 
 		#region PublicKey - KeyGeneration Tab
@@ -87,10 +87,54 @@ namespace CryptoFrontend
 			try {
 				ECDomainNames domain;
 				byte[] publicKey = ParsePublicKey (txtEncryptionKey.Text, out domain);
-				ECIES ecies = new ECIES (domain);
-				ecies.Parameters.PublicKey = publicKey;
+				string encryptType = null;
+				SymmetricAlgorithm algo = null;
+				switch (cbEncryptionSymmetricAlgo.SelectedIndex) {
+					case 0:
+						encryptType = "ecies+xor";
+						algo = null;
+						break;
+					case 1:
+					case 2:
+						encryptType = "ecies+camellia";
+						algo = new CamelliaManaged ();
+						algo.BlockSize = 128;
+						if (cbEncryptionSymmetricAlgo.SelectedIndex == 1) {
+							encryptType += "128";
+							algo.KeySize = 128;
+						} else {
+							encryptType += "256";
+							algo.KeySize = 256;
+						}
+						break;
+					case 3:
+					case 4:
+						encryptType = "ecies+rijndael";
+						algo = new openCrypto.RijndaelManaged ();
+						algo.BlockSize = 128;
+						if (cbEncryptionSymmetricAlgo.SelectedIndex == 3) {
+							encryptType += "128";
+							algo.KeySize = 128;
+						} else {
+							encryptType += "256";
+							algo.KeySize = 256;
+						}
+						break;
+					default:
+						throw new CryptographicException ("Unknown");
+				}
+				if (algo != null) {
+					algo.Mode = CipherMode.CBC;
+					algo.Padding = PaddingMode.PKCS7;
+				}
+				ECIES ecies = new ECIES (domain, algo);
+				try {
+					ecies.Parameters.PublicKey = publicKey;
+				} catch {
+					ecies.Parameters.PrivateKey = ParsePrivateKey (txtEncryptionKey.Text, txtEncryptionPass.Text, out domain);
+				}
 				string encrypted = Convert.ToBase64String (ecies.Encrypt (Encoding.UTF8.GetBytes (txtEncryptionPlain.Text)));
-				txtEncryptionCipher.Text = "ecies+xor=" + encrypted;
+				txtEncryptionCipher.Text = encryptType + "=" + encrypted;
 			} catch (Exception ex) {
 				MessageBox.Show (ex.Message);
 			}
@@ -111,16 +155,30 @@ namespace CryptoFrontend
 				} catch {
 					throw new CryptographicException ("暗号文のフォーマットを認識できません");
 				}
-				switch (encrypt_type) {
-					case "ecies+xor": {
-						ECIES ecies = new ECIES (domain);
-						ecies.Parameters.PrivateKey = privateKey;
-						txtEncryptionPlain.Text = Encoding.UTF8.GetString (ecies.Decrypt (encrypted));
-						break;
+				if (encrypt_type.StartsWith ("ecies+")) {
+					encrypt_type = encrypt_type.Substring (6);
+					SymmetricAlgorithm algo = null;
+					switch (encrypt_type) {
+						case "xor":
+							break;
+						case "camellia128":
+						case "camellia256":
+						case "rijndael128":
+						case "rijndael256":
+							algo = encrypt_type.StartsWith ("camellia") ? (SymmetricAlgorithm)new CamelliaManaged () : (SymmetricAlgorithm)new openCrypto.RijndaelManaged ();
+							algo.BlockSize = 128;
+							algo.KeySize = encrypt_type.EndsWith ("128") ? 128 : 256;
+							algo.Mode = CipherMode.CBC;
+							algo.Padding = PaddingMode.PKCS7;
+							break;
+						default:
+							throw new CryptographicException ("対応していない暗号化形式です");
 					}
-					default: {
-						throw new CryptographicException ("対応していない暗号化形式です");
-					}
+					ECIES ecies = new ECIES (domain, algo);
+					ecies.Parameters.PrivateKey = privateKey;
+					txtEncryptionPlain.Text = Encoding.UTF8.GetString (ecies.Decrypt (encrypted));
+				} else {
+					throw new CryptographicException ("対応していない暗号化形式です");
 				}
 			} catch (Exception ex) {
 				MessageBox.Show (ex.Message);
