@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 using openCrypto;
 using openCrypto.EllipticCurve;
 using openCrypto.EllipticCurve.Encryption;
@@ -16,6 +17,8 @@ namespace CryptoFrontend
 {
 	public partial class MainWindow : Form
 	{
+		KeyStore _store;
+
 		public MainWindow ()
 		{
 			InitializeComponent ();
@@ -23,10 +26,45 @@ namespace CryptoFrontend
 			txtGeneratedKey.Font = new Font (FontFamily.GenericMonospace, (int)(Font.Size + 1.5), Font.Unit);
 			txtGeneratedPublicKey.Font = txtGeneratedKey.Font;
 			txtGeneratedKeyPass.Font = txtGeneratedKey.Font;
-			txtEncryptionKey.Font = txtGeneratedKey.Font;
+			txtDecryptKeyPass.Font = txtGeneratedKey.Font;
 			tabControl1.SelectedTab = tabPage2;
 			cbPassEncryptType.SelectedIndex = 0;
-			cbEncryptionSymmetricAlgo.SelectedIndex = 2;
+			cbEncryptCrypto.SelectedIndex = 2;
+
+			_store = new KeyStore (Path.Combine (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "openCrypto.NET"), "keystore.xml"));
+			_store.PrivateKeyUpdated += delegate (object sender, EventArgs args) {
+				object selected = cbPrivateKeys.SelectedItem;
+				object selected2 = cbPrivateKeys2.SelectedItem;
+				cbPrivateKeys.Items.Clear ();
+				cbPrivateKeys2.Items.Clear ();
+				foreach (KeyEntry entry in _store.PrivateKeys) {
+					cbPrivateKeys.Items.Add (entry);
+					cbPrivateKeys2.Items.Add (entry);
+				}
+				cbPrivateKeys.SelectedItem = selected;
+				if (cbPrivateKeys.SelectedIndex < 0 && cbPrivateKeys.Items.Count > 0)
+					cbPrivateKeys.SelectedIndex = 0;
+				cbPrivateKeys2.SelectedItem = selected2;
+				if (cbPrivateKeys2.SelectedIndex < 0 && cbPrivateKeys2.Items.Count > 0)
+					cbPrivateKeys2.SelectedIndex = 0;
+			};
+			_store.PublicKeyUpdated += delegate (object sender, EventArgs args) {
+				object selected = cbPublicKeys.SelectedItem;
+				object selected2 = cbPublicKeys2.SelectedItem;
+				cbPublicKeys.Items.Clear ();
+				cbPublicKeys2.Items.Clear ();
+				foreach (KeyEntry entry in _store.PublicKeys) {
+					cbPublicKeys.Items.Add (entry);
+					cbPublicKeys2.Items.Add (entry);
+				}
+				cbPublicKeys.SelectedItem = selected;
+				if (cbPublicKeys.SelectedIndex < 0 && cbPublicKeys.Items.Count > 0)
+					cbPublicKeys.SelectedIndex = 0;
+				cbPublicKeys2.SelectedItem = selected2;
+				if (cbPublicKeys2.SelectedIndex < 0 && cbPublicKeys2.Items.Count > 0)
+					cbPublicKeys2.SelectedIndex = 0;
+			};
+			_store.Load ();
 		}
 
 		#region PublicKey - KeyGeneration Tab
@@ -36,32 +74,7 @@ namespace CryptoFrontend
 			ECDSA dsa = new ECDSA (domain);
 			string domainName = domain.ToString ().Substring(4);
 			byte[] privateKeyBytes = dsa.Parameters.PrivateKey;
-			if (txtGeneratedKeyPass.Text.Length > 0) {
-				byte[] pass = ComputeHash (new SHA256Managed (), Encoding.UTF8.GetBytes (txtGeneratedKeyPass.Text), true);
-				byte[] iv = ComputeHash (new SHA1Managed (), Encoding.UTF8.GetBytes (txtGeneratedKeyPass.Text), true);
-				Array.Resize<byte> (ref iv, 128 >> 3);
-				string encType = null;
-				SymmetricAlgorithm algo = null;
-				switch (cbPassEncryptType.SelectedIndex) {
-					case 0:
-						encType = "camellia256";
-						algo = new CamelliaManaged ();
-						break;
-					case 1:
-						encType = "rijndael256";
-						algo = new openCrypto.RijndaelManaged ();
-						break;
-					default:
-						MessageBox.Show ("暗号化の種類を認識できません");
-						return;
-				}
-				byte[] encrypted = Encrypt (algo, CipherMode.CBC, pass, iv, privateKeyBytes);
-				string privateKey = Convert.ToBase64String (encrypted);
-				txtGeneratedKey.Text = encType + "=" + domainName + "=" + privateKey;
-			} else {
-				string privateKey = Convert.ToBase64String (privateKeyBytes);
-				txtGeneratedKey.Text = domainName + "=" + privateKey;
-			}
+			txtGeneratedKey.Text = ToPrivateKeyString (privateKeyBytes, txtGeneratedKeyPass.Text, domain);
 			string publicKey = Convert.ToBase64String (dsa.Parameters.ExportPublicKey (domain != ECDomainNames.secp224r1 ? true : false));
 			txtGeneratedPublicKey.Text = domainName + "=" + publicKey;
 		}
@@ -79,17 +92,189 @@ namespace CryptoFrontend
 				MessageBox.Show (ex.Message);
 			}
 		}
-		#endregion
 
-		#region PublicKey - Encryption Tab
-		private void btnEncryption_Click (object sender, EventArgs e)
+		private void btnDecryptPrivateKey_Click (object sender, EventArgs e)
 		{
 			try {
 				ECDomainNames domain;
-				byte[] publicKey = ParsePublicKey (txtEncryptionKey.Text, out domain);
+				byte[] privateKey = ParsePrivateKey (txtGeneratedKey.Text, txtGeneratedKeyPass.Text, out domain);
+				txtGeneratedKey.Text = ToPrivateKeyString (privateKey, string.Empty, domain);
+			} catch (Exception ex) {
+				MessageBox.Show (ex.Message);
+			}
+		}
+
+		private void btnEncryptPrivateKey_Click (object sender, EventArgs e)
+		{
+			try {
+				ECDomainNames domain;
+				byte[] privateKey = ParsePrivateKey (txtGeneratedKey.Text, txtGeneratedKeyPass.Text, out domain);
+				txtGeneratedKey.Text = ToPrivateKeyString (privateKey, txtGeneratedKeyPass.Text, domain);
+			} catch (Exception ex) {
+				MessageBox.Show (ex.Message);
+			}
+		}
+
+		string ToPrivateKeyString (byte[] privateKey, string passphrase, ECDomainNames domain)
+		{
+			string domainName = domain.ToString ().Substring (4);
+			if (passphrase.Length > 0) {
+				byte[] pass = ComputeHash (new SHA256Managed (), Encoding.UTF8.GetBytes (txtGeneratedKeyPass.Text), true);
+				byte[] iv = ComputeHash (new SHA1Managed (), Encoding.UTF8.GetBytes (txtGeneratedKeyPass.Text), true);
+				Array.Resize<byte> (ref iv, 128 >> 3);
+				string encType = null;
+				SymmetricAlgorithm algo = null;
+				switch (cbPassEncryptType.SelectedIndex) {
+					case 0:
+						encType = "camellia256";
+						algo = new CamelliaManaged ();
+						break;
+					case 1:
+						encType = "rijndael256";
+						algo = new openCrypto.RijndaelManaged ();
+						break;
+					default:
+						throw new CryptographicException ("暗号化の種類を認識できません");
+				}
+				byte[] encrypted = Encrypt (algo, CipherMode.CBC, pass, iv, privateKey);
+				string privateKeyText = Convert.ToBase64String (encrypted);
+				return encType + "=" + domainName + "=" + privateKeyText;
+			} else {
+				string privateKeyText = Convert.ToBase64String (privateKey);
+				return domainName + "=" + privateKeyText;
+			}
+		}
+		#endregion
+
+		#region PublicKey - KeyManagement Tab
+		private void btnRegisterPrivateKey_Click (object sender, EventArgs e)
+		{
+			try {
+				ECDomainNames domain;
+				byte[] privateKey = ParsePrivateKey (txtGeneratedKey.Text, txtGeneratedKeyPass.Text, out domain);
+				ECDSA ecdsa = new ECDSA (domain);
+				ecdsa.Parameters.PrivateKey = privateKey;
+			} catch (Exception ex) {
+				MessageBox.Show (ex.Message);
+				return;
+			}
+			using (TextInputDialog dlg = new TextInputDialog ("名前を入力", "秘密鍵の名前を入力してください")) {
+				if (dlg.ShowDialog () == DialogResult.OK) {
+					_store.AddPrivateKeyEntry (dlg.InputText, txtGeneratedKey.Text);
+				}
+			}
+		}
+
+		private void btnAddPrivateKey_Click (object sender, EventArgs e)
+		{
+			MessageBox.Show ("秘密鍵の追加は鍵生成タブから行ってください");
+		}
+
+		private void btnAddPublicKey_Click (object sender, EventArgs e)
+		{
+			string name;
+			using (TextInputDialog dlg = new TextInputDialog ("名前の入力", "公開鍵の名前を入力してください")) {
+				if (dlg.ShowDialog () != DialogResult.OK)
+					return;
+				name = dlg.InputText;
+			}
+			using (TextInputDialog dlg = new TextInputDialog (name + "の公開鍵", name + "の公開鍵を入力してください", 4)) {
+				if (dlg.ShowDialog () != DialogResult.OK)
+					return;
+				try {
+					ECDomainNames domain;
+					byte[] publicKey = ParsePublicKey (dlg.InputText, out domain);
+					ECDSA ecdsa = new ECDSA (domain);
+					ecdsa.Parameters.PublicKey = publicKey;
+				} catch (Exception ex) {
+					MessageBox.Show (ex.Message);
+					return;
+				}
+				_store.AddPublicKeyEntry (name, dlg.InputText);
+			}
+		}
+
+		private void btnPrivateKeyRename_Click (object sender, EventArgs e)
+		{
+			if (cbPrivateKeys.SelectedIndex < 0)
+				return;
+			Rename (cbPrivateKeys.SelectedItem as KeyEntry);
+			_store.Save ();
+			_store.RaisePrivateKeyUpdatedEvent ();
+		}
+
+		private void btnPublicKeyRename_Click (object sender, EventArgs e)
+		{
+			if (cbPublicKeys.SelectedIndex < 0)
+				return;
+			Rename (cbPublicKeys.SelectedItem as KeyEntry);
+			_store.Save ();
+			_store.RaisePublicKeyUpdatedEvent ();
+		}
+
+		void Rename (KeyEntry entry)
+		{
+			using (TextInputDialog dlg = new TextInputDialog ("名前の変更", "名前を変更してOKを押してください")) {
+				dlg.SetDefaultText (entry.Name, true);
+				if (dlg.ShowDialog () == DialogResult.OK) {
+					entry.Name = dlg.InputText;
+				}
+			}
+		}
+
+		private void btnPublicKeyDel_Click (object sender, EventArgs e)
+		{
+			Remove (cbPublicKeys.SelectedItem as KeyEntry);
+		}
+
+		private void btnPrivateKeyDel_Click (object sender, EventArgs e)
+		{
+			Remove (cbPrivateKeys.SelectedItem as KeyEntry);
+		}
+
+		void Remove (KeyEntry entry)
+		{
+			if (entry == null)
+				return;
+			if (MessageBox.Show (entry.Name + "を削除してもよろしいですか？", "確認", MessageBoxButtons.OKCancel) == DialogResult.OK)
+				_store.RemoveEntry (entry);
+		}
+
+		private void btnPrivateKeyCopy_Click (object sender, EventArgs e)
+		{
+			KeyEntry entry = cbPrivateKeys.SelectedItem as KeyEntry;
+			try {
+				Clipboard.SetText (entry.Key);
+			} catch (Exception ex) {
+				MessageBox.Show (ex.Message);
+			}
+		}
+
+		private void btnPublicKeyCopy_Click (object sender, EventArgs e)
+		{
+			KeyEntry entry = cbPublicKeys.SelectedItem as KeyEntry;
+			try {
+				Clipboard.SetText (entry.Key);
+			} catch (Exception ex) {
+				MessageBox.Show (ex.Message);
+			}
+		}
+		#endregion
+
+		#region PublicKey - Encrypt Tab
+		private void btnEncryptText_Click (object sender, EventArgs e)
+		{
+			if (txtEncryptPlain.Text.Length == 0)
+				return;
+			try {
+				KeyEntry publicKeyEntry = cbPublicKeys2.SelectedItem as KeyEntry;
+				if (publicKeyEntry == null)
+					throw new Exception ("暗号化に利用する公開鍵を選択してください");
+				ECDomainNames domain;
+				byte[] publicKey = ParsePublicKey (publicKeyEntry.Key, out domain);
 				string encryptType = null;
 				SymmetricAlgorithm algo = null;
-				switch (cbEncryptionSymmetricAlgo.SelectedIndex) {
+				switch (cbEncryptCrypto.SelectedIndex) {
 					case 0:
 						encryptType = "ecies+xor";
 						algo = null;
@@ -99,7 +284,7 @@ namespace CryptoFrontend
 						encryptType = "ecies+camellia";
 						algo = new CamelliaManaged ();
 						algo.BlockSize = 128;
-						if (cbEncryptionSymmetricAlgo.SelectedIndex == 1) {
+						if (cbEncryptCrypto.SelectedIndex == 1) {
 							encryptType += "128";
 							algo.KeySize = 128;
 						} else {
@@ -112,7 +297,7 @@ namespace CryptoFrontend
 						encryptType = "ecies+rijndael";
 						algo = new openCrypto.RijndaelManaged ();
 						algo.BlockSize = 128;
-						if (cbEncryptionSymmetricAlgo.SelectedIndex == 3) {
+						if (cbEncryptCrypto.SelectedIndex == 3) {
 							encryptType += "128";
 							algo.KeySize = 128;
 						} else {
@@ -128,24 +313,25 @@ namespace CryptoFrontend
 					algo.Padding = PaddingMode.PKCS7;
 				}
 				ECIES ecies = new ECIES (domain, algo);
-				try {
-					ecies.Parameters.PublicKey = publicKey;
-				} catch {
-					ecies.Parameters.PrivateKey = ParsePrivateKey (txtEncryptionKey.Text, txtEncryptionPass.Text, out domain);
-				}
-				string encrypted = Convert.ToBase64String (ecies.Encrypt (Encoding.UTF8.GetBytes (txtEncryptionPlain.Text)));
-				txtEncryptionCipher.Text = encryptType + "=" + encrypted;
+				ecies.Parameters.PublicKey = publicKey;
+				string encrypted = Convert.ToBase64String (ecies.Encrypt (Encoding.UTF8.GetBytes (txtEncryptPlain.Text)));
+				txtEncryptCipher.Text = encryptType + "=" + encrypted;
 			} catch (Exception ex) {
 				MessageBox.Show (ex.Message);
 			}
 		}
+		#endregion
 
-		private void btnDecryption_Click (object sender, EventArgs e)
+		#region Public Key - Decrypt Tab
+		private void btnDecryptText_Click (object sender, EventArgs e)
 		{
 			try {
+				KeyEntry privateKeyEntry = cbPrivateKeys2.SelectedItem as KeyEntry;
+				if (privateKeyEntry == null)
+					throw new Exception ("復号に利用する秘密鍵を指定してください");
 				ECDomainNames domain;
-				byte[] privateKey = ParsePrivateKey (txtEncryptionKey.Text, txtEncryptionPass.Text, out domain);
-				string text = txtEncryptionCipher.Text;
+				byte[] privateKey = ParsePrivateKey (privateKeyEntry.Key, txtDecryptKeyPass.Text, out domain);
+				string text = txtDecryptCipher.Text;
 				string encrypt_type;
 				byte[] encrypted;
 				try {
@@ -176,7 +362,7 @@ namespace CryptoFrontend
 					}
 					ECIES ecies = new ECIES (domain, algo);
 					ecies.Parameters.PrivateKey = privateKey;
-					txtEncryptionPlain.Text = Encoding.UTF8.GetString (ecies.Decrypt (encrypted));
+					txtDecryptPlain.Text = Encoding.UTF8.GetString (ecies.Decrypt (encrypted));
 				} else {
 					throw new CryptographicException ("対応していない暗号化形式です");
 				}
