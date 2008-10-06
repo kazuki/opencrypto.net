@@ -41,6 +41,7 @@ namespace openCrypto.EllipticCurve.Encryption
 		ECIESParameters _params;
 		KeyedHashAlgorithm _mac;
 		byte[] _sharedInfo = null;
+		SymmetricAlgorithm _symmetricAlgo = null;
 
 		public ECIES (ECDomainNames name)
 		{
@@ -48,6 +49,11 @@ namespace openCrypto.EllipticCurve.Encryption
 			_kdf = new ANSI_X963_KDF (new SHA1Managed ());
 			_params = new ECIESParameters (_domain);
 			_mac = new HMACSHA1 ();
+		}
+
+		public ECIES (ECDomainNames name, SymmetricAlgorithm symmetricAlgo) : this (name)
+		{
+			_symmetricAlgo = symmetricAlgo;
 		}
 
 		public byte[] Encrypt (byte[] value)
@@ -61,7 +67,10 @@ namespace openCrypto.EllipticCurve.Encryption
 #endif
 		{
 			int domainLen = (int)((_domain.Bits >> 3) + ((_domain.Bits & 7) == 0 ? 0 : 1));
-			int encKeyLen = value.Length; // TODO: 3-DESなどの場合はencKeyLenを共通鍵のサイズとなるように変更する
+			int encBlockBytes = (_symmetricAlgo == null ? 0 : _symmetricAlgo.BlockSize >> 3);
+			int encKeyLen = (_symmetricAlgo == null ? value.Length : _symmetricAlgo.KeySize >> 3);
+			int encPaddingLen = 0;
+			int encTotalBytes = value.Length;
 			int macKeyLen = _mac.HashSize >> 3;
 			byte[] result;
 			int ridx = 0;
@@ -70,6 +79,17 @@ namespace openCrypto.EllipticCurve.Encryption
 				_params.CreateNewPrivateKey ();
 			if (_params.Q == null)
 				_params.CreatePublicKeyFromPrivateKey ();
+			if (_symmetricAlgo != null) {
+				int mod = value.Length % encBlockBytes;
+				int rmod = encBlockBytes - mod;
+				if (mod == 0) {
+					if (!(_symmetricAlgo.Padding == PaddingMode.None || _symmetricAlgo.Padding == PaddingMode.Zeros))
+						encPaddingLen = _symmetricAlgo.BlockSize >> 3;
+				} else {
+					encPaddingLen = rmod;
+				}
+				encTotalBytes += encPaddingLen;
+			}
 
 			// Step.1
 #if !TEST
@@ -81,7 +101,7 @@ namespace openCrypto.EllipticCurve.Encryption
 			// Step.2
 			// TODO: 点圧縮を利用しないオプションを追加する
 			byte[] R = pair.ExportPublicKey (true);
-			result = new byte[R.Length + value.Length + macKeyLen];
+			result = new byte[R.Length + encTotalBytes + macKeyLen];
 			for (int i = 0; i < R.Length; i ++) result[ridx ++] = R[i];
 
 			// Step.3 & 4
@@ -92,24 +112,33 @@ namespace openCrypto.EllipticCurve.Encryption
 			byte[] K = _kdf.Calculate (z, encKeyLen + macKeyLen);
 
 			// Step.6
-			// TODO: 3-DESなどの対称鍵暗号を利用する場合はコメントアウトされている以下のコードを利用して鍵を取得する
-			// byte[] EK = new byte[encKeyLen];
-			// for (int i = 0; i < EK.Length; i ++)
-			// 	EK[i] = K[i];
 			byte[] MK = new byte[macKeyLen];
-			for (int i = 0; i < MK.Length; i ++)
+			for (int i = 0; i < MK.Length; i++)
 				MK[i] = K[K.Length - MK.Length + i];
 
 			// Step.7
-			// TODO: XOR以外の暗号アルゴリズムを利用可能にする
-			for (int i = 0; i < value.Length; i ++)
-				result[ridx++] = (byte)(value[i] ^ K[i]);
+			if (_symmetricAlgo == null) {
+				for (int i = 0; i < value.Length; i++)
+					result[ridx++] = (byte)(value[i] ^ K[i]);
+			} else {
+				byte[] EK = new byte[encKeyLen];
+				for (int i = 0; i < EK.Length; i ++)
+					EK[i] = K[i];
+				using (ICryptoTransform transform = _symmetricAlgo.CreateEncryptor (EK, new byte[encBlockBytes])) {
+					int i = 0;
+					for (; i < value.Length - encBlockBytes; i += encBlockBytes)
+						transform.TransformBlock (value, i, encBlockBytes, result, ridx + i);
+					byte[] padding = transform.TransformFinalBlock (value, i, value.Length - i);
+					Buffer.BlockCopy (padding, 0, result, ridx + i, padding.Length);
+					ridx += i + padding.Length;
+				}
+			}
 
 			// Step.8
 			// TODO: HMAC-SHA1-80への対応
 			_mac.Key = MK;
 			_mac.Initialize ();
-			_mac.TransformBlock (result, R.Length, value.Length, null, 0);
+			_mac.TransformBlock (result, R.Length, encTotalBytes, null, 0);
 			if (_sharedInfo == null)
 				_mac.TransformFinalBlock (result, 0, 0);
 			else
@@ -141,7 +170,7 @@ namespace openCrypto.EllipticCurve.Encryption
 			Array.Copy (value, 0, RBytes, 0, RBytes.Length);
 			Array.Copy (value, RBytes.Length, EM, 0, EM.Length);
 			Array.Copy (value, RBytes.Length + EM.Length, D, 0, D.Length);
-			int encKeyLen = EM.Length; // TODO: 3-DESなどの場合はencKeyLenを共通鍵のサイズとなるように変更する
+			int encKeyLen = (_symmetricAlgo == null ? EM.Length : _symmetricAlgo.KeySize >> 3);;
 
 			// Step.2
 			ECPoint R = new ECPoint (_domain.Group, RBytes);
@@ -157,10 +186,12 @@ namespace openCrypto.EllipticCurve.Encryption
 			byte[] K = _kdf.Calculate (Z, encKeyLen + macKeyLen);
 
 			// Step.7
-			// TODO: 3-DESなどの対称鍵暗号を利用する場合はコメントアウトされている以下のコードを利用して鍵を取得する
-			// byte[] EK = new byte[encKeyLen];
-			// for (int i = 0; i < EK.Length; i ++)
-			// 	EK[i] = K[i];
+			byte[] EK = null;
+			if (_symmetricAlgo != null) {
+				EK = new byte[encKeyLen];
+				for (int i = 0; i < EK.Length; i ++)
+					EK[i] = K[i];
+			}
 			byte[] MK = new byte[macKeyLen];
 			for (int i = 0; i < MK.Length; i++)
 				MK[i] = K[K.Length - MK.Length + i];
@@ -180,11 +211,22 @@ namespace openCrypto.EllipticCurve.Encryption
 					throw new CryptographicException ();
 
 			// Step.9
-			// TODO: XOR以外の暗号アルゴリズムを利用可能にする
-			byte[] result = new byte [EM.Length];
-			for (int i = 0; i < result.Length; i ++)
-				result[i] = (byte)(EM[i] ^ K[i]);
-
+			byte[] result = new byte[EM.Length];
+			if (_symmetricAlgo == null) {
+				for (int i = 0; i < result.Length; i ++)
+					result[i] = (byte)(EM[i] ^ K[i]);
+			} else {
+				int blockBytes = _symmetricAlgo.BlockSize >> 3;
+				using (ICryptoTransform transform = _symmetricAlgo.CreateDecryptor (EK, new byte[blockBytes])) {
+					int i = 0;
+					for (; i < result.Length - blockBytes; i += blockBytes)
+						transform.TransformBlock (EM, i, blockBytes, result, i);
+					byte[] temp = transform.TransformFinalBlock (EM, i, EM.Length - i);
+					Buffer.BlockCopy (temp, 0, result, i, temp.Length);
+					if (temp.Length != blockBytes)
+						Array.Resize<byte> (ref result, i + temp.Length);
+				}
+			}
 			return result;
 		}
 

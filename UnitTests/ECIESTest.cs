@@ -175,5 +175,75 @@ namespace openCrypto.Tests
 				Assert.AreEqual (plainText, decrypted);
 			}
 		}
+
+		[Test]
+		public void Test_Camellia ()
+		{
+			using (SymmetricAlgorithmPlus algo = new CamelliaManaged ()) {
+				// Generate test data
+				byte[] plain = RNG.GetRNGBytes (16 * 8);
+				byte[] cipher, decrypted;
+				ECIES ecies;
+
+				// Test.1 128bit ECB Encryption with No-padding
+				algo.KeySize = 128;
+				algo.BlockSize = 128;
+				algo.Mode = System.Security.Cryptography.CipherMode.ECB;
+				algo.Padding = System.Security.Cryptography.PaddingMode.None;
+				ecies = new ECIES (ECDomainNames.secp192r1, algo);
+				cipher = ecies.Encrypt (plain);
+				decrypted = ecies.Decrypt (cipher);
+				Assert.AreEqual (plain, decrypted, "#1");
+
+				// Test.2 128bit CBC Encryption with No-padding
+				algo.Mode = System.Security.Cryptography.CipherMode.CBC;
+				ecies = new ECIES (ECDomainNames.secp192r1, algo);
+				cipher = ecies.Encrypt (plain);
+				decrypted = ecies.Decrypt (cipher);
+				Assert.AreEqual (plain, decrypted, "#2");
+
+				// Test.3 128bit CBC Encryption with PKCS7 Padding
+				algo.Padding = System.Security.Cryptography.PaddingMode.PKCS7;
+				ecies = new ECIES (ECDomainNames.secp192r1, algo);
+				cipher = ecies.Encrypt (plain);
+				decrypted = ecies.Decrypt (cipher);
+				Assert.AreEqual (plain, decrypted, "#3");
+
+				// Test.4 128bit CBC Encryption with PKCS7 Padding
+				plain = RNG.GetRNGBytes (16 * 8 + 3);
+				algo.Padding = System.Security.Cryptography.PaddingMode.PKCS7;
+				ecies = new ECIES (ECDomainNames.secp192r1, algo);
+				cipher = ecies.Encrypt (plain);
+				decrypted = ecies.Decrypt (cipher);
+				Assert.AreEqual (plain, decrypted, "#4");
+
+				// Test.5 128bit CBC Encryption with ANSIX923 Padding
+				plain = RNG.GetRNGBytes (16 * 8 + 7);
+				algo.Padding = System.Security.Cryptography.PaddingMode.ANSIX923;
+				ecies = new ECIES (ECDomainNames.secp192r1, algo);
+				cipher = ecies.Encrypt (plain);
+				decrypted = ecies.Decrypt (cipher);
+				Assert.AreEqual (plain, decrypted, "#5");
+
+				// Test.6 128bit CBC Encryption with ISO10126 Padding
+				plain = RNG.GetRNGBytes (16 * 8 + 9);
+				algo.Padding = System.Security.Cryptography.PaddingMode.ISO10126;
+				ecies = new ECIES (ECDomainNames.secp192r1, algo);
+				cipher = ecies.Encrypt (plain);
+				decrypted = ecies.Decrypt (cipher);
+				Assert.AreEqual (plain, decrypted, "#6");
+
+				// Test.7 128bit CBC Encryption with Zeros Padding
+				plain = RNG.GetRNGBytes (16 * 8 + 11);
+				algo.Padding = System.Security.Cryptography.PaddingMode.Zeros;
+				ecies = new ECIES (ECDomainNames.secp192r1, algo);
+				cipher = ecies.Encrypt (plain);
+				decrypted = ecies.Decrypt (cipher);
+				for (int i = 0; i < plain.Length; i ++)
+					Assert.AreEqual (plain[i], decrypted[i], "#7.1");
+				for (int i = plain.Length; i < decrypted.Length; i ++)
+					Assert.AreEqual (0, decrypted[i], "#7.2");
+			}
+		}
 	}
 }
