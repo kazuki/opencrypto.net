@@ -34,10 +34,14 @@ namespace openCrypto.EllipticCurve.Signature
 		ECDSAParameters _params;
 		int _orderBits;
 
-		internal ECDSA (ECDomainParameters domain)
+		internal ECDSA (ECDSAParameters param)
 		{
-			_params = new ECDSAParameters (null, null, domain);
 			_orderBits = _params.Domain.N.BitCount ();
+		}
+
+		internal ECDSA (ECDomainParameters domain)
+			: this (new ECDSAParameters (null, null, domain))
+		{	
 		}
 
 		public ECDSA (ECDomainNames domain)
@@ -47,6 +51,11 @@ namespace openCrypto.EllipticCurve.Signature
 
 		public ECDSA (Uri domain_oid)
 			: this (ECDomains.GetDomainParameter (domain_oid))
+		{
+		}
+
+		public ECDSA (ECKeyPair keyPair)
+			: this (new ECDSAParameters (keyPair.D, keyPair.Q, keyPair.Domain))
 		{
 		}
 

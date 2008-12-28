@@ -41,6 +41,25 @@ namespace openCrypto.EllipticCurve
 			_domain = domain;
 		}
 
+		public static ECKeyPair Create (ECDomainNames domain)
+		{
+			return new ECKeyPair (null, null, ECDomains.GetDomainParameter (domain));
+		}
+
+		public static ECKeyPair CreatePrivate (ECDomainNames domain, byte[] privateKey)
+		{
+			 ECKeyPair pair = Create (domain);
+			pair.PrivateKey = privateKey;
+			return pair;
+		}
+
+		public static ECKeyPair CreatePublic (ECDomainNames domain, byte[] publicKey)
+		{
+			ECKeyPair pair = Create (domain);
+			pair.PublicKey = publicKey;
+			return pair;
+		}
+
 		internal void CreateNewPrivateKey ()
 		{
 			_d = Number.CreateRandomElement (_domain.N);

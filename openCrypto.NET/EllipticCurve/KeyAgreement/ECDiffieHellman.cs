@@ -49,6 +49,11 @@ namespace openCrypto.EllipticCurve.KeyAgreement
 			: this (new ECDiffieHellmanParameters (null, null, ECDomains.GetDomainParameter (oid)))
 		{
 		}
+
+		public ECDiffieHellman (ECKeyPair keyPair)
+			: this (new ECDiffieHellmanParameters (keyPair.D, keyPair.Q, keyPair.Domain))
+		{
+		}
 		#endregion
 
 		#region DiffieHellman KeyAgreement
