@@ -36,6 +36,7 @@ namespace openCrypto.EllipticCurve.Signature
 
 		internal ECDSA (ECDSAParameters param)
 		{
+			_params = param;
 			_orderBits = _params.Domain.N.BitCount ();
 		}
 

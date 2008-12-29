@@ -46,9 +46,17 @@ namespace openCrypto.EllipticCurve
 			return new ECKeyPair (null, null, ECDomains.GetDomainParameter (domain));
 		}
 
+		public static ECKeyPair Create (ECDomainNames domain, byte[] privateKey, byte[] publicKey)
+		{
+			ECKeyPair pair = Create (domain);
+			pair.PrivateKey = privateKey;
+			pair._Q = new ECPoint (pair.Domain.Group, publicKey);
+			return pair;
+		}
+
 		public static ECKeyPair CreatePrivate (ECDomainNames domain, byte[] privateKey)
 		{
-			 ECKeyPair pair = Create (domain);
+			ECKeyPair pair = Create (domain);
 			pair.PrivateKey = privateKey;
 			return pair;
 		}
@@ -122,6 +130,17 @@ namespace openCrypto.EllipticCurve
 				CreatePublicKeyFromPrivateKey ();
 			}
 			return _Q.ToByteArray (usePointCompression);
+		}
+
+		public bool ValidatePublicKey ()
+		{
+			if (_d == null || _Q == null)
+				return true;
+			ECPoint point1 = _Q.Export ();
+			ECPoint point2 = _domain.G.Multiply (_d).Export ();
+			return point1.X.CompareTo (point2.X) == 0 &&
+				point1.Y.CompareTo (point2.Y) == 0 &&
+				point1.Z.CompareTo (point2.Z) == 0;
 		}
 	}
 }
