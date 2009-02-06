@@ -65,7 +65,10 @@ namespace openCrypto.KeyDerivationFunctions
 				}
 
 				// Compute hash
-				byte[] hash = _hashAlgo.ComputeHash (buffer);
+				byte[] hash;
+				lock (_hashAlgo) {
+					hash = _hashAlgo.ComputeHash (buffer);
+				}
 
 				// Copy hash to result
 				for (int k = 0; k < hash.Length; k ++)
