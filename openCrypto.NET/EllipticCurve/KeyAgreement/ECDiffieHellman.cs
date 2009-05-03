@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2008, Kazuki Oikawa
+// Copyright (c) 2008-2009, Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -59,8 +59,19 @@ namespace openCrypto.EllipticCurve.KeyAgreement
 		#region DiffieHellman KeyAgreement
 		public byte[] PerformKeyAgreement (byte[] otherPublicKey, int keyDataLength)
 		{
-			ECPoint other = new ECPoint (_params.Domain.Group, otherPublicKey);
-
+			return PerformKeyAgreement (new ECPoint (_params.Domain.Group, otherPublicKey), keyDataLength);
+		}
+		public byte[] PerformKeyAgreement (ECKeyPair otherPublicKey, int keyDataLength)
+		{
+			if (otherPublicKey.Q == null) {
+				if (otherPublicKey.D == null)
+					throw new CryptographicException ();
+				otherPublicKey.CreatePublicKeyFromPrivateKey ();
+			}
+			return PerformKeyAgreement (otherPublicKey.Q, keyDataLength);
+		}
+		byte[] PerformKeyAgreement (ECPoint other, int keyDataLength)
+		{
 			// Diffie-Hellman Primitives
 			if (_params.D == null)
 				_params.CreateNewPrivateKey ();

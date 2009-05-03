@@ -73,7 +73,7 @@ namespace openCrypto.Tests
 			PointCompressTest (ECDomainNames.secp521r1, repeats);
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void PointCompressTestB ()
 		{
 			//法が4n-1では無い

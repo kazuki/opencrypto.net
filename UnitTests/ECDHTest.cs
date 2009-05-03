@@ -52,6 +52,10 @@ namespace openCrypto.Tests
 				key1 = ecdh1.PerformKeyAgreement (ecdh2.Parameters.PublicKey, 256);
 				key2 = ecdh2.PerformKeyAgreement (ecdh1.Parameters.PublicKey, 256);
 				Assert.AreEqual (key1, key2, "#3");
+
+				key1 = ecdh1.PerformKeyAgreement (ecdh2.Parameters, 128);
+				key2 = ecdh2.PerformKeyAgreement (ecdh1.Parameters, 128);
+				Assert.AreEqual (key1, key2, "#4");
 			}
 		}
 
