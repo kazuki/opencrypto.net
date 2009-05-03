@@ -46,6 +46,7 @@
     <Compile Include="ECDHTest.cs" />
     <Compile Include="ECDSATest.cs" />
     <Compile Include="ECIESTest.cs" />
+    <Compile Include="ECKeyPairTest.cs" />
     <Compile Include="ECMQVTest.cs" />
     <Compile Include="ECPointTest.cs" />
     <Compile Include="FiniteFieldTest.cs" />
