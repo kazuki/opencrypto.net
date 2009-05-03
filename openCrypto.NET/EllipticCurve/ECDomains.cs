@@ -30,10 +30,10 @@ namespace openCrypto.EllipticCurve
 	static class ECDomains
 	{
 		delegate ECDomainParameters CreateDomainParameterDelegate ();
-		static Dictionary<int, ECDomainParameters> _cache;
-		static Dictionary<int, Uri> _oidReverseMap;
-		static Dictionary<Uri, int> _oidMap;
-		static Dictionary<int, CreateDomainParameterDelegate> _creator;
+		static Dictionary<ECDomainNames, ECDomainParameters> _cache;
+		static Dictionary<ECDomainNames, Uri> _oidReverseMap;
+		static Dictionary<Uri, ECDomainNames> _oidMap;
+		static Dictionary<ECDomainNames, CreateDomainParameterDelegate> _creator;
 		const string URN_OID_PREFIX = "urn:oid:";
 		const string OID_CERTICOM_EC = URN_OID_PREFIX + "1.3.132.0.";
 		const string OID_ANSI_X9_62 = URN_OID_PREFIX + "1.2.840.10045.";
@@ -41,10 +41,10 @@ namespace openCrypto.EllipticCurve
 
 		static ECDomains ()
 		{
-			_cache = new Dictionary<int, ECDomainParameters> ();
-			_creator = new Dictionary<int, CreateDomainParameterDelegate> ();
-			_oidMap = new Dictionary<Uri, int> ();
-			_oidReverseMap = new Dictionary<int, Uri> ();
+			_cache = new Dictionary<ECDomainNames, ECDomainParameters> ();
+			_creator = new Dictionary<ECDomainNames, CreateDomainParameterDelegate> ();
+			_oidMap = new Dictionary<Uri, ECDomainNames> ();
+			_oidReverseMap = new Dictionary<ECDomainNames, Uri> ();
 
 			ECDomainNames[] names = new ECDomainNames[] {
 				ECDomainNames.secp112r1,
@@ -87,19 +87,21 @@ namespace openCrypto.EllipticCurve
 			};
 
 			for (int i = 0; i < names.Length; i ++) {
-				_creator.Add ((int)names[i], procs[i]);
-				_oidMap.Add (oids[i], (int)names[i]);
-				_oidReverseMap.Add ((int)names[i], oids[i]);
+				_creator.Add (names[i], procs[i]);
+				_oidMap.Add (oids[i], names[i]);
+				_oidReverseMap.Add (names[i], oids[i]);
 			}
 		}
 
 		public static ECDomainParameters GetDomainParameter (ECDomainNames domainName)
 		{
 			ECDomainParameters domain;
-			if (_cache.TryGetValue ((int)domainName, out domain))
-				return domain;
-			domain = _creator[(int)domainName] ();
-			_cache[(int)domainName] = domain;
+			lock (_cache) {
+				if (_cache.TryGetValue (domainName, out domain))
+					return domain;
+				domain = _creator[domainName] ();
+				_cache[domainName] = domain;
+			}
 			return domain;
 		}
 
@@ -113,6 +115,18 @@ namespace openCrypto.EllipticCurve
 			return (ECDomainNames)_oidMap[oid];
 		}
 
+		public static ECDomainNames GetDomainName (ECDomainParameters param)
+		{
+			lock (_cache) {
+				foreach (KeyValuePair<ECDomainNames, ECDomainParameters> pair in _cache) {
+					if (pair.Value == param)
+						return pair.Key;
+				}
+			}
+
+			throw new NotSupportedException ();
+		}
+
 		static ECDomainParameters Create_secp112r1 ()
 		{
 			Number p = new Number (new uint[] {3199017099, 1583775862, 717185763, 56188});
@@ -122,7 +136,7 @@ namespace openCrypto.EllipticCurve
 			Number gY = new Number (new uint[] {267875584, 3231858190, 3853485860, 43164});
 			Number order = new Number (new uint[] {2892325317, 1584802015, 717185763, 56188});
 			Montgomery mont = new Montgomery (p);
-			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[(int)ECDomainNames.secp112r1]);
+			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[ECDomainNames.secp112r1]);
 		}
 
 		static ECDomainParameters Create_secp112r2 ()
@@ -134,7 +148,7 @@ namespace openCrypto.EllipticCurve
 			Number gY = new Number (new uint[] {1855286935, 927457011, 1190496302, 44493});
 			Number order = new Number (new uint[] {86036555, 3612966049, 179296440, 14047});
 			Montgomery mont = new Montgomery (p);
-			return Create (a, b, gX, gY, order, 4, mont, _oidReverseMap[(int)ECDomainNames.secp112r2]);
+			return Create (a, b, gX, gY, order, 4, mont, _oidReverseMap[ECDomainNames.secp112r2]);
 		}
 
 		static ECDomainParameters Create_secp128r1 ()
@@ -146,7 +160,7 @@ namespace openCrypto.EllipticCurve
 			Number gY = new Number (new uint[] {3723328131, 3224216210, 1538255635, 3478833209});
 			Number order = new Number (new uint[] {2419630357, 1973619995, 0, 4294967294});
 			Montgomery mont = new Montgomery (p);
-			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[(int)ECDomainNames.secp128r1]);
+			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[ECDomainNames.secp128r1]);
 		}
 
 		static ECDomainParameters Create_secp128r2 ()
@@ -158,7 +172,7 @@ namespace openCrypto.EllipticCurve
 			Number gY = new Number (new uint[] {1606634308, 1896283776, 2303539950, 666276202});
 			Number order = new Number (new uint[] {101954979, 3187680370, 2147483647, 1073741823});
 			Montgomery mont = new Montgomery (p);
-			return Create (a, b, gX, gY, order, 4, mont, _oidReverseMap[(int)ECDomainNames.secp128r2]);
+			return Create (a, b, gX, gY, order, 4, mont, _oidReverseMap[ECDomainNames.secp128r2]);
 		}
 
 		static ECDomainParameters Create_secp160r1 ()
@@ -170,7 +184,7 @@ namespace openCrypto.EllipticCurve
 			Number gY = new Number (new uint[] {2059795250, 69423415, 1507641618, 828937341, 598091861});
 			Number order = new Number (new uint[] {3396674135, 4180127443, 128200, 0, 0, 1});
 			Montgomery mont = new Montgomery (p);
-			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[(int)ECDomainNames.secp160r1]);
+			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[ECDomainNames.secp160r1]);
 		}
 
 		static ECDomainParameters Create_secp160r2 ()
@@ -182,7 +196,7 @@ namespace openCrypto.EllipticCurve
 			Number gY = new Number (new uint[] {2815704878, 4187499774, 3765565965, 3811701398, 4272946930});
 			Number order = new Number (new uint[] {4087456107, 3884361752, 13598, 0, 0, 1});
 			Montgomery mont = new Montgomery (p);
-			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[(int)ECDomainNames.secp160r2]);
+			return Create (a, b, gX, gY, order, 1, mont, _oidReverseMap[ECDomainNames.secp160r2]);
 		}
 
 		static ECDomainParameters Create_secp192r1 ()
@@ -193,7 +207,7 @@ namespace openCrypto.EllipticCurve
 			Number gX = new Number (new uint[] {2197753874, 4110355197, 1134659584, 2092900587, 2955972854, 411936782});			
 			Number gY = new Number (new uint[] {511264785, 1945728929, 1797574101, 1661997549, 4291353208, 119090069});
 			Number order = new Number (new uint[] {3033671729, 342608305, 2581526582, 4294967295, 4294967295, 4294967295});
-			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[(int)ECDomainNames.secp192r1]);
+			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[ECDomainNames.secp192r1]);
 		}
 
 		static ECDomainParameters Create_secp224r1 ()
@@ -204,7 +218,7 @@ namespace openCrypto.EllipticCurve
 			Number gX = new Number (new uint[] {291249441, 875725014, 1455558946, 1241760211, 840143033, 1807007615, 3071151293});
 			Number gY = new Number (new uint[] {2231402036, 1154843033, 1510426468, 3443750304, 1277353958, 3052872699, 3174523784});
 			Number order = new Number (new uint[] {1549543997, 333261125, 3770216510, 4294907554, 4294967295, 4294967295, 4294967295});
-			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[(int)ECDomainNames.secp224r1]);
+			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[ECDomainNames.secp224r1]);
 		}
 
 		static ECDomainParameters Create_secp256r1 ()
@@ -215,7 +229,7 @@ namespace openCrypto.EllipticCurve
 			Number gX = new Number (new uint[] {3633889942, 4104206661, 770388896, 1996717441, 1671708914, 4173129445, 3777774151, 1796723186});
 			Number gY = new Number (new uint[] {935285237, 3417718888, 1798397646, 734933847, 2081398294, 2397563722, 4263149467, 1340293858});
 			Number order = new Number (new uint[] {4234356049, 4089039554, 2803342980, 3169254061, 4294967295, 4294967295, 0, 4294967295});
-			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[(int)ECDomainNames.secp256r1]);
+			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[ECDomainNames.secp256r1]);
 		}
 
 		static ECDomainParameters Create_secp384r1 ()
@@ -226,7 +240,7 @@ namespace openCrypto.EllipticCurve
 			Number gX = new Number (new uint[] {1920338615, 978607672, 3210029420, 1426256477, 2186553912, 1509376480, 2343017368, 1847409506, 4079005044, 2394015518, 3196781879, 2861025826});
 			Number gY = new Number (new uint[] {2431258207, 2051218812, 494829981, 174109134, 3052452032, 3923390739, 681186428, 4176747965, 2459098153, 1570674879, 2519084143, 907533898});
 			Number order = new Number (new uint[] {3435473267, 3974895978, 1219536762, 1478102450, 4097256927, 3345173889, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295});
-			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[(int)ECDomainNames.secp384r1]);
+			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[ECDomainNames.secp384r1]);
 		}
 
 		static ECDomainParameters Create_secp521r1 ()
@@ -237,7 +251,7 @@ namespace openCrypto.EllipticCurve
 			Number gX = new Number (new uint[] {3269836134, 4185816625, 2238333595, 860402625, 2734663902, 4263362855, 4024916264, 2706071159, 1800224186, 4163415904, 88061217, 2623832377, 597013570, 2654915430, 67430861, 2240677559, 198});
 			Number gY = new Number (new uint[] {2681300560, 2294191222, 2725429824, 893153414, 1068304225, 3310401793, 1593058880, 2548986521, 658400812, 397393175, 1469793384, 2566210633, 746396633, 1552572340, 2587607044, 959015544, 280});
 			Number order = new Number (new uint[] {2436391945, 3144660766, 2308720558, 1001769400, 4144604624, 2144076104, 3207566955, 1367771011, 4294967290, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 511});
-			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[(int)ECDomainNames.secp521r1]);
+			return Create (a, b, gX, gY, order, 1, ff, _oidReverseMap[ECDomainNames.secp521r1]);
 		}
 
 		static ECDomainParameters Create (Number a, Number b, Number gX, Number gY, Number order, uint h, IFiniteField ff, Uri uri)

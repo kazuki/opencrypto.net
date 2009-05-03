@@ -90,6 +90,10 @@ namespace openCrypto.EllipticCurve
 			get { return _domain; }
 		}
 
+		public ECDomainNames DomainName {
+			get { return ECDomains.GetDomainName (_domain); }
+		}
+
 		public byte[] PrivateKey {
 			get {
 				if (_d == null)
