@@ -31,19 +31,27 @@ namespace openCrypto.EllipticCurve
 		internal Number _d;
 		internal ECPoint _Q;
 		internal ECDomainParameters _domain;
+		internal ECDomainNames _domainName = ECDomainNames.none;
 
 		/// <param name="d">Private Key</param>
 		/// <param name="Q">Public Key</param>
 		internal ECKeyPair (Number d, ECPoint Q, ECDomainParameters domain)
+			: this (d, Q, domain, ECDomainNames.none)
+		{
+			_domainName = ECDomains.GetDomainName (domain);
+		}
+
+		internal ECKeyPair (Number d, ECPoint Q, ECDomainParameters domain, ECDomainNames domainName)
 		{
 			_d = d;
 			_Q = Q;
 			_domain = domain;
+			_domainName = domainName;
 		}
 
 		public static ECKeyPair Create (ECDomainNames domain)
 		{
-			return new ECKeyPair (null, null, ECDomains.GetDomainParameter (domain));
+			return new ECKeyPair (null, null, ECDomains.GetDomainParameter (domain), domain);
 		}
 
 		public static ECKeyPair Create (ECDomainNames domain, byte[] privateKey, byte[] publicKey)
@@ -91,7 +99,7 @@ namespace openCrypto.EllipticCurve
 		}
 
 		public ECDomainNames DomainName {
-			get { return ECDomains.GetDomainName (_domain); }
+			get { return _domainName; }
 		}
 
 		public byte[] PrivateKey {

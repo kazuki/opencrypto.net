@@ -27,7 +27,7 @@ namespace openCrypto.EllipticCurve
 {
 	public enum ECDomainNames
 	{
-
+		none,
 		secp112r1,
 		secp112r2,
 		secp128r1,

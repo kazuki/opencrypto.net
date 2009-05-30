@@ -123,8 +123,7 @@ namespace openCrypto.EllipticCurve
 						return pair.Key;
 				}
 			}
-
-			throw new NotSupportedException ();
+			return ECDomainNames.none;
 		}
 
 		static ECDomainParameters Create_secp112r1 ()
