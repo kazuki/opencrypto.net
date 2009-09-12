@@ -146,5 +146,24 @@ namespace openCrypto.Tests
 			Number n2 = new Number (data2, 1, 7, false);
 			Assert.IsTrue (n1.CompareTo (n2) == 0);
 		}
+
+		[Test]
+		public void ShiftTest ()
+		{
+			Number x = new Number (RNG.GetRNGBytes (8), false);
+			string s = x.ToString (2);
+			for (int i = 0; i < s.Length - 1; i ++)
+				Assert.AreEqual (s.Substring (0, s.Length - i), (x >> i).ToString (2), ">> " + i.ToString ());
+
+			x = Number.Parse ("1", 2);
+			s = "1";
+			for (int i = 0; i < s.Length - 1; i++)
+				Assert.AreEqual (s + new string ('0', i), (x << i).ToString (2), "<< " + i.ToString ());
+
+			x = new Number (RNG.GetRNGBytes (8), false);
+			s = x.ToString (2);
+			for (int i = 0; i < s.Length - 1; i++)
+				Assert.AreEqual (s + new string ('0', i), (x << i).ToString (2), "<< " + i.ToString ());
+		}
 	}
 }

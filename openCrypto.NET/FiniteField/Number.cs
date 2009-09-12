@@ -648,11 +648,11 @@ namespace openCrypto.FiniteField
 				return tmp;
 			} else {
 				int w = n >> 5;
-				int s = n & ((1 << 5) - 1);
-				uint[] tmp = new uint[length - w + (s == 0 ? 0 : 1)];
-				uint l = (uint)tmp.Length - 1;
+				n &= ((1 << 5) - 1);
+				uint[] tmp = new uint[length - w];
+				int l = tmp.Length;
 
-				if (s != 0) {
+				if (n != 0) {
 					uint x, carry = 0;
 					while (l-- > 0) {
 						x = data[l + w];
@@ -662,7 +662,6 @@ namespace openCrypto.FiniteField
 				} else {
 					while (l-- > 0)
 						tmp[l] = data[l + w];
-
 				}
 				return tmp;
 			}
