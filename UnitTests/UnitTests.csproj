@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="BlockCipherModeTest.cs" />
     <Compile Include="CamelliaTest.cs" />
+    <Compile Include="CMACTest.cs" />
     <Compile Include="ConfluentWaitHandleTest.cs" />
     <Compile Include="CurveDomainValidation.cs" />
     <Compile Include="DummyAlgorithm.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="ParallelTest.cs" />
     <Compile Include="RecommendedCurveTest.cs" />
     <Compile Include="RijndaelTest.cs" />
+    <Compile Include="ShortKeyedHashAlgorithmTest.cs" />
     <Compile Include="SymmetricAlgorithmPlusTest.cs" />
     <Compile Include="SymmetricAlgorithmTestBase.cs" />
   </ItemGroup>

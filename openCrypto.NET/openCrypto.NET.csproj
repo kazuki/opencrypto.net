@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{59AD989B-7DD7-400B-B2D5-EFBD0004A749}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="CipherImplementationType.cs" />
     <Compile Include="CipherModePlus.cs" />
+    <Compile Include="CMAC.cs" />
     <Compile Include="ConfluentWaitHandle.cs" />
     <Compile Include="EllipticCurve\ECDomainNames.cs" />
     <Compile Include="EllipticCurve\ECDomains.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="FiniteField\SECP224r1.cs" />
     <Compile Include="FiniteField\SECP384r1.cs" />
     <Compile Include="FiniteField\SECP521r1.cs" />
+    <Compile Include="ShortKeyedHashAlgorithm.cs" />
     <Compile Include="KeyDerivationFunctions\ANSI_X963_KDF.cs" />
     <Compile Include="KeyDerivationFunctions\KeyDerivationFunction.cs" />
     <Compile Include="Rijndael\Rijndael.cs" />
