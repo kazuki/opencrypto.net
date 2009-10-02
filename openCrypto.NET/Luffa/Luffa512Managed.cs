@@ -29,7 +29,7 @@ namespace openCrypto
 		{
 		}
 
-		protected override unsafe void HashCore (uint* v, uint* m)
+		protected override unsafe void HashCore (uint* v, uint* m, uint* c)
 		{
 			uint* t = stackalloc uint[8];
 			for (int i = 0; i < 8; i++)
@@ -104,13 +104,11 @@ namespace openCrypto
 			for (int i = 0; i < 8; i++)
 				v[i + 32] ^= m[i];
 
-			fixed (uint* c = InitialValues) {
-				Permute (v, 0, c);
-				Permute (v + 8, 1, c + 16);
-				Permute (v + 16, 2, c + 32);
-				Permute (v + 24, 3, c + 48);
-				Permute (v + 32, 4, c + 64);
-			}
+			Permute (v, c);
+			Permute (v + 8, 1, c + 16);
+			Permute (v + 16, 2, c + 32);
+			Permute (v + 24, 3, c + 48);
+			Permute (v + 32, 4, c + 64);
 		}
 	}
 }

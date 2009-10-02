@@ -72,7 +72,7 @@ namespace openCrypto
 				Initialize ();
 
 			uint* m = stackalloc uint[8];
-			fixed (uint* v = _v)
+			fixed (uint* v = _v, c = InitialValues)
 			fixed (byte* pary = array, pbuf = _buf) {
 				byte* p = pary + ibStart;
 				if (_filled > 0) {
@@ -85,12 +85,12 @@ namespace openCrypto
 					if (_filled == _buf.Length) {
 						_filled = 0;
 						Copy (m, pbuf);
-						HashCore (v, m);
+						HashCore (v, m, c);
 					}
 				}
 				while (cbSize >= _buf.Length) {
 					Copy (m, p);
-					HashCore (v, m);
+					HashCore (v, m, c);
 					p += _buf.Length;
 					cbSize -= _buf.Length;
 				}
@@ -106,21 +106,21 @@ namespace openCrypto
 		{
 			uint* m = stackalloc uint[8];
 			uint* t = stackalloc uint[8];
-			fixed (uint* v = _v)
+			fixed (uint* v = _v, c = InitialValues)
 			fixed (byte* p = _buf) {
 				// Padding
 				p[_filled] = 0x80;
 				for (int i = _filled + 1; i < _buf.Length; i++)
 					p[i] = 0;
 				Copy (m, p);
-				HashCore (v, m);
+				HashCore (v, m, c);
 
 				// blank block
 				m[0] = m[1] = m[2] = m[3] = m[4] = m[5] = m[6] = m[7] = 0;
 
 				// finalization
 				byte[] r = new byte[_hashLen / 8];
-				HashCore (v, m);
+				HashCore (v, m, c);
 				t[0] = v[0] ^ v[8] ^ v[16] ^ v[24] ^ v[32];
 				t[1] = v[1] ^ v[9] ^ v[17] ^ v[25] ^ v[33];
 				t[2] = v[2] ^ v[10] ^ v[18] ^ v[26] ^ v[34];
@@ -143,7 +143,7 @@ namespace openCrypto
 				if (_hashLen == 256)
 					return r;
 
-				HashCore (v, m);
+				HashCore (v, m, c);
 				t[0] = v[0] ^ v[8] ^ v[16] ^ v[24] ^ v[32];
 				t[1] = v[1] ^ v[9] ^ v[17] ^ v[25] ^ v[33];
 				t[2] = v[2] ^ v[10] ^ v[18] ^ v[26] ^ v[34];
@@ -167,7 +167,7 @@ namespace openCrypto
 			}
 		}
 
-		protected abstract unsafe void HashCore (uint* v, uint* m);
+		protected abstract unsafe void HashCore (uint* v, uint* m, uint* c);
 
 		protected static unsafe void Double (uint* x)
 		{
@@ -182,20 +182,32 @@ namespace openCrypto
 			x[0] = tmp;
 		}
 
-		protected static unsafe void Tweaks (uint* x, int j)
+		protected static unsafe void Permute (uint* v, uint* c)
 		{
-			x[0] = (x[0] << j) | (x[0] >> (32 - j));
-			x[1] = (x[1] << j) | (x[1] >> (32 - j));
-			x[2] = (x[2] << j) | (x[2] >> (32 - j));
-			x[3] = (x[3] << j) | (x[3] >> (32 - j));
+			Step (v, c[0], c[1]);
+			Step (v, c[2], c[3]);
+			Step (v, c[4], c[5]);
+			Step (v, c[6], c[7]);
+			Step (v, c[8], c[9]);
+			Step (v, c[10], c[11]);
+			Step (v, c[12], c[13]);
+			Step (v, c[14], c[15]);
 		}
 
 		protected static unsafe void Permute (uint* v, int j, uint* c)
 		{
-			if (j > 0)
-				Tweaks (v + 4, j);
-			for (int r = 0; r < 8; r ++)
-				Step (v, c[r * 2], c[r * 2 + 1]);
+			v[4] = (v[4] << j) | (v[4] >> (32 - j));
+			v[5] = (v[5] << j) | (v[5] >> (32 - j));
+			v[6] = (v[6] << j) | (v[6] >> (32 - j));
+			v[7] = (v[7] << j) | (v[7] >> (32 - j));
+			Step (v, c[0], c[1]);
+			Step (v, c[2], c[3]);
+			Step (v, c[4], c[5]);
+			Step (v, c[6], c[7]);
+			Step (v, c[8], c[9]);
+			Step (v, c[10], c[11]);
+			Step (v, c[12], c[13]);
+			Step (v, c[14], c[15]);
 		}
 
 		protected static unsafe void Step (uint* v, uint c0, uint c1)
@@ -216,21 +228,24 @@ namespace openCrypto
 			tmp  ^= v[6]; v[4] ^= v[7]; v[7] &= v[6];
 			v[6] ^= v[5]; v[5]  = tmp;
 
-			// MixWord
-			for (int k = 0; k < 4; k ++) {
-				v[k + 4] ^= v[k];
-				v[k] = (v[k] << 2) | (v[k] >> 30);
-				v[k] ^= v[k + 4];
-				v[k + 4] = (v[k + 4] << 14) | (v[k + 4] >> 18);
-				v[k + 4] ^= v[k];
-				v[k] = (v[k] << 10) | (v[k] >> 22);
-				v[k] ^= v[k + 4];
-				v[k + 4] = (v[k + 4] << 1) | (v[k + 4] >> 31);
-			}
-
-			// AddConstant
-			v[0] ^= c0;
-			v[4] ^= c1;
+			// MixWord & Add Constant
+			v[4] ^= v[0]; v[5] ^= v[1]; v[6] ^= v[2]; v[7] ^= v[3];
+			v[0] = ((v[0] << 2) | (v[0] >> 30)) ^ v[4];
+			v[1] = ((v[1] << 2) | (v[1] >> 30)) ^ v[5];
+			v[2] = ((v[2] << 2) | (v[2] >> 30)) ^ v[6];
+			v[3] = ((v[3] << 2) | (v[3] >> 30)) ^ v[7];
+			v[4] = ((v[4] << 14) | (v[4] >> 18)) ^ v[0];
+			v[5] = ((v[5] << 14) | (v[5] >> 18)) ^ v[1];
+			v[6] = ((v[6] << 14) | (v[6] >> 18)) ^ v[2];
+			v[7] = ((v[7] << 14) | (v[7] >> 18)) ^ v[3];
+			v[0] = ((v[0] << 10) | (v[0] >> 22)) ^ v[4] ^ c0; // Add Constant (c0)
+			v[1] = ((v[1] << 10) | (v[1] >> 22)) ^ v[5];
+			v[2] = ((v[2] << 10) | (v[2] >> 22)) ^ v[6];
+			v[3] = ((v[3] << 10) | (v[3] >> 22)) ^ v[7];
+			v[4] = ((v[4] << 1) | (v[4] >> 31)) ^ c1;         // Add Constant (c1)
+			v[5] = (v[5] << 1) | (v[5] >> 31);
+			v[6] = (v[6] << 1) | (v[6] >> 31);
+			v[7] = (v[7] << 1) | (v[7] >> 31);
 		}
 
 		#region Misc

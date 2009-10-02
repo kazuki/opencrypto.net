@@ -35,25 +35,49 @@ namespace openCrypto
 				throw new System.ArgumentOutOfRangeException ();
 		}
 
-		protected override unsafe void HashCore (uint* v, uint* m)
+		protected override unsafe void HashCore (uint* v, uint* m, uint* c)
 		{
 			uint* t = stackalloc uint[8];
-			for (int i = 0; i < 8; i++)
-				t[i] = v[i] ^ v[8 + i] ^ v[16 + i];
-			Double (t);
-			for (int i = 0; i < 8; i++)
-				v[i] ^= t[i] ^ m[i];
-			Double (m);
-			for (int i = 0; i < 8; i++)
-				v[i + 8] ^= t[i] ^ m[i];
-			Double (m);
-			for (int i = 0; i < 8; i++)
-				v[i + 16] ^= t[i] ^ m[i];
-			fixed (uint* c = InitialValues) {
-				Permute (v, 0, c);
-				Permute (v + 8, 1, c + 16);
-				Permute (v + 16, 2, c + 32);
-			}
+			uint tmp;
+			t[0] = v[0] ^ v[8] ^ v[16];
+			t[1] = v[1] ^ v[9] ^ v[17];
+			t[2] = v[2] ^ v[10] ^ v[18];
+			t[3] = v[3] ^ v[11] ^ v[19];
+			t[4] = v[4] ^ v[12] ^ v[20];
+			t[5] = v[5] ^ v[13] ^ v[21];
+			t[6] = v[6] ^ v[14] ^ v[22];
+			t[7] = v[7] ^ v[15] ^ v[23];
+
+			tmp = t[7]; t[7] = t[6]; t[6] = t[5]; t[5] = t[4];
+			t[4] = t[3] ^ tmp; t[3] = t[2] ^ tmp; t[2] = t[1];
+			t[1] = t[0] ^ tmp; t[0] = tmp;
+
+			v[0] ^= t[0] ^ m[0]; v[1] ^= t[1] ^ m[1];
+			v[2] ^= t[2] ^ m[2]; v[3] ^= t[3] ^ m[3];
+			v[4] ^= t[4] ^ m[4]; v[5] ^= t[5] ^ m[5];
+			v[6] ^= t[6] ^ m[6]; v[7] ^= t[7] ^ m[7];
+
+			tmp = m[7]; m[7] = m[6]; m[6] = m[5]; m[5] = m[4];
+			m[4] = m[3] ^ tmp; m[3] = m[2] ^ tmp; m[2] = m[1];
+			m[1] = m[0] ^ tmp; m[0] = tmp;
+
+			v[8] ^= t[0] ^ m[0];  v[9] ^= t[1] ^ m[1];
+			v[10] ^= t[2] ^ m[2]; v[11] ^= t[3] ^ m[3];
+			v[12] ^= t[4] ^ m[4]; v[13] ^= t[5] ^ m[5];
+			v[14] ^= t[6] ^ m[6]; v[15] ^= t[7] ^ m[7];
+
+			tmp = m[7]; m[7] = m[6]; m[6] = m[5]; m[5] = m[4];
+			m[4] = m[3] ^ tmp; m[3] = m[2] ^ tmp; m[2] = m[1];
+			m[1] = m[0] ^ tmp; m[0] = tmp;
+
+			v[16] ^= t[0] ^ m[0]; v[17] ^= t[1] ^ m[1];
+			v[18] ^= t[2] ^ m[2]; v[19] ^= t[3] ^ m[3];
+			v[20] ^= t[4] ^ m[4]; v[21] ^= t[5] ^ m[5];
+			v[22] ^= t[6] ^ m[6]; v[23] ^= t[7] ^ m[7];
+
+			Permute (v, c);
+			Permute (v + 8, 1, c + 16);
+			Permute (v + 16, 2, c + 32);
 		}
 	}
 }
