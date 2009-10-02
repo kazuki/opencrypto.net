@@ -76,6 +76,11 @@
     <Compile Include="FiniteField\SECP224r1.cs" />
     <Compile Include="FiniteField\SECP384r1.cs" />
     <Compile Include="FiniteField\SECP521r1.cs" />
+    <Compile Include="Luffa\Luffa224Managed.cs" />
+    <Compile Include="Luffa\Luffa256Managed.cs" />
+    <Compile Include="Luffa\Luffa384Managed.cs" />
+    <Compile Include="Luffa\Luffa512Managed.cs" />
+    <Compile Include="Luffa\LuffaManaged.cs" />
     <Compile Include="ShortKeyedHashAlgorithm.cs" />
     <Compile Include="KeyDerivationFunctions\ANSI_X963_KDF.cs" />
     <Compile Include="KeyDerivationFunctions\KeyDerivationFunction.cs" />

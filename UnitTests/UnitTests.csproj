@@ -51,6 +51,7 @@
     <Compile Include="ECMQVTest.cs" />
     <Compile Include="ECPointTest.cs" />
     <Compile Include="FiniteFieldTest.cs" />
+    <Compile Include="LuffaTest.cs" />
     <Compile Include="NumberTest.cs" />
     <Compile Include="PaddingModeTest.cs" />
     <Compile Include="ParallelTest.cs" />
