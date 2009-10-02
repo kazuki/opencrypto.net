@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2006-2008 Kazuki Oikawa
+// Copyright (c) 2006-2009 Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -152,6 +152,34 @@ namespace openCrypto.Executable
 				ECDomainNames domain = (ECDomainNames)i;
 				double ret = Run (new ECMQV (domain));
 				Console.WriteLine ("{0}: {1}ms", domain, ret);
+			}
+
+			Console.WriteLine ();
+			HashAlgorithm[] hashList = new HashAlgorithm[] {
+				new SHA1Managed (), new SHA256Managed (), new SHA384Managed (), new SHA512Managed (),
+				new Luffa224Managed (), new Luffa256Managed (), new Luffa384Managed (), new Luffa512Managed (),
+				new CMAC (new RijndaelManaged ()), new CMAC (new CamelliaManaged ())
+			};
+			string[] luffaNames = new string[] {
+				"    SHA1", "  SHA256", "  SHA384", "  SHA512",
+				"Luffa224", "Luffa256", "Luffa384", "Luffa512",
+				"CMAC-AES", "CMAC-CAM"
+			};
+			int[] testSizes = new int[] {0, 32, 1024, 1024 * 1024, 1024 * 1024 * 64};
+			Console.WriteLine ("    Size |     0B     |     32B    |     1KB    |     1MB    |    64MB    |");
+			Console.WriteLine ("---------------------------------------------------------------------------");
+			for (int i = 0; i < hashList.Length; i++) {
+				double[] results = new double[testSizes.Length];
+				for (int k = 0; k < results.Length; k ++)
+					results[k] = SpeedTest.Run (hashList[i], testSizes[k]);
+				Console.Write ("{0} | ", luffaNames[i]);
+				for (int k = 0; k < results.Length; k ++)
+					Console.Write ("{0}ms | ", (results[k] / 1000.0).ToString ("0.00e00"));
+				Console.WriteLine ();
+				Console.Write ("         | ");
+				for (int k = 0; k < results.Length; k++)
+					Console.Write ("{0}Mbps | ", (testSizes[k] / results[k] * 8.0 / 1024.0 / 1024.0).ToString ("f5").Substring (0, 6));
+				Console.WriteLine ();
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2006-2008 Kazuki Oikawa
+// Copyright (c) 2006-2009 Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -159,6 +159,22 @@ namespace openCrypto.Executable
 				result[1] = sw.Elapsed.TotalSeconds;
 			}
 			return result;
+		}
+
+		public static double Run (HashAlgorithm hash, int bytes)
+		{
+			byte[] data = RNG.GetRNGBytes (bytes);
+			Stopwatch sw = new Stopwatch ();
+			double ts = 0.0;
+			const int tests = 3;
+			for (int i = 0; i < tests; i ++) {
+				sw.Start ();
+				hash.ComputeHash (data);
+				sw.Stop ();
+				ts += sw.Elapsed.TotalSeconds;
+				sw.Reset ();
+			}
+			return ts / tests;
 		}
 	}
 }
