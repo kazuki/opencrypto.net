@@ -104,7 +104,7 @@ namespace openCrypto
 			for (int i = 0; i < 8; i++)
 				v[i + 32] ^= m[i];
 
-			Permute (v, c);
+			Permute (v, 0, c);
 			Permute (v + 8, 1, c + 16);
 			Permute (v + 16, 2, c + 32);
 			Permute (v + 24, 3, c + 48);

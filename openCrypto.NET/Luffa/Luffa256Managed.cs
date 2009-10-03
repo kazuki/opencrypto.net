@@ -45,35 +45,37 @@ namespace openCrypto
 			uint t5 = v[5] ^ v[13] ^ v[21];
 			uint t6 = v[6] ^ v[14] ^ v[22];
 			uint t7 = v[7] ^ v[15] ^ v[23];
+			uint m0 = m[0], m1 = m[1], m2 = m[2], m3 = m[3];
+			uint m4 = m[4], m5 = m[5], m6 = m[6], m7 = m[7];
 
 			uint tmp = t7; t7 = t6; t6 = t5; t5 = t4;
 			t4 = t3 ^ tmp; t3 = t2 ^ tmp; t2 = t1;
 			t1 = t0 ^ tmp; t0 = tmp;
 
-			v[0] ^= t0 ^ m[0]; v[1] ^= t1 ^ m[1];
-			v[2] ^= t2 ^ m[2]; v[3] ^= t3 ^ m[3];
-			v[4] ^= t4 ^ m[4]; v[5] ^= t5 ^ m[5];
-			v[6] ^= t6 ^ m[6]; v[7] ^= t7 ^ m[7];
+			v[0] ^= t0 ^ m0; v[1] ^= t1 ^ m1;
+			v[2] ^= t2 ^ m2; v[3] ^= t3 ^ m3;
+			v[4] ^= t4 ^ m4; v[5] ^= t5 ^ m5;
+			v[6] ^= t6 ^ m6; v[7] ^= t7 ^ m7;
 
-			tmp = m[7]; m[7] = m[6]; m[6] = m[5]; m[5] = m[4];
-			m[4] = m[3] ^ tmp; m[3] = m[2] ^ tmp; m[2] = m[1];
-			m[1] = m[0] ^ tmp; m[0] = tmp;
+			tmp = m7; m7 = m6; m6 = m5; m5 = m4;
+			m4 = m3 ^ tmp; m3 = m2 ^ tmp; m2 = m1;
+			m1 = m0 ^ tmp; m0 = tmp;
 
-			v[8] ^= t0 ^ m[0];  v[9] ^= t1 ^ m[1];
-			v[10] ^= t2 ^ m[2]; v[11] ^= t3 ^ m[3];
-			v[12] ^= t4 ^ m[4]; v[13] ^= t5 ^ m[5];
-			v[14] ^= t6 ^ m[6]; v[15] ^= t7 ^ m[7];
+			v[8] ^= t0 ^ m0;  v[9] ^= t1 ^ m1;
+			v[10] ^= t2 ^ m2; v[11] ^= t3 ^ m3;
+			v[12] ^= t4 ^ m4; v[13] ^= t5 ^ m5;
+			v[14] ^= t6 ^ m6; v[15] ^= t7 ^ m7;
 
-			tmp = m[7]; m[7] = m[6]; m[6] = m[5]; m[5] = m[4];
-			m[4] = m[3] ^ tmp; m[3] = m[2] ^ tmp; m[2] = m[1];
-			m[1] = m[0] ^ tmp; m[0] = tmp;
+			tmp = m7; m7 = m6; m6 = m5; m5 = m4;
+			m4 = m3 ^ tmp; m3 = m2 ^ tmp; m2 = m1;
+			m1 = m0 ^ tmp; m0 = tmp;
 
-			v[16] ^= t0 ^ m[0]; v[17] ^= t1 ^ m[1];
-			v[18] ^= t2 ^ m[2]; v[19] ^= t3 ^ m[3];
-			v[20] ^= t4 ^ m[4]; v[21] ^= t5 ^ m[5];
-			v[22] ^= t6 ^ m[6]; v[23] ^= t7 ^ m[7];
+			v[16] ^= t0 ^ m0; v[17] ^= t1 ^ m1;
+			v[18] ^= t2 ^ m2; v[19] ^= t3 ^ m3;
+			v[20] ^= t4 ^ m4; v[21] ^= t5 ^ m5;
+			v[22] ^= t6 ^ m6; v[23] ^= t7 ^ m7;
 
-			Permute (v, c);
+			Permute (v, 0, c);
 			Permute (v + 8, 1, c + 16);
 			Permute (v + 16, 2, c + 32);
 		}
