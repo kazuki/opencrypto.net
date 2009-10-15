@@ -26,24 +26,21 @@ using System.Security.Cryptography;
 
 namespace openCrypto
 {
-	/// <summary>
-	/// <ja>内部的に利用される補助メソッド群</ja>
-	/// </summary>
+	/// <remarks>全てのメンバはスレッドセーフです</remarks>
 	public static class RNG
 	{
 		static RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider ();
 
-		public static RNGCryptoServiceProvider Instance {
-			get { return _rng; }
+		public static void GetBytes (byte[] data)
+		{
+			_rng.GetBytes (data);
 		}
 
-//#if TEST
-		public static byte[] GetRNGBytes (int size)
+		public static byte[] GetBytes (int size)
 		{
 			byte[] buf = new byte [size];
 			_rng.GetBytes (buf);
 			return buf;
 		}
-//#endif
 	}
 }

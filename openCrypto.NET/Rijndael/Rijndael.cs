@@ -42,14 +42,12 @@ namespace openCrypto
 
 		public override void GenerateIV ()
 		{
-			base.IVValue = new byte [base.BlockSizeValue >> 3];
-			RNG.Instance.GetBytes (base.IVValue);
+			base.IVValue = RNG.GetBytes (base.BlockSizeValue >> 3);
 		}
 
 		public override void GenerateKey ()
 		{
-			base.KeyValue = new byte [base.KeySizeValue >> 3];
-			RNG.Instance.GetBytes (base.KeyValue);
+			base.KeyValue = RNG.GetBytes (base.KeySizeValue >> 3);
 		}
 
 		public override bool SupportsBlockModeParallelization {

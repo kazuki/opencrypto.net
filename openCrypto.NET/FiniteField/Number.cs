@@ -776,7 +776,7 @@ namespace openCrypto.FiniteField
 			int bits = max.BitCount ();
 			byte[] raw = new byte [bits >> 3];
 			while (true) {
-				RNG.Instance.GetBytes (raw);
+				RNG.GetBytes (raw);
 				Number ret = new Number (raw, true);
 				if (max.CompareTo (ret) > 0)
 					return ret;
