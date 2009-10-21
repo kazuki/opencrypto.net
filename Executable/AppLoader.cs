@@ -160,7 +160,7 @@ namespace openCrypto.Executable
 				new Luffa224Managed (), new Luffa256Managed (), new Luffa384Managed (), new Luffa512Managed (),
 				new CMAC (new RijndaelManaged ()), new CMAC (new CamelliaManaged ())
 			};
-			string[] luffaNames = new string[] {
+			string[] hashNames = new string[] {
 				"    SHA1", "  SHA256", "  SHA384", "  SHA512",
 				"Luffa224", "Luffa256", "Luffa384", "Luffa512",
 				"CMAC-AES", "CMAC-CAM"
@@ -169,16 +169,16 @@ namespace openCrypto.Executable
 			Console.WriteLine ("    Size |     0B     |     32B    |     1KB    |     1MB    |    64MB    |");
 			Console.WriteLine ("---------------------------------------------------------------------------");
 			for (int i = 0; i < hashList.Length; i++) {
-				double[] results = new double[testSizes.Length];
+				TimeSpan[] results = new TimeSpan[testSizes.Length];
 				for (int k = 0; k < results.Length; k ++)
 					results[k] = SpeedTest.Run (hashList[i], testSizes[k]);
-				Console.Write ("{0} | ", luffaNames[i]);
+				Console.Write ("{0} | ", hashNames[i]);
 				for (int k = 0; k < results.Length; k ++)
-					Console.Write ("{0}ms | ", (results[k] / 1000.0).ToString ("0.00e00"));
+					Console.Write ("{0}t | ", results[k].Ticks.ToString ().PadLeft (9));
 				Console.WriteLine ();
 				Console.Write ("         | ");
 				for (int k = 0; k < results.Length; k++)
-					Console.Write ("{0}Mbps | ", (testSizes[k] / results[k] * 8.0 / 1024.0 / 1024.0).ToString ("f5").Substring (0, 6));
+					Console.Write ("{0}Mbps | ", (testSizes[k] / results[k].TotalSeconds * 8.0 / 1024.0 / 1024.0).ToString ("f5").Substring (0, 6));
 				Console.WriteLine ();
 			}
 		}

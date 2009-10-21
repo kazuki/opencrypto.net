@@ -161,20 +161,20 @@ namespace openCrypto.Executable
 			return result;
 		}
 
-		public static double Run (HashAlgorithm hash, int bytes)
+		public static TimeSpan Run (HashAlgorithm hash, int bytes)
 		{
-			byte[] data = RNG.GetRNGBytes (bytes);
+			byte[] data = RNG.GetBytes (bytes);
 			Stopwatch sw = new Stopwatch ();
-			double ts = 0.0;
+			long ts = long.MaxValue;
 			const int tests = 3;
 			for (int i = 0; i < tests; i ++) {
 				sw.Start ();
 				hash.ComputeHash (data);
 				sw.Stop ();
-				ts += sw.Elapsed.TotalSeconds;
+				ts = Math.Min (ts, sw.Elapsed.Ticks);
 				sw.Reset ();
 			}
-			return ts / tests;
+			return TimeSpan.FromTicks (ts);
 		}
 	}
 }
