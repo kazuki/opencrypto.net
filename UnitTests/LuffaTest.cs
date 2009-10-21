@@ -59,7 +59,7 @@ namespace openCrypto.Tests
 		public void BlockTest ()
 		{
 			Luffa256Managed luffa = new Luffa256Managed ();
-			byte[] msg = RNG.GetRNGBytes (128);
+			byte[] msg = RNG.GetBytes (128);
 			byte[] expected = luffa.ComputeHash (msg);
 
 			luffa.Initialize ();

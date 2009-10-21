@@ -55,7 +55,7 @@ namespace openCrypto.Tests
 				ECMQV ecmqv2 = new ECMQV (name);
 				int keyDataLen = 20;
 
-				byte[] sharedInfo = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
+				byte[] sharedInfo = RNG.GetBytes (RNG.GetBytes (1)[0] + 1);
 				ecmqv1.SharedInfo = sharedInfo;
 				ecmqv2.SharedInfo = sharedInfo;
 

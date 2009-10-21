@@ -44,7 +44,7 @@ namespace openCrypto.Tests
 			byte[] ary9 = new byte[32];
 			byte[] tmp = new byte[16];
 
-			RNG.Instance.GetBytes (ary9);
+			RNG.GetBytes (ary9);
 			ary1.CopyTo (ary9, 5);
 
 			Number v;
@@ -96,7 +96,7 @@ namespace openCrypto.Tests
 			byte[] ary9 = new byte[32];
 			byte[] tmp = new byte[16];
 
-			RNG.Instance.GetBytes (ary9);
+			RNG.GetBytes (ary9);
 			ary1.CopyTo (ary9, 5);
 
 			Number v;
@@ -137,7 +137,7 @@ namespace openCrypto.Tests
 		[Test]
 		public void ConstructorTest3 ()
 		{
-			byte[] data1 = RNG.GetRNGBytes (7);
+			byte[] data1 = RNG.GetBytes (7);
 			byte[] data2 = new byte[10];
 			data1[0] = 0;
 			data1[data1.Length - 1] = 0;
@@ -150,7 +150,7 @@ namespace openCrypto.Tests
 		[Test]
 		public void ShiftTest ()
 		{
-			Number x = new Number (RNG.GetRNGBytes (8), false);
+			Number x = new Number (RNG.GetBytes (8), false);
 			string s = x.ToString (2);
 			for (int i = 0; i < s.Length - 1; i ++)
 				Assert.AreEqual (s.Substring (0, s.Length - i), (x >> i).ToString (2), ">> " + i.ToString ());
@@ -160,7 +160,7 @@ namespace openCrypto.Tests
 			for (int i = 0; i < s.Length - 1; i++)
 				Assert.AreEqual (s + new string ('0', i), (x << i).ToString (2), "<< " + i.ToString ());
 
-			x = new Number (RNG.GetRNGBytes (8), false);
+			x = new Number (RNG.GetBytes (8), false);
 			s = x.ToString (2);
 			for (int i = 0; i < s.Length - 1; i++)
 				Assert.AreEqual (s + new string ('0', i), (x << i).ToString (2), "<< " + i.ToString ());

@@ -46,7 +46,7 @@ namespace openCrypto.Tests
 				key2 = ecdh2.PerformKeyAgreement (ecdh1.Parameters.PublicKey, 128);
 				Assert.AreEqual (key1, key2, "#2");
 
-				byte[] shareInfo = RNG.GetRNGBytes (16);
+				byte[] shareInfo = RNG.GetBytes (16);
 				ecdh1.SharedInfo = shareInfo;
 				ecdh2.SharedInfo = shareInfo;
 				key1 = ecdh1.PerformKeyAgreement (ecdh2.Parameters.PublicKey, 256);
@@ -65,7 +65,7 @@ namespace openCrypto.Tests
 			for (int i = 0; i < 10; i++) {
 				ECDiffieHellman ecdh1 = new ECDiffieHellman (ECDomainNames.secp256r1);
 				ECDiffieHellman ecdh2 = new ECDiffieHellman (ECDomainNames.secp256r1);
-				byte[] sharedInfo = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
+				byte[] sharedInfo = RNG.GetBytes (RNG.GetBytes (1)[0] + 1);
 
 				ecdh1.SharedInfo = sharedInfo;
 				ecdh2.SharedInfo = sharedInfo;
@@ -78,7 +78,7 @@ namespace openCrypto.Tests
 				key2 = ecdh2.PerformKeyAgreement (ecdh1.Parameters.PublicKey, 128);
 				Assert.AreEqual (key1, key2, "#2");
 
-				byte[] shareInfo = RNG.GetRNGBytes (16);
+				byte[] shareInfo = RNG.GetBytes (16);
 				ecdh1.SharedInfo = shareInfo;
 				ecdh2.SharedInfo = shareInfo;
 				key1 = ecdh1.PerformKeyAgreement (ecdh2.Parameters.PublicKey, 256);

@@ -51,9 +51,9 @@ namespace openCrypto.Tests
 			byte[] iv = new byte[algo.IV.Length];
 			byte[] key = new byte[algo.Key.Length];
 
-			RNG.Instance.GetBytes (data1);
-			RNG.Instance.GetBytes (key);
-			RNG.Instance.GetBytes (iv);
+			RNG.GetBytes (data1);
+			RNG.GetBytes (key);
+			RNG.GetBytes (iv);
 			algo.ModePlus = mode;
 
 			algo.NumberOfThreads = 4;

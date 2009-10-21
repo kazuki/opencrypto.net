@@ -61,7 +61,7 @@ namespace openCrypto.Tests
 			for (int i = 0; i < 10; i ++) {
 				ECIES ecies1 = new ECIES (domainName);
 				ECIES ecies2 = new ECIES (domainName);
-				byte[] plainText = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + RNG.GetRNGBytes (1)[0]);
+				byte[] plainText = RNG.GetBytes (RNG.GetBytes (1)[0] + RNG.GetBytes (1)[0]);
 
 				// ecies2 exports public key.
 				byte[] publicKey = ecies2.Parameters.ExportPublicKey (true);
@@ -87,8 +87,8 @@ namespace openCrypto.Tests
 			for (int i = 0; i < 5; i++) {
 				ECIES ecies1 = new ECIES (domainName);
 				ECIES ecies2 = new ECIES (domainName);
-				byte[] sharedInfo = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
-				byte[] plainText = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + RNG.GetRNGBytes (1)[0] + 1);
+				byte[] sharedInfo = RNG.GetBytes (RNG.GetBytes (1)[0] + 1);
+				byte[] plainText = RNG.GetBytes (RNG.GetBytes (1)[0] + RNG.GetBytes (1)[0] + 1);
 
 				// setup shared info 1
 				ecies1.SharedInfo1 = sharedInfo;
@@ -118,8 +118,8 @@ namespace openCrypto.Tests
 			for (int i = 0; i < 5; i++) {
 				ECIES ecies1 = new ECIES (domainName);
 				ECIES ecies2 = new ECIES (domainName);
-				byte[] sharedInfo = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
-				byte[] plainText = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + RNG.GetRNGBytes (1)[0] + 1);
+				byte[] sharedInfo = RNG.GetBytes (RNG.GetBytes (1)[0] + 1);
+				byte[] plainText = RNG.GetBytes (RNG.GetBytes (1)[0] + RNG.GetBytes (1)[0] + 1);
 
 				// setup shared info 1
 				ecies1.SharedInfo2 = sharedInfo;
@@ -149,9 +149,9 @@ namespace openCrypto.Tests
 			for (int i = 0; i < 5; i++) {
 				ECIES ecies1 = new ECIES (domainName);
 				ECIES ecies2 = new ECIES (domainName);
-				byte[] sharedInfo1 = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
-				byte[] sharedInfo2 = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + 1);
-				byte[] plainText = RNG.GetRNGBytes (RNG.GetRNGBytes (1)[0] + RNG.GetRNGBytes (1)[0] + 1);
+				byte[] sharedInfo1 = RNG.GetBytes (RNG.GetBytes (1)[0] + 1);
+				byte[] sharedInfo2 = RNG.GetBytes (RNG.GetBytes (1)[0] + 1);
+				byte[] plainText = RNG.GetBytes (RNG.GetBytes (1)[0] + RNG.GetBytes (1)[0] + 1);
 
 				// setup shared info 1
 				ecies1.SharedInfo1 = sharedInfo1;
@@ -181,7 +181,7 @@ namespace openCrypto.Tests
 		{
 			using (SymmetricAlgorithmPlus algo = new CamelliaManaged ()) {
 				// Generate test data
-				byte[] plain = RNG.GetRNGBytes (16 * 8);
+				byte[] plain = RNG.GetBytes (16 * 8);
 				byte[] cipher, decrypted;
 				ECIES ecies;
 
@@ -210,7 +210,7 @@ namespace openCrypto.Tests
 				Assert.AreEqual (plain, decrypted, "#3");
 
 				// Test.4 128bit CBC Encryption with PKCS7 Padding
-				plain = RNG.GetRNGBytes (16 * 8 + 3);
+				plain = RNG.GetBytes (16 * 8 + 3);
 				algo.Padding = System.Security.Cryptography.PaddingMode.PKCS7;
 				ecies = new ECIES (ECDomainNames.secp192r1, algo);
 				cipher = ecies.Encrypt (plain);
@@ -218,7 +218,7 @@ namespace openCrypto.Tests
 				Assert.AreEqual (plain, decrypted, "#4");
 
 				// Test.5 128bit CBC Encryption with ANSIX923 Padding
-				plain = RNG.GetRNGBytes (16 * 8 + 7);
+				plain = RNG.GetBytes (16 * 8 + 7);
 				algo.Padding = System.Security.Cryptography.PaddingMode.ANSIX923;
 				ecies = new ECIES (ECDomainNames.secp192r1, algo);
 				cipher = ecies.Encrypt (plain);
@@ -226,7 +226,7 @@ namespace openCrypto.Tests
 				Assert.AreEqual (plain, decrypted, "#5");
 
 				// Test.6 128bit CBC Encryption with ISO10126 Padding
-				plain = RNG.GetRNGBytes (16 * 8 + 9);
+				plain = RNG.GetBytes (16 * 8 + 9);
 				algo.Padding = System.Security.Cryptography.PaddingMode.ISO10126;
 				ecies = new ECIES (ECDomainNames.secp192r1, algo);
 				cipher = ecies.Encrypt (plain);
@@ -234,7 +234,7 @@ namespace openCrypto.Tests
 				Assert.AreEqual (plain, decrypted, "#6");
 
 				// Test.7 128bit CBC Encryption with Zeros Padding
-				plain = RNG.GetRNGBytes (16 * 8 + 11);
+				plain = RNG.GetBytes (16 * 8 + 11);
 				algo.Padding = System.Security.Cryptography.PaddingMode.Zeros;
 				ecies = new ECIES (ECDomainNames.secp192r1, algo);
 				cipher = ecies.Encrypt (plain);

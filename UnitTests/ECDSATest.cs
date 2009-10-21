@@ -34,7 +34,7 @@ namespace openCrypto.Tests
 		public void PublicKeyTest ()
 		{
 			ECDSA ecdsa = new ECDSA (ECDomainNames.secp192r1);
-			byte[] hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
+			byte[] hash = RNG.GetBytes (ecdsa.KeySize >> 3);
 			byte[] sign = ecdsa.SignHash (hash);
 			byte[] publicKey = ecdsa.Parameters.PublicKey;
 
@@ -50,7 +50,7 @@ namespace openCrypto.Tests
 		public void PrivateKeyTest ()
 		{
 			ECDSA ecdsa = new ECDSA (ECDomainNames.secp192r1);
-			byte[] hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
+			byte[] hash = RNG.GetBytes (ecdsa.KeySize >> 3);
 			byte[] sign = ecdsa.SignHash (hash);
 			byte[] publicKey = ecdsa.Parameters.PublicKey;
 			byte[] privateKey = ecdsa.Parameters.PrivateKey;
@@ -64,7 +64,7 @@ namespace openCrypto.Tests
 
 			ecdsa = new ECDSA (ECDomainNames.secp192r1);
 			ecdsa.Parameters.PrivateKey = privateKey;
-			hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
+			hash = RNG.GetBytes (ecdsa.KeySize >> 3);
 			sign = ecdsa.SignHash (hash);
 
 			ecdsa = new ECDSA (ECDomainNames.secp192r1);
@@ -168,7 +168,7 @@ namespace openCrypto.Tests
 			for (int i = 0; i < repeat; i ++) {
 				ECDSA ecdsa = new ECDSA (domainName);
 				byte[] pubKey = ecdsa.Parameters.PublicKey;
-				byte[] hash = RNG.GetRNGBytes (ecdsa.KeySize >> 3);
+				byte[] hash = RNG.GetBytes (ecdsa.KeySize >> 3);
 				byte[] sign = ecdsa.SignHash (hash);
 				ecdsa = new ECDSA (domainName);
 				ecdsa.Parameters.PublicKey = pubKey;
