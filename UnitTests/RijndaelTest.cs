@@ -139,6 +139,12 @@ namespace openCrypto.Tests
 			Test_MultiBlock_2 (algo);
 		}
 
+		[Test]
+		public void Test_SameBuffer ()
+		{
+			base.Test_SameBuffer (new RijndaelManaged ());
+		}
+
 		class ECBTestReader : ECBTestHelper
 		{
 			StreamReader _reader;

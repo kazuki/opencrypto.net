@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2006, Kazuki Oikawa
+// Copyright (c) 2006-2009, Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -156,6 +156,37 @@ namespace openCrypto.Tests
 					break;
 				keySize += keySizes.SkipSize;
 			} while (keySize <= keySizes.MaxSize);
+		}
+
+		protected void Test_SameBuffer (SymmetricAlgorithmPlus algo)
+		{
+			byte[] key = RNG.GetBytes (algo.KeySize >> 3);
+			byte[] iv = RNG.GetBytes (algo.BlockSize >> 3);
+			algo.Padding = PaddingMode.None;
+
+			foreach (CipherModePlus mode in Enum.GetValues (typeof (CipherModePlus))) {
+				algo.ModePlus = mode;
+				if (mode == CipherModePlus.CTS)
+					continue;
+
+				byte[] buf1 = RNG.GetBytes ((algo.BlockSize >> 3) * 4);
+				byte[] buf2 = RNG.GetBytes ((algo.BlockSize >> 3) * 4);
+
+				using (ICryptoTransform ct = algo.CreateEncryptor (key, iv)) {
+					ct.TransformBlock (buf1, 0, buf1.Length, buf2, 0);
+				}
+				using (ICryptoTransform ct = algo.CreateEncryptor (key, iv)) {
+					ct.TransformBlock (buf1, 0, buf1.Length, buf1, 0);
+				}
+				Assert.AreEqual (buf2, buf1, string.Format ("Encrypt with {0} mode", mode));
+				using (ICryptoTransform ct = algo.CreateDecryptor (key, iv)) {
+					ct.TransformBlock (buf1, 0, buf1.Length, buf2, 0);
+				}
+				using (ICryptoTransform ct = algo.CreateDecryptor (key, iv)) {
+					ct.TransformBlock (buf1, 0, buf1.Length, buf1, 0);
+				}
+				Assert.AreEqual (buf2, buf1, string.Format ("Decrypt with {0} mode", mode));
+			}
 		}
 
 		protected abstract class ECBTestHelper
