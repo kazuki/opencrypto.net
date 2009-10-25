@@ -111,10 +111,11 @@ namespace openCrypto
 						}
 					} else {
 						for (int i = inputOffset, o = outputOffset; i < inputOffset + inputCount; i += InputBlockSize, o += OutputBlockSize) {
+							Buffer.BlockCopy (inputBuffer, i, _temp, 0, InputBlockSize);
 							DecryptECB (inputBuffer, i, outputBuffer, o);
 							for (int j = 0; j < InputBlockSize; j ++) {
 								outputBuffer[o + j] ^= _iv[j];
-								_iv[j] = inputBuffer[i + j];
+								_iv[j] = _temp[j];
 							}
 						}
 					}
