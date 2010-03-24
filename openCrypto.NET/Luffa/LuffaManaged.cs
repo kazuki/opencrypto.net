@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2009, Kazuki Oikawa
+// Copyright (c) 2009-2010, Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -71,7 +71,6 @@ namespace openCrypto
 			if (_v == null)
 				Initialize ();
 
-			uint* m = stackalloc uint[8];
 			fixed (uint* v = _v, c = InitialValues)
 			fixed (byte* pary = array, pbuf = _buf) {
 				byte* p = pary + ibStart;
@@ -84,13 +83,11 @@ namespace openCrypto
 					cbSize -= size;
 					if (_filled == _buf.Length) {
 						_filled = 0;
-						Copy (m, pbuf);
-						HashCore (v, m, c);
+						HashCore (v, pbuf, c);
 					}
 				}
 				while (cbSize >= _buf.Length) {
-					Copy (m, p);
-					HashCore (v, m, c);
+					HashCore (v, p, c);
 					p += _buf.Length;
 					cbSize -= _buf.Length;
 				}
@@ -112,15 +109,14 @@ namespace openCrypto
 				p[_filled] = 0x80;
 				for (int i = _filled + 1; i < _buf.Length; i++)
 					p[i] = 0;
-				Copy (m, p);
-				HashCore (v, m, c);
+				HashCore (v, p, c);
 
 				// blank block
 				m[0] = m[1] = m[2] = m[3] = m[4] = m[5] = m[6] = m[7] = 0;
 
 				// finalization
 				byte[] r = new byte[_hashLen / 8];
-				HashCore (v, m, c);
+				HashCore (v, (byte*)m, c);
 				t0 = v[0] ^ v[8] ^ v[16] ^ v[24] ^ v[32];
 				t1 = v[1] ^ v[9] ^ v[17] ^ v[25] ^ v[33];
 				t2 = v[2] ^ v[10] ^ v[18] ^ v[26] ^ v[34];
@@ -143,7 +139,7 @@ namespace openCrypto
 				if (_hashLen == 256)
 					return r;
 
-				HashCore (v, m, c);
+				HashCore (v, (byte*)m, c);
 				t0 = v[0] ^ v[8] ^ v[16] ^ v[24] ^ v[32];
 				t1 = v[1] ^ v[9] ^ v[17] ^ v[25] ^ v[33];
 				t2 = v[2] ^ v[10] ^ v[18] ^ v[26] ^ v[34];
@@ -167,7 +163,7 @@ namespace openCrypto
 			}
 		}
 
-		protected abstract unsafe void HashCore (uint* v, uint* m, uint* c);
+		protected abstract unsafe void HashCore (uint* v, byte* b, uint* c);
 
 		protected static unsafe void Double (uint* x)
 		{
@@ -400,7 +396,7 @@ namespace openCrypto
 		}
 
 		#region Misc
-		unsafe void Copy (uint* m, byte* buf)
+		static protected unsafe void Copy (uint* m, byte* buf)
 		{
 			m[0] = ((uint)buf[0] << 24) | ((uint)buf[1] << 16) | ((uint)buf[2] << 8) | buf[3];
 			m[1] = ((uint)buf[4] << 24) | ((uint)buf[5] << 16) | ((uint)buf[6] << 8) | buf[7];

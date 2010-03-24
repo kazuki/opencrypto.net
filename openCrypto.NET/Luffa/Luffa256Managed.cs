@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2009, Kazuki Oikawa
+// Copyright (c) 2009-2010, Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,7 +35,7 @@ namespace openCrypto
 				throw new System.ArgumentOutOfRangeException ();
 		}
 
-		protected override unsafe void HashCore (uint* v, uint* m, uint* c)
+		protected override sealed unsafe void HashCore (uint* v, byte* m, uint* c)
 		{
 			uint t0 = v[0] ^ v[8] ^ v[16];
 			uint t1 = v[1] ^ v[9] ^ v[17];
@@ -45,8 +45,14 @@ namespace openCrypto
 			uint t5 = v[5] ^ v[13] ^ v[21];
 			uint t6 = v[6] ^ v[14] ^ v[22];
 			uint t7 = v[7] ^ v[15] ^ v[23];
-			uint m0 = m[0], m1 = m[1], m2 = m[2], m3 = m[3];
-			uint m4 = m[4], m5 = m[5], m6 = m[6], m7 = m[7];
+			uint m0 = ((uint)m[0] << 24) | ((uint)m[1] << 16) | ((uint)m[2] << 8) | m[3];
+			uint m1 = ((uint)m[4] << 24) | ((uint)m[5] << 16) | ((uint)m[6] << 8) | m[7];
+			uint m2 = ((uint)m[8] << 24) | ((uint)m[9] << 16) | ((uint)m[10] << 8) | m[11];
+			uint m3 = ((uint)m[12] << 24) | ((uint)m[13] << 16) | ((uint)m[14] << 8) | m[15];
+			uint m4 = ((uint)m[16] << 24) | ((uint)m[17] << 16) | ((uint)m[18] << 8) | m[19];
+			uint m5 = ((uint)m[20] << 24) | ((uint)m[21] << 16) | ((uint)m[22] << 8) | m[23];
+			uint m6 = ((uint)m[24] << 24) | ((uint)m[25] << 16) | ((uint)m[26] << 8) | m[27];
+			uint m7 = ((uint)m[28] << 24) | ((uint)m[29] << 16) | ((uint)m[30] << 8) | m[31];
 
 			uint tmp = t7; t7 = t6; t6 = t5; t5 = t4;
 			t4 = t3 ^ tmp; t3 = t2 ^ tmp; t2 = t1;

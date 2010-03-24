@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2009, Kazuki Oikawa
+// Copyright (c) 2009-2010, Kazuki Oikawa
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,9 +29,10 @@ namespace openCrypto
 		{
 		}
 
-		protected override unsafe void HashCore (uint* v, uint* m, uint* c)
+		protected override sealed unsafe void HashCore (uint* v, byte* b, uint* c)
 		{
 			uint* t = stackalloc uint[8];
+			uint* m = stackalloc uint[8];
 			for (int i = 0; i < 8; i++)
 				t[i] = v[i] ^ v[8 + i] ^ v[16 + i] ^ v[24 + i] ^ v[32 + i];
 			Double (t);
@@ -85,6 +86,7 @@ namespace openCrypto
 				v[8 + i] ^= v[i];
 
 			Double (v);
+			Copy (m, b);
 			for (int i = 0; i < 8; i++)
 				v[i] ^= t[i] ^ m[i];
 
