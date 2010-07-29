@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "openCrypto.NET", "openCrypto.NET\openCrypto.NET.csproj", "{59AD989B-7DD7-400B-B2D5-EFBD0004A749}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{97D7C524-ACAC-49F2-8DB8-D1EDAABAABE2}"
