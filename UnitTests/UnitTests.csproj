@@ -56,6 +56,9 @@
     <Compile Include="ParallelTest.cs" />
     <Compile Include="RecommendedCurveTest.cs" />
     <Compile Include="RijndaelTest.cs" />
+    <Compile Include="SHA512Tests.cs" />
+    <Compile Include="SHA512_224Tests.cs" />
+    <Compile Include="SHA512_256Tests.cs" />
     <Compile Include="ShortKeyedHashAlgorithmTest.cs" />
     <Compile Include="SymmetricAlgorithmPlusTest.cs" />
     <Compile Include="SymmetricAlgorithmTestBase.cs" />

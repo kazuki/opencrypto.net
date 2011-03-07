@@ -83,6 +83,10 @@
     <Compile Include="Luffa\Luffa384Managed.cs" />
     <Compile Include="Luffa\Luffa512Managed.cs" />
     <Compile Include="Luffa\LuffaManaged.cs" />
+    <Compile Include="SHA\SHA512Algorithm.cs" />
+    <Compile Include="SHA\SHA512Managed.cs" />
+    <Compile Include="SHA\SHA512_224Managed.cs" />
+    <Compile Include="SHA\SHA512_256Managed.cs" />
     <Compile Include="ShortKeyedHashAlgorithm.cs" />
     <Compile Include="KeyDerivationFunctions\ANSI_X963_KDF.cs" />
     <Compile Include="KeyDerivationFunctions\KeyDerivationFunction.cs" />
